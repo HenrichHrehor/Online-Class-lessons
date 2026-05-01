@@ -85,6 +85,14 @@
     .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .small { font-size: 13px; color: var(--muted); }
     .term-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
+    .score-box {
+      margin-top: 12px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #f8fbff;
+      font-weight: 700;
+    }
     @media (max-width: 760px) {
       .grid2, .meta { grid-template-columns: 1fr; }
       .inline-input { min-width: 95px; max-width: 130px; }
@@ -94,13 +102,14 @@
 <body>
   <div class="wrap">
     <div class="toolbar">
-      <button class="primary" onclick="saveData(false)">Save</button>
+      <button class="primary" onclick="savePdf()">Save as PDF</button>
+      <button onclick="saveData()">Save Answers</button>
       <button onclick="loadData()">Load</button>
       <button onclick="clearData()">Clear</button>
       <button onclick="window.print()">Print</button>
       <button onclick="copyPlain()">Copy Plain Text</button>
-      <button onclick="exportJson()">Export JSON</button>
-      <button onclick="importJson()">Import JSON</button>
+      <button onclick="copyHtmlSource()">Copy HTML Source</button>
+      <button onclick="checkScore()">Check Score</button>
     </div>
 
     <div class="card">
@@ -261,35 +270,98 @@
 
     <div class="card">
       <h2>7. Classroom and Grammar Connection</h2>
-      <p>Match each English term with one Slovak option from the pool.</p>
+      <p>Choose one correct Slovak option for each English term.</p>
       <div class="term-grid">
-        <div>1) third person singular: <input class="inline-input autosave" id="m1" type="text"></div>
-        <div>2) irregular verb: <input class="inline-input autosave" id="m2" type="text"></div>
-        <div>3) present perfect: <input class="inline-input autosave" id="m3" type="text"></div>
-        <div>4) past continuous: <input class="inline-input autosave" id="m4" type="text"></div>
-        <div>5) past simple: <input class="inline-input autosave" id="m5" type="text"></div>
-        <div>6) affirmative sentence: <input class="inline-input autosave" id="m6" type="text"></div>
-        <div>7) negative sentence: <input class="inline-input autosave" id="m7" type="text"></div>
-        <div>8) fill in the blanks: <input class="inline-input autosave" id="m8" type="text"></div>
-        <div>9) circle the correct option: <input class="inline-input autosave" id="m9" type="text"></div>
-        <div>10) describe the picture: <input class="inline-input autosave" id="m10" type="text"></div>
-        <div>11) put the words in the correct order: <input class="inline-input autosave" id="m11" type="text"></div>
+        <div>1) third person singular:
+          <select class="autosave inline-input" id="m1">
+            <option value=""></option>
+            <option>tretia osoba jednotneho cisla</option>
+            <option>nepravidelne sloveso</option>
+            <option>zaporova veta</option>
+          </select>
+        </div>
+        <div>2) irregular verb:
+          <select class="autosave inline-input" id="m2">
+            <option value=""></option>
+            <option>nepravidelne sloveso</option>
+            <option>kladna veta</option>
+            <option>predpritomny cas</option>
+          </select>
+        </div>
+        <div>3) present perfect:
+          <select class="autosave inline-input" id="m3">
+            <option value=""></option>
+            <option>predpritomny cas</option>
+            <option>minuly cas jednoduchy</option>
+            <option>minuly cas priebehovy</option>
+          </select>
+        </div>
+        <div>4) past continuous:
+          <select class="autosave inline-input" id="m4">
+            <option value=""></option>
+            <option>minuly cas priebehovy</option>
+            <option>predpritomny cas</option>
+            <option>zaporova veta</option>
+          </select>
+        </div>
+        <div>5) past simple:
+          <select class="autosave inline-input" id="m5">
+            <option value=""></option>
+            <option>minuly cas jednoduchy</option>
+            <option>minuly cas priebehovy</option>
+            <option>kladna veta</option>
+          </select>
+        </div>
+        <div>6) affirmative sentence:
+          <select class="autosave inline-input" id="m6">
+            <option value=""></option>
+            <option>kladna veta</option>
+            <option>zaporova veta</option>
+            <option>nepravidelne sloveso</option>
+          </select>
+        </div>
+        <div>7) negative sentence:
+          <select class="autosave inline-input" id="m7">
+            <option value=""></option>
+            <option>zaporova veta</option>
+            <option>kladna veta</option>
+            <option>doplnte prazdne miesta</option>
+          </select>
+        </div>
+        <div>8) fill in the blanks:
+          <select class="autosave inline-input" id="m8">
+            <option value=""></option>
+            <option>doplnte prazdne miesta</option>
+            <option>zakruzkujte spravnu moznost</option>
+            <option>opiste obrazok</option>
+          </select>
+        </div>
+        <div>9) circle the correct option:
+          <select class="autosave inline-input" id="m9">
+            <option value=""></option>
+            <option>zakruzkujte spravnu moznost</option>
+            <option>dajte slova do spravneho poradia</option>
+            <option>predpritomny cas</option>
+          </select>
+        </div>
+        <div>10) describe the picture:
+          <select class="autosave inline-input" id="m10">
+            <option value=""></option>
+            <option>opiste obrazok</option>
+            <option>doplnte prazdne miesta</option>
+            <option>zaporova veta</option>
+          </select>
+        </div>
+        <div>11) put the words in the correct order:
+          <select class="autosave inline-input" id="m11">
+            <option value=""></option>
+            <option>dajte slova do spravneho poradia</option>
+            <option>minuly cas jednoduchy</option>
+            <option>nepravidelne sloveso</option>
+          </select>
+        </div>
       </div>
-
-      <h4>Slovak option pool (shuffled):</h4>
-      <ul>
-        <li>opiste obrazok</li>
-        <li>minuly cas jednoduchy</li>
-        <li>kladna veta</li>
-        <li>nepravidelne sloveso</li>
-        <li>dajte slova do spravneho poradia</li>
-        <li>zakruzkujte spravnu moznost</li>
-        <li>tretia osoba jednotneho cisla</li>
-        <li>minuly cas priebehovy</li>
-        <li>doplnte prazdne miesta</li>
-        <li>predpritomny cas</li>
-        <li>zaporova veta</li>
-      </ul>
+      <div id="scoreOutput" class="score-box">Score: not checked yet.</div>
     </div>
   </div>
 
@@ -333,6 +405,11 @@
       localStorage.removeItem(STORAGE_KEY);
     }
 
+    function savePdf() {
+      saveData(false);
+      window.print();
+    }
+
     function copyPlain() {
       const text = [
         "WORKSHEET - CLASS 10",
@@ -360,32 +437,40 @@
       navigator.clipboard.writeText(text).then(() => alert("Copied plain text."));
     }
 
-    function exportJson() {
-      const data = {};
-      getAllFields().forEach(id => {
-        const el = document.getElementById(id);
-        data[id] = el.value;
-      });
-      const payload = JSON.stringify(data, null, 2);
-      navigator.clipboard.writeText(payload).then(() => {
-        alert("JSON copied to clipboard.");
+    function copyHtmlSource() {
+      const source = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+      navigator.clipboard.writeText(source).then(() => {
+        alert("HTML source copied.");
+      }).catch(() => {
+        alert("Copy failed. Please try again.");
       });
     }
 
-    function importJson() {
-      const raw = prompt("Paste exported JSON here:");
-      if (!raw) return;
-      try {
-        const data = JSON.parse(raw);
-        Object.keys(data).forEach(id => {
-          const el = document.getElementById(id);
-          if (el) el.value = data[id];
-        });
-        saveData(false);
-        alert("JSON imported.");
-      } catch (err) {
-        alert("Invalid JSON. Please paste a valid export.");
-      }
+    function checkScore() {
+      const answerKey = {
+        m1: "tretia osoba jednotneho cisla",
+        m2: "nepravidelne sloveso",
+        m3: "predpritomny cas",
+        m4: "minuly cas priebehovy",
+        m5: "minuly cas jednoduchy",
+        m6: "kladna veta",
+        m7: "zaporova veta",
+        m8: "doplnte prazdne miesta",
+        m9: "zakruzkujte spravnu moznost",
+        m10: "opiste obrazok",
+        m11: "dajte slova do spravneho poradia"
+      };
+
+      let score = 0;
+      const total = Object.keys(answerKey).length;
+      Object.keys(answerKey).forEach(id => {
+        const el = document.getElementById(id);
+        if (el && el.value === answerKey[id]) score += 1;
+      });
+
+      const percent = Math.round((score / total) * 100);
+      const output = document.getElementById("scoreOutput");
+      output.textContent = "Score: " + score + "/" + total + " (" + percent + "%)";
     }
 
     document.querySelectorAll(".autosave").forEach(el => {
