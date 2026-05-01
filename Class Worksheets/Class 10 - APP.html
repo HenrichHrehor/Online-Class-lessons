@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Class 10 Worksheet App</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #1c2430;
+      --muted: #5b6878;
+      --line: #d8deea;
+      --primary: #2d6cdf;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.45;
+    }
+    .wrap { max-width: 1060px; margin: 20px auto 40px; padding: 0 12px; }
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(245, 247, 251, 0.96);
+      backdrop-filter: blur(4px);
+      border-bottom: 1px solid var(--line);
+      padding: 10px 0;
+      margin-bottom: 12px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    button {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--text);
+      border-radius: 8px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    h1, h2, h3, h4 { margin: 0 0 10px; }
+    h1 { font-size: 24px; }
+    h2 { font-size: 19px; border-bottom: 1px solid var(--line); padding-bottom: 6px; }
+    h3 { font-size: 16px; color: var(--muted); }
+    h4 { font-size: 15px; margin-top: 14px; }
+    .meta { display: grid; grid-template-columns: repeat(2, minmax(240px, 1fr)); gap: 8px 14px; }
+    .field-line { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .field-line label { min-width: 130px; font-weight: 600; }
+    input[type="text"], textarea, select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px 10px;
+      font: inherit;
+      color: var(--text);
+      background: #fff;
+    }
+    .inline-input {
+      min-width: 120px;
+      max-width: 190px;
+      display: inline-block;
+      margin: 0 2px;
+      vertical-align: middle;
+    }
+    .line-input { width: 100%; margin-top: 4px; }
+    .q { margin: 10px 0; }
+    .muted { color: var(--muted); }
+    .wordbank { font-size: 14px; margin-bottom: 8px; }
+    .tf-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 8px 0; }
+    .tf-row select { width: 90px; }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .small { font-size: 13px; color: var(--muted); }
+    .term-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
+    @media (max-width: 760px) {
+      .grid2, .meta { grid-template-columns: 1fr; }
+      .inline-input { min-width: 95px; max-width: 130px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="toolbar">
+      <button class="primary" onclick="saveData(false)">Save</button>
+      <button onclick="loadData()">Load</button>
+      <button onclick="clearData()">Clear</button>
+      <button onclick="window.print()">Print</button>
+      <button onclick="copyPlain()">Copy Plain Text</button>
+      <button onclick="exportJson()">Export JSON</button>
+      <button onclick="importJson()">Import JSON</button>
+    </div>
+
+    <div class="card">
+      <h1>WORKSHEET - CLASS 10</h1>
+      <div class="meta">
+        <div class="field-line"><label>Date</label><input class="autosave" id="date" type="text" value="01.05.2026"></div>
+        <div class="field-line"><label>Student</label><input class="autosave" id="student" type="text" value="Martin"></div>
+        <div class="field-line"><label>Unit</label><input class="autosave" id="unit" type="text" value="Unit 4 -> Unit 5"></div>
+        <div class="field-line"><label>Main focus</label><input class="autosave" id="focus" type="text" value="Past Simple regular/irregular"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>1. Grammar Review</h2>
+
+      <h3>A) Present Perfect -> Past Simple</h3>
+      <div class="q">1) I have visited London three times.<input class="line-input autosave" id="g1" type="text"></div>
+      <div class="q">2) She has finished her project.<input class="line-input autosave" id="g2" type="text"></div>
+      <div class="q">3) We have not seen that film.<input class="line-input autosave" id="g3" type="text"></div>
+      <div class="q">4) Have they called the teacher?<input class="line-input autosave" id="g4" type="text"></div>
+
+      <h3>B) Past Simple -> Past Continuous</h3>
+      <div class="q">1) He played football at 5 p.m.<input class="line-input autosave" id="g5" type="text"></div>
+      <div class="q">2) I studied for the test last night.<input class="line-input autosave" id="g6" type="text"></div>
+      <div class="q">3) They watched TV after dinner.<input class="line-input autosave" id="g7" type="text"></div>
+      <div class="q">4) The dog ran in the garden.<input class="line-input autosave" id="g8" type="text"></div>
+
+      <h3>C) Mixed: Regular / Irregular Verbs</h3>
+      <div class="q">1) Yesterday I (walk) <input class="inline-input autosave" id="g9" type="text"> to school and (meet) <input class="inline-input autosave" id="g10" type="text"> my friend.</div>
+      <div class="q">2) She (study) <input class="inline-input autosave" id="g11" type="text"> hard and (get) <input class="inline-input autosave" id="g12" type="text"> a very good mark.</div>
+      <div class="q">3) We (watch) <input class="inline-input autosave" id="g13" type="text"> a video and (learn) <input class="inline-input autosave" id="g14" type="text"> new words.</div>
+      <div class="q">4) They (play) <input class="inline-input autosave" id="g15" type="text"> online, but they (not win) <input class="inline-input autosave" id="g16" type="text">.</div>
+    </div>
+
+    <div class="card">
+      <h2>2. Listening - English Language: Powerful Tool</h2>
+
+      <h3>2.1 English for Global Connection</h3>
+      <div class="wordbank"><strong>Word bank:</strong> powerful, connect, confidence, practice, communication</div>
+      <p>
+        English is more than a school subject. It is a
+        <input class="inline-input autosave" id="l1a" type="text">
+        tool that helps people
+        <input class="inline-input autosave" id="l1b" type="text">
+        across countries and cultures. Teenagers use it to watch videos, follow creators, and join global gaming communities.
+        When students understand English, they can read ideas from different perspectives and compare opinions.
+        This builds
+        <input class="inline-input autosave" id="l1c" type="text">
+        and curiosity. In class, even short daily
+        <input class="inline-input autosave" id="l1d" type="text">
+        can make a big difference. Over time, simple conversations turn into real
+        <input class="inline-input autosave" id="l1e" type="text">,
+        and learners begin to feel that the language belongs to them.
+      </p>
+
+      <h3>2.2 English and Future Opportunities</h3>
+      <div class="wordbank"><strong>Word bank:</strong> opportunities, scholarships, interviews, travel, experiences</div>
+      <p>
+        English also opens doors to <input class="inline-input autosave" id="l2a" type="text"> in education and work.
+        Many websites, courses, and science articles are written in English first.
+        Students who read them can discover new topics earlier.
+        Later, English can help with applications for <input class="inline-input autosave" id="l2b" type="text">,
+        summer programs, or part-time jobs. During <input class="inline-input autosave" id="l2c" type="text">,
+        clear communication creates a strong first impression.
+        <input class="inline-input autosave" id="l2d" type="text"> becomes easier too, because signs, tickets, and online reviews are often in English.
+        For many young people, this language is a bridge to <input class="inline-input autosave" id="l2e" type="text"> they could not reach before.
+      </p>
+
+      <h3>2.3 English and Brain Development</h3>
+      <div class="wordbank"><strong>Word bank:</strong> creative, podcasts, pronunciation, progress, independent</div>
+      <p>
+        Learning English can improve thinking skills, not only speaking. Students learn to choose words carefully, organize ideas, and explain reasons clearly.
+        They also become more <input class="inline-input autosave" id="l3a" type="text"> when they write stories, posts, or short presentations.
+        Listening to songs, <input class="inline-input autosave" id="l3b" type="text">, and films in English trains the brain to notice rhythm and
+        <input class="inline-input autosave" id="l3c" type="text">. At first, mistakes feel uncomfortable, but they are part of
+        <input class="inline-input autosave" id="l3d" type="text">. Each corrected sentence teaches something useful. Step by step, learners become more
+        <input class="inline-input autosave" id="l3e" type="text"> and can study other subjects with greater confidence.
+      </p>
+
+      <h3>2.4 English for Real Life Communication</h3>
+      <div class="wordbank"><strong>Word bank:</strong> audience, misunderstandings, teamwork, careers, empathy</div>
+      <p>
+        English is powerful because it helps people share knowledge and feelings with a wider
+        <input class="inline-input autosave" id="l4a" type="text">. It can reduce
+        <input class="inline-input autosave" id="l4b" type="text"> when people from different places work together. In online spaces, respectful English communication helps build friendships and
+        <input class="inline-input autosave" id="l4c" type="text">. In school, students can ask better questions and join discussions with confidence.
+        In the future, many <input class="inline-input autosave" id="l4d" type="text"> will require international contact, and English will support that daily communication.
+        It is not about being perfect. It is about being understood, showing
+        <input class="inline-input autosave" id="l4e" type="text">, and keeping doors open for growth.
+      </p>
+      <p class="small">[TEACHER NOTE: Dotted blanks are ready for Google Docs typing.]</p>
+    </div>
+
+    <div class="card">
+      <h2>3. True / False - Listening Check</h2>
+
+      <h4>3.1 English for Global Connection and Future Opportunities</h4>
+      <div class="tf-row"><span>1) English is more than a school subject.</span><select class="autosave" id="tf1"><option></option><option>T</option><option>F</option></select></div>
+      <div class="tf-row"><span>2) The text says English cannot connect people across countries and cultures.</span><select class="autosave" id="tf2"><option></option><option>T</option><option>F</option></select></div>
+      <div class="tf-row"><span>3) Teenagers use English in global online communities.</span><select class="autosave" id="tf3"><option></option><option>T</option><option>F</option></select></div>
+      <div class="tf-row"><span>4) English can help with scholarships and interviews.</span><select class="autosave" id="tf4"><option></option><option>T</option><option>F</option></select></div>
+      <div class="tf-row"><span>5) Travel becomes easier when people can use English.</span><select class="autosave" id="tf5"><option></option><option>T</option><option>F</option></select></div>
+
+      <h4>3.2 English and Brain Development and Real Life Communication</h4>
+      <div class="tf-row"><span>1) Listening to songs, podcasts, and films can train the brain.</span><select class="autosave" id="tf6"><option></option><option>T</option><option>F</option></select></div>
+      <div class="tf-row"><span>2) Mistakes are not part of progress.</span><select class="autosave" id="tf7"><option></option><option>T</option><option>F</option></select></div>
+      <div class="tf-row"><span>3) English can reduce misunderstandings in teamwork.</span><select class="autosave" id="tf8"><option></option><option>T</option><option>F</option></select></div>
+      <div class="tf-row"><span>4) The text says future careers may require international contact.</span><select class="autosave" id="tf9"><option></option><option>T</option><option>F</option></select></div>
+      <div class="tf-row"><span>5) The text says English is only about being perfect.</span><select class="autosave" id="tf10"><option></option><option>T</option><option>F</option></select></div>
+      <p class="small">True_False_MK</p>
+    </div>
+
+    <div class="card">
+      <h2>4. Talking - Scrambled Dialogue</h2>
+      <div class="q">
+        <p><strong>Jim:</strong> Why did English become important for your goals?<br><span class="muted">[ bridge / became / English / because / a ]</span></p>
+        <textarea class="autosave" id="d1" rows="2"></textarea>
+      </div>
+      <div class="q">
+        <p><strong>Jim:</strong> What did you watch in English last week?<br><span class="muted">[ watched / YouTube / I / interviews / and ]</span></p>
+        <textarea class="autosave" id="d2" rows="2"></textarea>
+      </div>
+      <div class="q">
+        <p><strong>Jim:</strong> How did English help you during travel?<br><span class="muted">[ read / could / and / signs / I ]</span></p>
+        <textarea class="autosave" id="d3" rows="2"></textarea>
+      </div>
+      <div class="q">
+        <p><strong>Jim:</strong> Why did you start practicing every day?<br><span class="muted">[ confidence / wanted / more / I / because ]</span></p>
+        <textarea class="autosave" id="d4" rows="2"></textarea>
+      </div>
+      <div class="q">
+        <p><strong>Jim:</strong> Which irregular verb did you use yesterday?<br><span class="muted">[ wrote / I / message / a / and ]</span></p>
+        <textarea class="autosave" id="d5" rows="2"></textarea>
+      </div>
+      <div class="q">
+        <p><strong>Jim:</strong> What regular verbs did you practice in class?<br><span class="muted">[ played / talked / and / practiced / we ]</span></p>
+        <textarea class="autosave" id="d6" rows="2"></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>5. New Topic Text - Unit 5</h2>
+      <div class="q"><strong>New Topic Title:</strong><input class="line-input autosave" id="n1" type="text"></div>
+      <div class="q"><strong>Difficult sentence 1:</strong><input class="line-input autosave" id="n2" type="text"></div>
+      <div class="q"><strong>Difficult sentence 2:</strong><input class="line-input autosave" id="n3" type="text"></div>
+      <div class="q"><strong>Difficult sentence 3:</strong><input class="line-input autosave" id="n4" type="text"></div>
+      <div class="q"><strong>One-sentence summary:</strong><textarea class="autosave" id="n5" rows="2"></textarea></div>
+    </div>
+
+    <div class="card">
+      <h2>6. Grammar Box - Unit 5</h2>
+      <p>- Regular verbs: verb + -ed<br>- Irregular verbs: special form (go -> went, see -> saw, write -> wrote)</p>
+      <div class="q"><strong>Affirmative example:</strong><input class="line-input autosave" id="b1" type="text"></div>
+      <div class="q"><strong>Negative example:</strong><input class="line-input autosave" id="b2" type="text"></div>
+      <div class="q"><strong>Question example:</strong><input class="line-input autosave" id="b3" type="text"></div>
+      <div class="q"><strong>Short answer example:</strong><input class="line-input autosave" id="b4" type="text"></div>
+    </div>
+
+    <div class="card">
+      <h2>7. Classroom and Grammar Connection</h2>
+      <p>Match each English term with one Slovak option from the pool.</p>
+      <div class="term-grid">
+        <div>1) third person singular: <input class="inline-input autosave" id="m1" type="text"></div>
+        <div>2) irregular verb: <input class="inline-input autosave" id="m2" type="text"></div>
+        <div>3) present perfect: <input class="inline-input autosave" id="m3" type="text"></div>
+        <div>4) past continuous: <input class="inline-input autosave" id="m4" type="text"></div>
+        <div>5) past simple: <input class="inline-input autosave" id="m5" type="text"></div>
+        <div>6) affirmative sentence: <input class="inline-input autosave" id="m6" type="text"></div>
+        <div>7) negative sentence: <input class="inline-input autosave" id="m7" type="text"></div>
+        <div>8) fill in the blanks: <input class="inline-input autosave" id="m8" type="text"></div>
+        <div>9) circle the correct option: <input class="inline-input autosave" id="m9" type="text"></div>
+        <div>10) describe the picture: <input class="inline-input autosave" id="m10" type="text"></div>
+        <div>11) put the words in the correct order: <input class="inline-input autosave" id="m11" type="text"></div>
+      </div>
+
+      <h4>Slovak option pool (shuffled):</h4>
+      <ul>
+        <li>opiste obrazok</li>
+        <li>minuly cas jednoduchy</li>
+        <li>kladna veta</li>
+        <li>nepravidelne sloveso</li>
+        <li>dajte slova do spravneho poradia</li>
+        <li>zakruzkujte spravnu moznost</li>
+        <li>tretia osoba jednotneho cisla</li>
+        <li>minuly cas priebehovy</li>
+        <li>doplnte prazdne miesta</li>
+        <li>predpritomny cas</li>
+        <li>zaporova veta</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "class10WorksheetApp_full_v1";
+
+    function getAllFields() {
+      return Array.from(document.querySelectorAll("input, textarea, select")).map(el => el.id).filter(Boolean);
+    }
+
+    function saveData(showAlert = true) {
+      const data = {};
+      getAllFields().forEach(id => {
+        const el = document.getElementById(id);
+        data[id] = el.value;
+      });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      if (showAlert) alert("Saved.");
+    }
+
+    function loadData() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      Object.keys(data).forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = data[id];
+      });
+    }
+
+    function clearData() {
+      if (!confirm("Clear all answers?")) return;
+      getAllFields().forEach(id => {
+        const el = document.getElementById(id);
+        if (el.tagName === "SELECT") {
+          el.selectedIndex = 0;
+        } else {
+          el.value = "";
+        }
+      });
+      localStorage.removeItem(STORAGE_KEY);
+    }
+
+    function copyPlain() {
+      const text = [
+        "WORKSHEET - CLASS 10",
+        "Date: " + document.getElementById("date").value,
+        "Student: " + document.getElementById("student").value,
+        "Unit: " + document.getElementById("unit").value,
+        "Main focus: " + document.getElementById("focus").value,
+        "",
+        "Listening 2.1 answers: " + ["l1a", "l1b", "l1c", "l1d", "l1e"].map(id => document.getElementById(id).value).join(", "),
+        "Listening 2.2 answers: " + ["l2a", "l2b", "l2c", "l2d", "l2e"].map(id => document.getElementById(id).value).join(", "),
+        "Listening 2.3 answers: " + ["l3a", "l3b", "l3c", "l3d", "l3e"].map(id => document.getElementById(id).value).join(", "),
+        "Listening 2.4 answers: " + ["l4a", "l4b", "l4c", "l4d", "l4e"].map(id => document.getElementById(id).value).join(", "),
+        "",
+        "True/False 1-10: " + ["tf1","tf2","tf3","tf4","tf5","tf6","tf7","tf8","tf9","tf10"].map(id => document.getElementById(id).value || "-").join(" "),
+        "",
+        "Dialogues:",
+        "1) " + document.getElementById("d1").value,
+        "2) " + document.getElementById("d2").value,
+        "3) " + document.getElementById("d3").value,
+        "4) " + document.getElementById("d4").value,
+        "5) " + document.getElementById("d5").value,
+        "6) " + document.getElementById("d6").value
+      ].join("\n");
+
+      navigator.clipboard.writeText(text).then(() => alert("Copied plain text."));
+    }
+
+    function exportJson() {
+      const data = {};
+      getAllFields().forEach(id => {
+        const el = document.getElementById(id);
+        data[id] = el.value;
+      });
+      const payload = JSON.stringify(data, null, 2);
+      navigator.clipboard.writeText(payload).then(() => {
+        alert("JSON copied to clipboard.");
+      });
+    }
+
+    function importJson() {
+      const raw = prompt("Paste exported JSON here:");
+      if (!raw) return;
+      try {
+        const data = JSON.parse(raw);
+        Object.keys(data).forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.value = data[id];
+        });
+        saveData(false);
+        alert("JSON imported.");
+      } catch (err) {
+        alert("Invalid JSON. Please paste a valid export.");
+      }
+    }
+
+    document.querySelectorAll(".autosave").forEach(el => {
+      el.addEventListener("input", () => saveData(false));
+      el.addEventListener("change", () => saveData(false));
+    });
+
+    loadData();
+  </script>
+</body>
+</html>
