@@ -897,59 +897,30 @@
     }
 
     const SCORE_KEY = {
-      m1: {
-        answer: "tretia osoba jednotneho cisla",
-        hint: "Hint: he/she/it forms (napr. goes, plays) = tretia osoba jednotnĂ©ho ÄŤĂ­sla."
-      },
-      m2: {
-        answer: "nepravidelne sloveso",
-        hint: "Hint: go-went, see-saw, write-wrote = irregular / nepravidelnĂ© sloveso."
-      },
-      m3: {
-        answer: "predpritomny cas",
-        hint: "Hint: have/has + past participle (I have visited) = present perfect / predprĂ­tomnĂ˝ ÄŤas."
-      },
-      m4: {
-        answer: "minuly cas priebehovy",
-        hint: "Hint: was/were + -ing (I was studying) = past continuous / minulĂ˝ ÄŤas priebehovĂ˝."
-      },
-      m5: {
-        answer: "minuly cas jednoduchy",
-        hint: "Hint: finished past action (I walked / I went) = past simple / minulĂ˝ ÄŤas jednoduchĂ˝."
-      },
-      m6: {
-        answer: "kladna veta",
-        hint: "Hint: kladnĂˇ veta = affirmative sentence (bez not / don't)."
-      },
-      m7: {
-        answer: "zaporova veta",
-        hint: "Hint: zĂˇporovĂˇ veta = negative sentence (not / don't / didn't)."
-      },
-      m8: {
-        answer: "doplnte prazdne miesta",
-        hint: "Hint: fill in the blanks = doplĹte prĂˇzdne miesta."
-      },
-      m9: {
-        answer: "zakruzkujte spravnu moznost",
-        hint: "Hint: circle the correct option = zakrĂşĹľkujte sprĂˇvnu moĹľnosĹĄ."
-      },
-      m10: {
-        answer: "opiste obrazok",
-        hint: "Hint: describe the picture = opĂ­Ĺˇte obrĂˇzok."
-      },
-      m11: {
-        answer: "dajte slova do spravneho poradia",
-        hint: "Hint: put the words in the correct order = dajte slovĂˇ do sprĂˇvneho poradia."
-      }
+      m1: { answer: "tretia osoba jednotneho cisla", hint: "Hint: he/she/it forms (napr. goes, plays) = tretia osoba jednotneho cisla." },
+      m2: { answer: "nepravidelne sloveso", hint: "Hint: go-went, see-saw, write-wrote = irregular / nepravidelne sloveso." },
+      m3: { answer: "predpritomny cas", hint: "Hint: have/has + past participle (I have visited) = present perfect / predpritomny cas." },
+      m4: { answer: "minuly cas priebehovy", hint: "Hint: was/were + -ing (I was studying) = past continuous / minuly cas priebehovy." },
+      m5: { answer: "minuly cas jednoduchy", hint: "Hint: finished past action (I walked / I went) = past simple / minuly cas jednoduchy." },
+      m6: { answer: "kladna veta", hint: "Hint: kladna veta = affirmative sentence (bez not / don't)." },
+      m7: { answer: "zaporova veta", hint: "Hint: zaporova veta = negative sentence (not / don't / didn't)." },
+      m8: { answer: "doplnte prazdne miesta", hint: "Hint: fill in the blanks = doplnte prazdne miesta." },
+      m9: { answer: "zakruzkujte spravnu moznost", hint: "Hint: circle the correct option = zakruzkujte spravnu moznost." },
+      m10: { answer: "opiste obrazok", hint: "Hint: describe the picture = opiste obrazok." },
+      m11: { answer: "dajte slova do spravneho poradia", hint: "Hint: put the words in the correct order = dajte slova do spravneho poradia." }
     };
+
+    var answersRevealed = false;
+    var scoreFeedbackVisible = false;
+    var hideAnswersLock = false;
 
     function resetScoreStyles() {
       document.querySelectorAll(".score-item").forEach(function (item) {
         item.classList.remove("scored-correct", "scored-wrong", "reveal-correct");
       });
       Object.keys(SCORE_KEY).forEach(function (id) {
-        const mark = document.getElementById("mark-" + id);
-        const hint = document.getElementById("hint-" + id);
+        var mark = document.getElementById("mark-" + id);
+        var hint = document.getElementById("hint-" + id);
         if (mark) mark.textContent = "";
         if (hint) {
           hint.classList.remove("show");
@@ -958,19 +929,50 @@
       });
     }
 
+    function hideCorrectAnswersOnEdit(changedId) {
+      if (hideAnswersLock) return;
+      if (!answersRevealed && !scoreFeedbackVisible) return;
+
+      hideAnswersLock = true;
+      resetScoreStyles();
+
+      if (answersRevealed) {
+        Object.keys(SCORE_KEY).forEach(function (id) {
+          if (changedId && id === changedId) return;
+          var el = document.getElementById(id);
+          if (el) el.value = "";
+        });
+        answersRevealed = false;
+        document.getElementById("scoreOutput").textContent = "Score: not checked yet.";
+        document.getElementById("scoreNote").textContent =
+          "Spravne odpovede su skryte. Vypln Section 7 znova a potom stlac Check Score.";
+        setStatus("Correct answers hidden.");
+        saveData(false);
+      } else {
+        document.getElementById("scoreOutput").textContent = "Score: not checked yet.";
+        document.getElementById("scoreNote").textContent =
+          "Feedback skryty po uprave. Po vyplneni stlac Check Score znova.";
+        setStatus("Score feedback hidden.");
+      }
+
+      scoreFeedbackVisible = false;
+      hideAnswersLock = false;
+    }
+
     function checkScore() {
       resetScoreStyles();
-      let score = 0;
-      const total = Object.keys(SCORE_KEY).length;
-      const details = [];
+      answersRevealed = false;
+      scoreFeedbackVisible = true;
+      var score = 0;
+      var total = Object.keys(SCORE_KEY).length;
 
       Object.keys(SCORE_KEY).forEach(function (id) {
-        const item = document.querySelector('.score-item[data-score-id="' + id + '"]');
-        const mark = document.getElementById("mark-" + id);
-        const hint = document.getElementById("hint-" + id);
-        const correct = SCORE_KEY[id].answer;
-        const chosen = val(id);
-        const isCorrect = chosen === correct;
+        var item = document.querySelector('.score-item[data-score-id="' + id + '"]');
+        var mark = document.getElementById("mark-" + id);
+        var hint = document.getElementById("hint-" + id);
+        var correct = SCORE_KEY[id].answer;
+        var chosen = val(id);
+        var isCorrect = chosen === correct;
 
         if (item) item.classList.add(isCorrect ? "scored-correct" : "scored-wrong");
         if (mark) mark.textContent = isCorrect ? "OK" : "X";
@@ -985,27 +987,29 @@
           hint.classList.add("show");
         }
         if (isCorrect) score += 1;
-        details.push((isCorrect ? "OK" : "X") + " " + id);
       });
 
-      const percent = Math.round((score / total) * 100);
+      var percent = Math.round((score / total) * 100);
       document.getElementById("scoreOutput").textContent =
         "Score: " + score + "/" + total + " (" + percent + "%)";
       document.getElementById("scoreNote").textContent =
-        "Check Score hodnotil polozky 1-11. Zelena = spravne, cervena = nespravne. Kazda polozka ma hint/zdovodnenie.";
+        "Check Score hodnotil polozky 1-11. Zelena = spravne, cervena = nespravne. Ak zacnes menit odpoved, feedback sa skryje.";
       setStatus("Score checked: " + score + "/" + total);
-      const section = document.getElementById("section7");
+      var section = document.getElementById("section7");
       if (section) section.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
     function showCorrectAnswers() {
+      hideAnswersLock = true;
       resetScoreStyles();
+      answersRevealed = true;
+      scoreFeedbackVisible = true;
       Object.keys(SCORE_KEY).forEach(function (id) {
-        const el = document.getElementById(id);
-        const item = document.querySelector('.score-item[data-score-id="' + id + '"]');
-        const mark = document.getElementById("mark-" + id);
-        const hint = document.getElementById("hint-" + id);
-        const correct = SCORE_KEY[id].answer;
+        var el = document.getElementById(id);
+        var item = document.querySelector('.score-item[data-score-id="' + id + '"]');
+        var mark = document.getElementById("mark-" + id);
+        var hint = document.getElementById("hint-" + id);
+        var correct = SCORE_KEY[id].answer;
 
         if (el) el.value = correct;
         if (item) item.classList.add("reveal-correct");
@@ -1017,17 +1021,23 @@
       });
       saveData(false);
       document.getElementById("scoreOutput").textContent =
-        "Correct answers shown (11/11). Run Check Score again if you want to re-test.";
+        "Correct answers shown (11/11). Ak zacnes menit odpoved, spravne odpovede sa skryju.";
       document.getElementById("scoreNote").textContent =
-        "Show Correct Answers vyplnilo vsetky spravne moznosti a zobrazilo zdovodnenie pri kazdej polozke.";
+        "Show Correct Answers je aktivne. Pri prvej uprave sa vsetky spravne odpovede a hinty skryju.";
       setStatus("Correct answers revealed.");
+      hideAnswersLock = false;
     }
 
     document.querySelectorAll(".autosave").forEach(function (el) {
-      el.addEventListener("input", function () { saveData(false); });
-      el.addEventListener("change", function () { saveData(false); });
+      el.addEventListener("input", function () {
+        if (el.id && SCORE_KEY[el.id]) hideCorrectAnswersOnEdit(el.id);
+        saveData(false);
+      });
+      el.addEventListener("change", function () {
+        if (el.id && SCORE_KEY[el.id]) hideCorrectAnswersOnEdit(el.id);
+        saveData(false);
+      });
     });
-
     loadData();
   </script>
 </body>
