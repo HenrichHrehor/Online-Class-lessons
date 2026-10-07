@@ -194,7 +194,6 @@
       <button onclick="checkScore()">Check Score (Sec.7)</button>
       <button id="toggleSec7AnswersBtn" onclick="toggleSec7Answers()">Show Answers (Sec.7)</button>
       <button onclick="checkDialogue()">Check Dialogue</button>
-      <button id="toggleDialogueAnswersBtn" onclick="toggleDialogueAnswers()">Show Dialogue Answers</button>
       <button onclick="clearData()">Clear Answers</button>
       <span class="status" id="copyStatus"></span>
     </div>
@@ -406,10 +405,9 @@
 
       <div class="score-actions">
         <button class="primary" onclick="checkDialogue()">Check Dialogue</button>
-        <button id="toggleDialogueAnswersBtn2" onclick="toggleDialogueAnswers()">Show Correct Answers</button>
       </div>
       <div id="dialogueScoreOutput" class="score-box">Dialogue score: not checked yet.</div>
-      <div id="dialogueScoreNote" class="score-note">Tip: Check Dialogue oznaci spravne/nespravne vety a ukaze hint. Pri uprave sa feedback skryje.</div>
+      <div id="dialogueScoreNote" class="score-note">Tip: Check Dialogue oznaci spravne/nespravne vety a ukaze napovedu. Napoveda zmizne hned po kliknuti do pola.</div>
     </div>
     <div class="card">
       <h2>5. New Topic Text - Unit 5</h2>
@@ -662,7 +660,7 @@
       var dOut = document.getElementById("dialogueScoreOutput");
       var dNote = document.getElementById("dialogueScoreNote");
       if (dOut) dOut.textContent = "Dialogue score: not checked yet.";
-      if (dNote) dNote.textContent = "Tip: Check Dialogue oznaci spravne/nespravne vety a ukaze hint. Pri uprave sa feedback skryje.";
+      if (dNote) dNote.textContent = "Tip: Check Dialogue oznaci spravne/nespravne vety a ukaze napovedu. Napoveda zmizne hned po kliknuti do pola.";
       setStatus("Cleared.");
     }
 
@@ -973,14 +971,6 @@
       if (b2) b2.textContent = label2;
     }
 
-    function setDialogueToggleLabel(revealed) {
-      var label = revealed ? "Hide Dialogue Answers" : "Show Dialogue Answers";
-      var label2 = revealed ? "Hide Correct Answers" : "Show Correct Answers";
-      var b1 = document.getElementById("toggleDialogueAnswersBtn");
-      var b2 = document.getElementById("toggleDialogueAnswersBtn2");
-      if (b1) b1.textContent = label;
-      if (b2) b2.textContent = label2;
-    }
 
     function hideCorrectAnswersOnEdit(changedId) {
       if (hideAnswersLock) return;
@@ -1200,44 +1190,18 @@ const DIALOGUE_KEY = {
       });
     }
 
-    function hideDialogueOnEdit(changedId) {
+    function clearDialogueFeedback() {
       if (hideDialogueLock) return;
-      if (!dialogueRevealed && !dialogueFeedbackVisible) return;
+      if (!dialogueFeedbackVisible && !dialogueRevealed) return;
 
       hideDialogueLock = true;
-      var keepValue = "";
-      if (dialogueRevealed && changedId) {
-        keepValue = val(changedId);
-        if (normalizeAnswer(keepValue) === normalizeAnswer(DIALOGUE_KEY[changedId].display)) keepValue = "";
-      }
-
       resetDialogueStyles();
-
-      if (dialogueRevealed) {
-        Object.keys(DIALOGUE_KEY).forEach(function (id) {
-          var el = document.getElementById(id);
-          if (!el) return;
-          if (id === changedId && keepValue) {
-            el.value = keepValue;
-          } else {
-            el.value = "";
-          }
-        });
-        dialogueRevealed = false;
-        document.getElementById("dialogueScoreOutput").textContent = "Dialogue score: not checked yet.";
-        document.getElementById("dialogueScoreNote").textContent =
-          "Podfarbenie a spravne dialogy zmizli. Pokracuj vo vyplnani a stlac Check Dialogue.";
-        setStatus("Dialogue answers/feedback hidden.");
-        saveData(false);
-      } else {
-        document.getElementById("dialogueScoreOutput").textContent = "Dialogue score: not checked yet.";
-        document.getElementById("dialogueScoreNote").textContent =
-          "Podfarbenie z Check Dialogue zmizlo. Pokracuj vo vyplnani a skontroluj znova.";
-        setStatus("Dialogue check colors hidden.");
-      }
-
+      dialogueRevealed = false;
       dialogueFeedbackVisible = false;
-      setDialogueToggleLabel(false);
+      document.getElementById("dialogueScoreOutput").textContent = "Dialogue score: not checked yet.";
+      document.getElementById("dialogueScoreNote").textContent =
+        "Napoveda sa skryla. Pokracuj vo vyplnani a neskor stlac Check Dialogue znova.";
+      setStatus("Dialogue hints hidden.");
       hideDialogueLock = false;
     }
 
@@ -1245,7 +1209,6 @@ const DIALOGUE_KEY = {
       resetDialogueStyles();
       dialogueRevealed = false;
       dialogueFeedbackVisible = true;
-      setDialogueToggleLabel(false);
       var score = 0;
       var total = Object.keys(DIALOGUE_KEY).length;
 
@@ -1275,75 +1238,27 @@ const DIALOGUE_KEY = {
       document.getElementById("dialogueScoreOutput").textContent =
         "Dialogue score: " + score + "/" + total + " (" + percent + "%)";
       document.getElementById("dialogueScoreNote").textContent =
-        "Check Dialogue hodnotil vety 1-6. Ked zacnes menit text, podfarbenie zmizne.";
+        "Check Dialogue hodnotil vety 1-6. Napoveda sa skryje hned, ked kliknes do pola na pisanie.";
       setStatus("Dialogue checked: " + score + "/" + total);
       var section = document.getElementById("section4");
       if (section) section.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-
-    function showDialogueAnswers() {
-      hideDialogueLock = true;
-      resetDialogueStyles();
-      dialogueRevealed = true;
-      dialogueFeedbackVisible = true;
-      Object.keys(DIALOGUE_KEY).forEach(function (id) {
-        var el = document.getElementById(id);
-        var item = document.querySelector('[data-dialogue-id="' + id + '"]');
-        var mark = document.getElementById("mark-" + id);
-        var hint = document.getElementById("hint-" + id);
-
-        if (el) el.value = DIALOGUE_KEY[id].display;
-        if (item) item.classList.add("reveal-correct");
-        if (mark) mark.textContent = "ANSWER";
-        if (hint) {
-          hint.textContent = "Spravna moznost: " + DIALOGUE_KEY[id].display + " " + DIALOGUE_KEY[id].hint;
-          hint.classList.add("show");
-        }
-      });
-      saveData(false);
-      document.getElementById("dialogueScoreOutput").textContent =
-        "Correct dialogue answers shown (6/6). Toggle Hide, or start editing to hide them.";
-      document.getElementById("dialogueScoreNote").textContent =
-        "Show Dialogue Answers je aktivne. Toggle na Hide, alebo zacni vyplnat - odpovede a farby zmiznu.";
-      setStatus("Dialogue answers revealed.");
-      setDialogueToggleLabel(true);
-      hideDialogueLock = false;
-    }
-
-    function hideDialogueAnswers() {
-      hideDialogueLock = true;
-      resetDialogueStyles();
-      dialogueRevealed = false;
-      dialogueFeedbackVisible = false;
-      Object.keys(DIALOGUE_KEY).forEach(function (id) {
-        var el = document.getElementById(id);
-        if (el) el.value = "";
-      });
-      document.getElementById("dialogueScoreOutput").textContent = "Dialogue score: not checked yet.";
-      document.getElementById("dialogueScoreNote").textContent =
-        "Dialogove odpovede su skryte. Napis vety znova a stlac Check Dialogue.";
-      setStatus("Dialogue answers hidden.");
-      setDialogueToggleLabel(false);
-      saveData(false);
-      hideDialogueLock = false;
-    }
-
-    function toggleDialogueAnswers() {
-      if (dialogueRevealed) hideDialogueAnswers();
-      else showDialogueAnswers();
-    }
 document.querySelectorAll(".autosave").forEach(function (el) {
       el.addEventListener("input", function () {
         if (el.id && SCORE_KEY[el.id]) hideCorrectAnswersOnEdit(el.id);
-        if (el.id && DIALOGUE_KEY[el.id]) hideDialogueOnEdit(el.id);
+        if (el.id && DIALOGUE_KEY[el.id]) clearDialogueFeedback();
         saveData(false);
       });
       el.addEventListener("change", function () {
         if (el.id && SCORE_KEY[el.id]) hideCorrectAnswersOnEdit(el.id);
-        if (el.id && DIALOGUE_KEY[el.id]) hideDialogueOnEdit(el.id);
+        if (el.id && DIALOGUE_KEY[el.id]) clearDialogueFeedback();
         saveData(false);
       });
-    });
+      el.addEventListener("focus", function () {
+        if (el.id && DIALOGUE_KEY[el.id]) clearDialogueFeedback();
+        if (el.id && SCORE_KEY[el.id]) hideCorrectAnswersOnEdit(el.id);
+      });
+    });;
     loadData();
   </script>
 </body>
