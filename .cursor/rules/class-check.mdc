@@ -12,6 +12,7 @@ Run this checklist on the lesson file. Fix failures before push.
 - [ ] Full-text paragraphs === gap-fill paragraphs (word-for-word; only blanks differ)
 - [ ] Word banks shuffled (not text order); exactly 5 words / 5 blanks per block
 - [ ] T/F answerable only from listening text (no outside knowledge traps)
+- [ ] T/F balance ~50/50 (e.g. 5 True + 5 False on 10 items); do not make almost all True
 
 ## Grammar
 - [ ] Hour’s grammar focus matches `curriculum/25-hours.md` for this class number
