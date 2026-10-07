@@ -291,8 +291,54 @@
       </div>
     </div>
 
+    <div class="card">
+      <h2>1. Grammar Review (for your pitch)</h2>
+      <h3>A) Present Simple - who you are</h3>
+      <div class="q">1) I (be) <input class="inline-input autosave" id="g1" type="text"> a year-nine student.</div>
+      <div class="q">2) I (live) <input class="inline-input autosave" id="g2" type="text"> in ________.</div>
+      <div class="q">3) I (not like) <input class="inline-input autosave" id="g3" type="text"> long boring talks.</div>
+      <div class="q">4) What (do / you / enjoy) <input class="inline-input autosave" id="g4" type="text">?</div>
+
+      <h3>B) Past Simple - one real story</h3>
+      <div class="q">1) Last year I (join) <input class="inline-input autosave" id="g5" type="text"> a project.</div>
+      <div class="q">2) I (feel) <input class="inline-input autosave" id="g6" type="text"> nervous at first.</div>
+      <div class="q">3) Then I (write) <input class="inline-input autosave" id="g7" type="text"> a short report.</div>
+      <div class="q">4) My classmates (clap) <input class="inline-input autosave" id="g8" type="text">.</div>
+
+      <h3>C) Present Perfect + going to</h3>
+      <div class="q">1) I have (practise) <input class="inline-input autosave" id="g9" type="text"> English more often.</div>
+      <div class="q">2) I have never (travel) <input class="inline-input autosave" id="g10" type="text"> alone.</div>
+      <div class="q">3) Next year I am going to (join) <input class="inline-input autosave" id="g11" type="text"> a club.</div>
+      <div class="q">4) I will (improve) <input class="inline-input autosave" id="g12" type="text"> if I practise.</div>
+    </div>
+
+    <div class="card" id="sectionTransform">
+      <h2>2. Exercise 2 – Sentence Transformations</h2>
+      <p class="small">
+        <strong>Exercise 2</strong> — kompletna aktivita: <strong>6 uloh</strong> na transformaciu viet
+        (Make affirmative / Make negative / Make question).
+        Kazdy cas ma pool 9 viet (3 + 3 + 3). Vyber pool, vypln vsetkych 6 odpovedi, potom Check.
+        <strong>New set</strong> = novych 6 uloh.
+      </p>
+      <div class="section-sticky-actions">
+        <label class="small" for="transformPool">Pool</label>
+        <select id="transformPool" class="pool-select" onchange="newTransformSet()">
+          <option value="all">All tenses (mix)</option>
+          <option value="present_simple">Present Simple</option>
+          <option value="past_simple">Past Simple</option>
+          <option value="present_perfect">Present Perfect</option>
+          <option value="going_to">be going to</option>
+        </select>
+        <button type="button" onclick="newTransformSet()">New set (6 tasks)</button>
+        <button type="button" class="primary" onclick="checkTransforms()">Check Exercise 2</button>
+      </div>
+      <div id="transformList" class="transform-grid" aria-label="Exercise 2 six transformation tasks"></div>
+      <div id="transformScoreOutput" class="score-box">Exercise 2: 6 tasks — not checked yet.</div>
+      <div id="transformScoreNote" class="score-note">Example: <em>I am going to study this year.</em> → Make question / Make negative. Always 6 tasks.</div>
+    </div>
+
     <div class="card" id="listeningSection">
-      <h2>2. Listening - Gap Fill</h2>
+      <h2>3. Listening - Gap Fill</h2>
       <p class="small">Fill in the blanks. Text matches the Full Text word-for-word.</p>
 
       <div class="listen-block" id="block1">
@@ -380,52 +426,7 @@
     </div>
 
     <div class="card">
-      <h2>1. Grammar Review (for your pitch)</h2>
-      <h3>A) Present Simple - who you are</h3>
-      <div class="q">1) I (be) <input class="inline-input autosave" id="g1" type="text"> a year-nine student.</div>
-      <div class="q">2) I (live) <input class="inline-input autosave" id="g2" type="text"> in ________.</div>
-      <div class="q">3) I (not like) <input class="inline-input autosave" id="g3" type="text"> long boring talks.</div>
-      <div class="q">4) What (do / you / enjoy) <input class="inline-input autosave" id="g4" type="text">?</div>
-
-      <h3>B) Past Simple - one real story</h3>
-      <div class="q">1) Last year I (join) <input class="inline-input autosave" id="g5" type="text"> a project.</div>
-      <div class="q">2) I (feel) <input class="inline-input autosave" id="g6" type="text"> nervous at first.</div>
-      <div class="q">3) Then I (write) <input class="inline-input autosave" id="g7" type="text"> a short report.</div>
-      <div class="q">4) My classmates (clap) <input class="inline-input autosave" id="g8" type="text">.</div>
-
-      <h3>C) Present Perfect + going to</h3>
-      <div class="q">1) I have (practise) <input class="inline-input autosave" id="g9" type="text"> English more often.</div>
-      <div class="q">2) I have never (travel) <input class="inline-input autosave" id="g10" type="text"> alone.</div>
-      <div class="q">3) Next year I am going to (join) <input class="inline-input autosave" id="g11" type="text"> a club.</div>
-      <div class="q">4) I will (improve) <input class="inline-input autosave" id="g12" type="text"> if I practise.</div>
-    </div>
-
-    <div class="card" id="sectionTransform">
-      <h2>1b. Sentence Transformations</h2>
-      <p class="small">
-        Kazdy cas ma pool <strong>9 viet</strong> (3 affirmative + 3 negative + 3 question).
-        Uloha ukaze jednu vetu a ty ju transformujes (napr. <em>Make negative</em> / <em>Make question</em>).
-        <strong>New set</strong> vytvori novy nahodny set.
-      </p>
-      <div class="section-sticky-actions">
-        <label class="small" for="transformPool">Pool</label>
-        <select id="transformPool" class="pool-select" onchange="newTransformSet()">
-          <option value="all">All tenses (mix)</option>
-          <option value="present_simple">Present Simple</option>
-          <option value="past_simple">Past Simple</option>
-          <option value="present_perfect">Present Perfect</option>
-          <option value="going_to">be going to</option>
-        </select>
-        <button type="button" onclick="newTransformSet()">New set</button>
-        <button type="button" class="primary" onclick="checkTransforms()">Check Transformations</button>
-      </div>
-      <div id="transformList" class="transform-grid"></div>
-      <div id="transformScoreOutput" class="score-box">Transformations: not checked yet.</div>
-      <div id="transformScoreNote" class="score-note">Tip: Example source — <em>I am going to study this year.</em> → Make question / Make negative.</div>
-    </div>
-
-    <div class="card">
-      <h2>3. True / False - Listening Check</h2>
+      <h2>4. True / False - Listening Check</h2>
       <h4>3.1 Opening and Past Chapter</h4>
       <div class="tf-row"><span>1) Leo is fifteen years old.</span><select class="autosave" id="tf1"><option value=""></option><option>T</option><option>F</option></select></div>
       <div class="tf-row"><span>2) Leo lives in Bratislava.</span><select class="autosave" id="tf2"><option value=""></option><option>T</option><option>F</option></select></div>
@@ -443,7 +444,7 @@
     </div>
 
     <div class="card" id="section4">
-      <h2>4. Talking - Scrambled Dialogue (after the talk)</h2>
+      <h2>5. Talking - Scrambled Dialogue (after the talk)</h2>
       <p class="small"><strong>Check Dialogue</strong> — odpovede po Leo-vej prezentacii.</p>
       <div class="section-sticky-actions">
         <button class="primary" onclick="checkDialogue()">Check Dialogue</button>
@@ -491,7 +492,7 @@
     </div>
 
     <div class="card">
-      <h2>5. Your Spotlight Script (personal presentation)</h2>
+      <h2>6. Your Spotlight Script (personal presentation)</h2>
       <p class="small">Write your own 2-minute talk. Use school-safe facts only.</p>
       <div class="pitch-box">
         <div class="q"><strong>1) Opening (who I am now):</strong><textarea class="autosave" id="n1" rows="2"></textarea></div>
@@ -503,7 +504,7 @@
     </div>
 
     <div class="card">
-      <h2>6. Grammar Box - Spotlight Talk</h2>
+      <h2>7. Grammar Box - Spotlight Talk</h2>
       <p>
         - <strong>Now:</strong> I am / I live / I like<br>
         - <strong>Past story:</strong> Last year I joined… / I felt… / I learned…<br>
@@ -517,7 +518,7 @@
     </div>
 
     <div class="card" id="section7">
-      <h2>7. Classroom and Grammar Connection</h2>
+      <h2>8. Classroom and Grammar Connection</h2>
       <p>Choose one correct Slovak option for each English term.</p>
       <div class="section-sticky-actions">
         <button class="primary" onclick="checkScore()">Check Score</button>
@@ -641,7 +642,7 @@
   </div>
 
   <script>
-    const STORAGE_KEY = "esl-class-24-v1";
+    const STORAGE_KEY = "esl-class-24-v2";
     const BLOCK_TITLES = {
       1: "1. Opening: Who I Am Now",
       2: "2. Past Chapter: What Changed Me",
@@ -832,7 +833,7 @@
         "4. DIALOGUE",
         val("d1"), val("d2"), val("d3"), val("d4"), val("d5"), val("d6"),
         "",
-        "1b. TRANSFORMATIONS",
+        "2. EXERCISE 2 - TRANSFORMATIONS",
         currentTransformTasks.map(function (task, i) {
           return (i + 1) + ") [" + task.target + "] " + task.sourceText + " -> " + (collectTransformAnswers()["t" + i] || ".....");
         }).join("\n"),
@@ -1086,9 +1087,9 @@
       if (!transformFeedbackVisible) return;
       resetTransformStyles();
       transformFeedbackVisible = false;
-      document.getElementById("transformScoreOutput").textContent = "Transformations: not checked yet.";
+      document.getElementById("transformScoreOutput").textContent = "Exercise 2: 6 tasks — not checked yet.";
       document.getElementById("transformScoreNote").textContent =
-        "Podfarbenie zmizlo. Uprav odpoved a stlac Check Transformations znova.";
+        "Podfarbenie zmizlo. Uprav odpoved a stlac Check Exercise 2 znova.";
     }
 
     function renderTransformTasks(answers) {
@@ -1135,15 +1136,44 @@
           });
         });
       });
-      // Per tense pool = 9 source sentences (3×3 forms); tasks = transform to another form.
+      // Exercise 2 = always exactly 6 transformation tasks.
       var setSize = 6;
-      currentTransformTasks = shuffle(candidates).slice(0, Math.min(setSize, candidates.length));
+      var picked = [];
+      if (poolKey === "all") {
+        var byPool = {};
+        candidates.forEach(function (c) {
+          if (!byPool[c.pool]) byPool[c.pool] = [];
+          byPool[c.pool].push(c);
+        });
+        Object.keys(byPool).forEach(function (k) {
+          byPool[k] = shuffle(byPool[k]);
+        });
+        var keys = shuffle(Object.keys(byPool));
+        keys.forEach(function (k) {
+          if (picked.length < setSize && byPool[k].length) picked.push(byPool[k].shift());
+        });
+        var rest = [];
+        keys.forEach(function (k) { rest = rest.concat(byPool[k]); });
+        rest = shuffle(rest);
+        while (picked.length < setSize && rest.length) picked.push(rest.shift());
+      } else {
+        picked = shuffle(candidates).slice(0, setSize);
+      }
+      if (picked.length < setSize) {
+        var filler = shuffle(candidates);
+        var i = 0;
+        while (picked.length < setSize && filler.length) {
+          picked.push(filler[i % filler.length]);
+          i += 1;
+        }
+      }
+      currentTransformTasks = picked.slice(0, setSize);
       renderTransformTasks({});
       document.getElementById("transformScoreNote").textContent =
-        "Novy set: " + currentTransformTasks.length + " uloh z poolu \"" +
+        "Exercise 2: 6 uloh z poolu \"" +
         (poolKey === "all" ? "All tenses" : TRANSFORM_POOLS[poolKey].label) +
-        "\" (v poole 9 viet / cas).";
-      setStatus("New transformation set ready.");
+        "\". Vypln vsetky, potom Check.";
+      setStatus("Exercise 2: new set of 6 tasks.");
       saveData();
     }
 
@@ -1172,10 +1202,10 @@
       });
       var percent = total ? Math.round((score / total) * 100) : 0;
       document.getElementById("transformScoreOutput").textContent =
-        "Transformations: " + score + "/" + total + " (" + percent + "%)";
+        "Exercise 2: " + score + "/" + total + " (" + percent + "%)";
       document.getElementById("transformScoreNote").textContent =
-        "Check hotovy. Ked zacnes editovat odpoved, farby zmiznu.";
-      setStatus("Transformations checked: " + score + "/" + total);
+        "Check Exercise 2 hotovy. Ked zacnes editovat odpoved, farby zmiznu.";
+      setStatus("Exercise 2 checked: " + score + "/" + total);
       saveData();
     }
 
