@@ -193,8 +193,10 @@
       <button onclick="savePdf()">Save as PDF</button>
       <button onclick="checkScore()">Check Score (Sec.7)</button>
       <button onclick="showCorrectAnswers()">Show Answers (Sec.7)</button>
+      <button onclick="hideCorrectAnswers()">Hide Answers (Sec.7)</button>
       <button onclick="checkDialogue()">Check Dialogue</button>
       <button onclick="showDialogueAnswers()">Show Dialogue Answers</button>
+      <button onclick="hideDialogueAnswers()">Hide Dialogue Answers</button>
       <button onclick="clearData()">Clear Answers</button>
       <span class="status" id="copyStatus"></span>
     </div>
@@ -364,7 +366,7 @@
 
       <div class="score-item" data-dialogue-id="d1">
         <div class="item-label">1) Pete answer: <span class="mark" id="mark-d1"></span></div>
-        <p><strong>Jim:</strong> Why did English become important for your goals?<br><span class="muted">[ bridge / became / English / because / a ]</span></p>
+        <p><strong>Jim:</strong> Why did English become important for your goals?<br><span class="muted">[ bridge / became / English / Because / a ]</span></p>
         <textarea class="autosave" id="d1" rows="2"></textarea>
         <div class="hint" id="hint-d1"></div>
       </div>
@@ -385,7 +387,7 @@
 
       <div class="score-item" data-dialogue-id="d4">
         <div class="item-label">4) Pete answer: <span class="mark" id="mark-d4"></span></div>
-        <p><strong>Jim:</strong> Why did you start practicing every day?<br><span class="muted">[ confidence / wanted / more / I / because ]</span></p>
+        <p><strong>Jim:</strong> Why did you start practicing every day?<br><span class="muted">[ confidence / wanted / more / I / Because ]</span></p>
         <textarea class="autosave" id="d4" rows="2"></textarea>
         <div class="hint" id="hint-d4"></div>
       </div>
@@ -407,6 +409,7 @@
       <div class="score-actions">
         <button class="primary" onclick="checkDialogue()">Check Dialogue</button>
         <button onclick="showDialogueAnswers()">Show Correct Answers</button>
+        <button onclick="hideDialogueAnswers()">Hide Correct Answers</button>
       </div>
       <div id="dialogueScoreOutput" class="score-box">Dialogue score: not checked yet.</div>
       <div id="dialogueScoreNote" class="score-note">Tip: Check Dialogue oznaci spravne/nespravne vety a ukaze hint. Pri uprave sa feedback skryje.</div>
@@ -548,6 +551,7 @@
       <div class="score-actions">
         <button class="primary" onclick="checkScore()">Check Score</button>
         <button onclick="showCorrectAnswers()">Show Correct Answers</button>
+        <button onclick="hideCorrectAnswers()">Hide Correct Answers</button>
       </div>
       <div id="scoreOutput" class="score-box">Score: not checked yet.</div>
       <div id="scoreNote" class="score-note">Tip: Check Score oznaci spravne (zelena) a nespravne (cervena) polozky a ukaze kratke zdovodnenie.</div>
@@ -865,7 +869,7 @@
         "==================================================",
         "",
         "Jim: Why did English become important for your goals?",
-        "     [ bridge / became / English / because / a ]",
+        "     [ bridge / became / English / Because / a ]",
         "Pete: " + (val("d1") || "................................................."),
         "",
         "Jim: What did you watch in English last week?",
@@ -877,7 +881,7 @@
         "Pete: " + (val("d3") || "................................................."),
         "",
         "Jim: Why did you start practicing every day?",
-        "     [ confidence / wanted / more / I / because ]",
+        "     [ confidence / wanted / more / I / Because ]",
         "Pete: " + (val("d4") || "................................................."),
         "",
         "Jim: Which irregular verb did you use yesterday?",
@@ -1063,39 +1067,63 @@
       hideAnswersLock = false;
     }
 
+    function hideCorrectAnswers() {
+      hideAnswersLock = true;
+      resetScoreStyles();
+      answersRevealed = false;
+      scoreFeedbackVisible = false;
+      Object.keys(SCORE_KEY).forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) el.selectedIndex = 0;
+      });
+      document.getElementById("scoreOutput").textContent = "Score: not checked yet.";
+      document.getElementById("scoreNote").textContent =
+        "Odpovede Section 7 su skryte. Vypln znova a stlac Check Score.";
+      setStatus("Section 7 answers hidden.");
+      saveData(false);
+      hideAnswersLock = false;
+    }
+
 
     const DIALOGUE_KEY = {
       d1: {
         display: "Because English became a bridge.",
-        answers: ["because english became a bridge", "english became a bridge because"],
-        hint: "Hint: Use all words -> Because English became a bridge."
+        words: ["because", "english", "became", "a", "bridge"],
+        answers: ["because english became a bridge", "english became a bridge because", "english became a bridge"],
+        hint: "Hint: Accepted with Because/because. Best: Because English became a bridge."
       },
       d2: {
         display: "I watched YouTube and interviews.",
+        words: ["i", "watched", "youtube", "and", "interviews"],
         answers: ["i watched youtube and interviews", "i watched interviews and youtube"],
-        hint: "Hint: Use all words -> I watched YouTube and interviews."
+        hint: "Hint: I watched YouTube and interviews. (YouTube/youtube OK)"
       },
       d3: {
         display: "And I could read signs.",
-        answers: ["and i could read signs", "i could read signs and", "i could read and signs"],
-        hint: "Hint: Best answer -> And I could read signs."
+        words: ["and", "i", "could", "read", "signs"],
+        answers: ["and i could read signs", "i could read signs and", "i could read and signs", "i could read signs"],
+        hint: "Hint: Best: And I could read signs. Also OK: I could read signs."
       },
       d4: {
         display: "Because I wanted more confidence.",
-        answers: ["because i wanted more confidence", "i wanted more confidence because"],
-        hint: "Hint: Use all words -> Because I wanted more confidence."
+        words: ["because", "i", "wanted", "more", "confidence"],
+        answers: ["because i wanted more confidence", "i wanted more confidence because", "i wanted more confidence"],
+        hint: "Hint: Accepted with Because/because. Best: Because I wanted more confidence."
       },
       d5: {
         display: "And I wrote a message.",
-        answers: ["and i wrote a message", "i wrote a message and"],
-        hint: "Hint: Best answer -> And I wrote a message. (irregular: write -> wrote)"
+        words: ["and", "i", "wrote", "a", "message"],
+        answers: ["and i wrote a message", "i wrote a message and", "i wrote a message"],
+        hint: "Hint: Best: And I wrote a message. (write -> wrote)"
       },
       d6: {
         display: "We played, talked and practiced.",
-        answers: ["we played talked and practiced", "we played and talked and practiced", "we practiced played and talked"],
-        hint: "Hint: Use all words -> We played, talked and practiced."
+        words: ["we", "played", "talked", "and", "practiced"],
+        answers: ["we played talked and practiced", "we played and talked and practiced", "we practiced played and talked", "we played and talked practiced"],
+        hint: "Hint: Best: We played, talked and practiced."
       }
     };
+
 
     var dialogueRevealed = false;
     var dialogueFeedbackVisible = false;
@@ -1104,9 +1132,26 @@
     function normalizeAnswer(text) {
       return (text || "")
         .toLowerCase()
-        .replace(/[.,!?;:'"]/g, " ")
+        .replace(/[.,!?;:'"()\-]/g, " ")
         .replace(/\s+/g, " ")
         .trim();
+    }
+
+    function sameWordBag(a, b) {
+      var sa = (a || []).slice().sort().join(" ");
+      var sb = (b || []).slice().sort().join(" ");
+      return sa === sb;
+    }
+
+    function isDialogueCorrect(id, text) {
+      var norm = normalizeAnswer(text);
+      if (!norm) return false;
+      var key = DIALOGUE_KEY[id];
+      if (!key) return false;
+      if (key.answers.indexOf(norm) !== -1) return true;
+      var tokens = norm.split(" ").filter(Boolean);
+      if (key.words && sameWordBag(tokens, key.words)) return true;
+      return false;
     }
 
     function resetDialogueStyles() {
@@ -1166,7 +1211,7 @@
         var mark = document.getElementById("mark-" + id);
         var hint = document.getElementById("hint-" + id);
         var chosenNorm = normalizeAnswer(val(id));
-        var isCorrect = DIALOGUE_KEY[id].answers.indexOf(chosenNorm) !== -1;
+        var isCorrect = isDialogueCorrect(id, val(id));
 
         if (item) item.classList.add(isCorrect ? "scored-correct" : "scored-wrong");
         if (mark) mark.textContent = isCorrect ? "OK" : "X";
@@ -1218,6 +1263,23 @@
       document.getElementById("dialogueScoreNote").textContent =
         "Show Correct Answers je aktivne. Pri prvej uprave sa spravne dialogy a hinty skryju.";
       setStatus("Dialogue answers revealed.");
+      hideDialogueLock = false;
+    }
+
+    function hideDialogueAnswers() {
+      hideDialogueLock = true;
+      resetDialogueStyles();
+      dialogueRevealed = false;
+      dialogueFeedbackVisible = false;
+      Object.keys(DIALOGUE_KEY).forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) el.value = "";
+      });
+      document.getElementById("dialogueScoreOutput").textContent = "Dialogue score: not checked yet.";
+      document.getElementById("dialogueScoreNote").textContent =
+        "Dialogove odpovede su skryte. Napis vety znova a stlac Check Dialogue.";
+      setStatus("Dialogue answers hidden.");
+      saveData(false);
       hideDialogueLock = false;
     }
     document.querySelectorAll(".autosave").forEach(function (el) {
