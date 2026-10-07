@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Class 24 - My Story Spotlight</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #1c2430;
+      --muted: #5b6878;
+      --line: #d8deea;
+      --primary: #2d6cdf;
+      --accent: #fff8e1;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .wrap { max-width: 1060px; margin: 20px auto 40px; padding: 0 12px; }
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(245, 247, 251, 0.96);
+      backdrop-filter: blur(4px);
+      border-bottom: 1px solid var(--line);
+      padding: 10px 0;
+      margin-bottom: 12px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    button {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--text);
+      border-radius: 8px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    button:hover { opacity: 0.92; }
+    .primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    .listen-block {
+      background: var(--accent);
+      border: 1px solid #ffecb3;
+      border-radius: 10px;
+      padding: 14px;
+      margin: 12px 0;
+    }
+    .block-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+    .block-top h3 { margin: 0; color: var(--text); }
+    #fullTextPanel {
+      display: none;
+      background: var(--accent);
+      border: 1px solid #ffecb3;
+      border-radius: 10px;
+      padding: 14px;
+      margin-top: 10px;
+    }
+    h1, h2, h3, h4 { margin: 0 0 10px; }
+    h1 { font-size: 24px; }
+    h2 { font-size: 19px; border-bottom: 1px solid var(--line); padding-bottom: 6px; }
+    h3 { font-size: 16px; }
+    h4 { font-size: 15px; margin-top: 14px; color: var(--muted); }
+    .meta { display: grid; grid-template-columns: repeat(2, minmax(240px, 1fr)); gap: 8px 14px; }
+    .field-line { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .field-line label { min-width: 120px; font-weight: 600; }
+    input[type="text"], textarea, select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px 10px;
+      font: inherit;
+      color: var(--text);
+      background: #fff;
+    }
+    .inline-input {
+      min-width: 120px;
+      max-width: 190px;
+      display: inline-block;
+      margin: 0 2px;
+      vertical-align: middle;
+      border-bottom: 2px solid #2563eb;
+    }
+    .line-input { width: 100%; margin-top: 4px; }
+    .q { margin: 10px 0; }
+    .muted { color: var(--muted); }
+    .wordbank { font-size: 14px; margin-bottom: 8px; font-weight: 600; }
+    .tf-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 8px 0; }
+    .tf-row select { width: 90px; }
+    .small { font-size: 13px; color: var(--muted); }
+    .term-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+    .score-item {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      background: #fff;
+    }
+    .score-item.scored-correct { border-color: #22c55e; background: #f0fdf4; }
+    .score-item.scored-wrong { border-color: #ef4444; background: #fef2f2; }
+    .score-item.reveal-correct { border-color: #2563eb; background: #eff6ff; }
+    .score-item .item-label { font-weight: 600; margin-bottom: 6px; }
+    .score-item .hint { margin-top: 6px; font-size: 13px; color: #334155; display: none; }
+    .score-item .hint.show { display: block; }
+    .score-item .mark { display: inline-block; margin-left: 6px; font-weight: 700; }
+    .section-sticky-actions {
+      position: sticky;
+      top: 56px;
+      z-index: 9;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+      padding: 8px 10px;
+      margin: 0 0 12px;
+      background: rgba(245, 247, 251, 0.96);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      backdrop-filter: blur(4px);
+    }
+    .score-box {
+      margin-top: 12px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #f8fbff;
+      font-weight: 700;
+    }
+    .score-note { margin-top: 8px; font-size: 13px; color: var(--muted); font-weight: 400; }
+    .status { margin-left: auto; font-size: 13px; color: var(--muted); align-self: center; }
+    .pitch-box {
+      border: 1px dashed #93c5fd;
+      background: #f8fbff;
+      border-radius: 10px;
+      padding: 12px;
+      margin-top: 8px;
+    }
+    @media print {
+      .toolbar { display: none !important; }
+      #fullTextPanel { display: none !important; }
+      body { background: #fff; }
+    }
+    @media (max-width: 760px) {
+      .meta { grid-template-columns: 1fr; }
+      .inline-input { min-width: 95px; max-width: 130px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="toolbar">
+      <button class="primary" id="toggleFullBtn" onclick="toggleFullText()">Show Full Text</button>
+      <button onclick="copyFullListening()">Copy Full Listening</button>
+      <button onclick="copyGapFill()">Copy Gap Fill</button>
+      <button onclick="copyPlainLesson()">Copy Plain Text (Lesson)</button>
+      <button onclick="savePdf()">Save as PDF</button>
+      <button onclick="clearData()">Clear Answers</button>
+      <a href="../../" style="align-self:center;font-weight:700;color:#2d6cdf;text-decoration:none;">Hub</a>
+      <span class="status" id="copyStatus"></span>
+    </div>
+
+    <div class="card">
+      <h1>WORKSHEET - CLASS 24</h1>
+      <p class="muted">Topic: <strong>My Story Spotlight</strong> — personal presentation (Curriculum Hour 24)</p>
+      <div class="meta">
+        <div class="field-line"><label>Date</label><input class="autosave" id="date" type="text" value=""></div>
+        <div class="field-line"><label>Student</label><input class="autosave" id="student" type="text" value=""></div>
+        <div class="field-line"><label>Unit</label><input class="autosave" id="unit" type="text" value="Portfolio -> Spotlight Talk"></div>
+        <div class="field-line"><label>Main focus</label><input class="autosave" id="focus" type="text" value="Present + Past + going to (personal pitch)"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Listening - Full Text (model talk)</h2>
+      <p class="small">Leo gives a 2-minute spotlight presentation. Use Show Full Text for Natural Reader.</p>
+      <div id="fullTextPanel">
+        <h3>1. Opening: Who I Am Now</h3>
+        <p id="full1">Good morning. My name is Leo and today I want to share my story spotlight. I am fifteen years old and I live in Kosice with my family. I am a year-nine student and I am interested in sport, music, and simple design. In this short talk I am going to introduce myself, explain one important past experience, and finish with my plans. I am a little nervous, but I am ready. Thank you for listening to my personal presentation.</p>
+
+        <h3>2. Past Chapter: What Changed Me</h3>
+        <p id="full2">Last year I joined a school project about local history. At first I felt shy and I did not want to speak. Then our teacher asked me to interview my grandfather. I prepared questions, I recorded his answers, and I wrote a short report in English. The presentation day was difficult, but I finished my part and my classmates clapped. That project taught me that practice beats fear. I also learned that real stories are stronger than perfect grammar.</p>
+
+        <h3>3. Skills and Experiences</h3>
+        <p id="full3">Since that project I have practised English more often. I have watched interviews, I have written short posts, and I have spoken with friends online. I have never travelled alone, but I have visited Bratislava with my class. These experiences help me sound more natural. When I make a mistake now, I correct it and continue. That is part of my spotlight story: progress is not a straight line, but I keep moving.</p>
+
+        <h3>4. Closing: Plans and Message</h3>
+        <p id="full4">Next year I am going to join the school media club. I am going to make short videos about teenage hobbies, and I will ask guests simple questions in English. My goal is clear: I want to speak for two minutes without stopping. If I practise every week, I will improve. That is my message. My story is still open, and I am excited about the next chapter. Thank you for your attention.</p>
+      </div>
+    </div>
+
+    <div class="card" id="listeningSection">
+      <h2>2. Listening - Gap Fill</h2>
+      <p class="small">Fill in the blanks. Text matches the Full Text word-for-word.</p>
+
+      <div class="listen-block" id="block1">
+        <div class="block-top">
+          <h3>1. Opening: Who I Am Now</h3>
+          <button type="button" onclick="copyBlock(1)">Copy this block</button>
+        </div>
+        <div class="wordbank">Word bank: spotlight, fifteen, introduce, nervous, presentation</div>
+        <p data-gap="1">
+          Good morning. My name is Leo and today I want to share my story
+          <input class="inline-input autosave" id="l1a" type="text" data-blank="spotlight">.
+          I am
+          <input class="inline-input autosave" id="l1b" type="text" data-blank="fifteen">
+          years old and I live in Kosice with my family. I am a year-nine student and I am interested in sport, music, and simple design. In this short talk I am going to
+          <input class="inline-input autosave" id="l1c" type="text" data-blank="introduce">
+          myself, explain one important past experience, and finish with my plans. I am a little
+          <input class="inline-input autosave" id="l1d" type="text" data-blank="nervous">,
+          but I am ready. Thank you for listening to my personal
+          <input class="inline-input autosave" id="l1e" type="text" data-blank="presentation">.
+        </p>
+      </div>
+
+      <div class="listen-block" id="block2">
+        <div class="block-top">
+          <h3>2. Past Chapter: What Changed Me</h3>
+          <button type="button" onclick="copyBlock(2)">Copy this block</button>
+        </div>
+        <div class="wordbank">Word bank: interview, clapped, project, report, shy</div>
+        <p data-gap="2">
+          Last year I joined a school
+          <input class="inline-input autosave" id="l2a" type="text" data-blank="project">
+          about local history. At first I felt
+          <input class="inline-input autosave" id="l2b" type="text" data-blank="shy">
+          and I did not want to speak. Then our teacher asked me to
+          <input class="inline-input autosave" id="l2c" type="text" data-blank="interview">
+          my grandfather. I prepared questions, I recorded his answers, and I wrote a short
+          <input class="inline-input autosave" id="l2d" type="text" data-blank="report">
+          in English. The presentation day was difficult, but I finished my part and my classmates
+          <input class="inline-input autosave" id="l2e" type="text" data-blank="clapped">.
+          That project taught me that practice beats fear. I also learned that real stories are stronger than perfect grammar.
+        </p>
+      </div>
+
+      <div class="listen-block" id="block3">
+        <div class="block-top">
+          <h3>3. Skills and Experiences</h3>
+          <button type="button" onclick="copyBlock(3)">Copy this block</button>
+        </div>
+        <div class="wordbank">Word bank: practised, interviews, visited, mistake, progress</div>
+        <p data-gap="3">
+          Since that project I have
+          <input class="inline-input autosave" id="l3a" type="text" data-blank="practised">
+          English more often. I have watched
+          <input class="inline-input autosave" id="l3b" type="text" data-blank="interviews">,
+          I have written short posts, and I have spoken with friends online. I have never travelled alone, but I have
+          <input class="inline-input autosave" id="l3c" type="text" data-blank="visited">
+          Bratislava with my class. These experiences help me sound more natural. When I make a
+          <input class="inline-input autosave" id="l3d" type="text" data-blank="mistake">
+          now, I correct it and continue. That is part of my spotlight story:
+          <input class="inline-input autosave" id="l3e" type="text" data-blank="progress">
+          is not a straight line, but I keep moving.
+        </p>
+      </div>
+
+      <div class="listen-block" id="block4">
+        <div class="block-top">
+          <h3>4. Closing: Plans and Message</h3>
+          <button type="button" onclick="copyBlock(4)">Copy this block</button>
+        </div>
+        <div class="wordbank">Word bank: media, videos, goal, improve, chapter</div>
+        <p data-gap="4">
+          Next year I am going to join the school
+          <input class="inline-input autosave" id="l4a" type="text" data-blank="media">
+          club. I am going to make short
+          <input class="inline-input autosave" id="l4b" type="text" data-blank="videos">
+          about teenage hobbies, and I will ask guests simple questions in English. My
+          <input class="inline-input autosave" id="l4c" type="text" data-blank="goal">
+          is clear: I want to speak for two minutes without stopping. If I practise every week, I will
+          <input class="inline-input autosave" id="l4d" type="text" data-blank="improve">.
+          That is my message. My story is still open, and I am excited about the next
+          <input class="inline-input autosave" id="l4e" type="text" data-blank="chapter">.
+          Thank you for your attention.
+        </p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>1. Grammar Review (for your pitch)</h2>
+      <h3>A) Present Simple - who you are</h3>
+      <div class="q">1) I (be) <input class="inline-input autosave" id="g1" type="text"> a year-nine student.</div>
+      <div class="q">2) I (live) <input class="inline-input autosave" id="g2" type="text"> in ________.</div>
+      <div class="q">3) I (not like) <input class="inline-input autosave" id="g3" type="text"> long boring talks.</div>
+      <div class="q">4) What (do / you / enjoy) <input class="inline-input autosave" id="g4" type="text">?</div>
+
+      <h3>B) Past Simple - one real story</h3>
+      <div class="q">1) Last year I (join) <input class="inline-input autosave" id="g5" type="text"> a project.</div>
+      <div class="q">2) I (feel) <input class="inline-input autosave" id="g6" type="text"> nervous at first.</div>
+      <div class="q">3) Then I (write) <input class="inline-input autosave" id="g7" type="text"> a short report.</div>
+      <div class="q">4) My classmates (clap) <input class="inline-input autosave" id="g8" type="text">.</div>
+
+      <h3>C) Present Perfect + going to</h3>
+      <div class="q">1) I have (practise) <input class="inline-input autosave" id="g9" type="text"> English more often.</div>
+      <div class="q">2) I have never (travel) <input class="inline-input autosave" id="g10" type="text"> alone.</div>
+      <div class="q">3) Next year I am going to (join) <input class="inline-input autosave" id="g11" type="text"> a club.</div>
+      <div class="q">4) I will (improve) <input class="inline-input autosave" id="g12" type="text"> if I practise.</div>
+    </div>
+
+    <div class="card">
+      <h2>3. True / False - Listening Check</h2>
+      <h4>3.1 Opening and Past Chapter</h4>
+      <div class="tf-row"><span>1) Leo is fifteen years old.</span><select class="autosave" id="tf1"><option value=""></option><option>T</option><option>F</option></select></div>
+      <div class="tf-row"><span>2) Leo lives in Bratislava.</span><select class="autosave" id="tf2"><option value=""></option><option>T</option><option>F</option></select></div>
+      <div class="tf-row"><span>3) Last year he joined a school project.</span><select class="autosave" id="tf3"><option value=""></option><option>T</option><option>F</option></select></div>
+      <div class="tf-row"><span>4) He interviewed his grandfather.</span><select class="autosave" id="tf4"><option value=""></option><option>T</option><option>F</option></select></div>
+      <div class="tf-row"><span>5) His classmates laughed and left.</span><select class="autosave" id="tf5"><option value=""></option><option>T</option><option>F</option></select></div>
+
+      <h4>3.2 Experiences and Plans</h4>
+      <div class="tf-row"><span>1) Leo has practised English more often.</span><select class="autosave" id="tf6"><option value=""></option><option>T</option><option>F</option></select></div>
+      <div class="tf-row"><span>2) He has travelled alone many times.</span><select class="autosave" id="tf7"><option value=""></option><option>T</option><option>F</option></select></div>
+      <div class="tf-row"><span>3) He is going to join the school media club.</span><select class="autosave" id="tf8"><option value=""></option><option>T</option><option>F</option></select></div>
+      <div class="tf-row"><span>4) His goal is to speak for two minutes without stopping.</span><select class="autosave" id="tf9"><option value=""></option><option>T</option><option>F</option></select></div>
+      <div class="tf-row"><span>5) He says his story is finished forever.</span><select class="autosave" id="tf10"><option value=""></option><option>T</option><option>F</option></select></div>
+      <p class="small">True_False_MK</p>
+    </div>
+
+    <div class="card" id="section4">
+      <h2>4. Talking - Scrambled Dialogue (after the talk)</h2>
+      <p class="small"><strong>Check Dialogue</strong> — odpovede po Leo-vej prezentacii.</p>
+      <div class="section-sticky-actions">
+        <button class="primary" onclick="checkDialogue()">Check Dialogue</button>
+      </div>
+
+      <div class="score-item" data-dialogue-id="d1">
+        <div class="item-label">1) Leo answer: <span class="mark" id="mark-d1"></span></div>
+        <p><strong>Jim:</strong> What is the title of your talk?<br><span class="muted">[ Story / My / Spotlight ]</span></p>
+        <textarea class="autosave" id="d1" rows="2"></textarea>
+        <div class="hint" id="hint-d1"></div>
+      </div>
+      <div class="score-item" data-dialogue-id="d2">
+        <div class="item-label">2) Leo answer: <span class="mark" id="mark-d2"></span></div>
+        <p><strong>Jim:</strong> Where do you live?<br><span class="muted">[ in / I / Kosice / live ]</span></p>
+        <textarea class="autosave" id="d2" rows="2"></textarea>
+        <div class="hint" id="hint-d2"></div>
+      </div>
+      <div class="score-item" data-dialogue-id="d3">
+        <div class="item-label">3) Leo answer: <span class="mark" id="mark-d3"></span></div>
+        <p><strong>Jim:</strong> What did you do last year?<br><span class="muted">[ a / joined / I / project ]</span></p>
+        <textarea class="autosave" id="d3" rows="2"></textarea>
+        <div class="hint" id="hint-d3"></div>
+      </div>
+      <div class="score-item" data-dialogue-id="d4">
+        <div class="item-label">4) Leo answer: <span class="mark" id="mark-d4"></span></div>
+        <p><strong>Jim:</strong> What have you practised since then?<br><span class="muted">[ practised / have / English / I ]</span></p>
+        <textarea class="autosave" id="d4" rows="2"></textarea>
+        <div class="hint" id="hint-d4"></div>
+      </div>
+      <div class="score-item" data-dialogue-id="d5">
+        <div class="item-label">5) Leo answer: <span class="mark" id="mark-d5"></span></div>
+        <p><strong>Jim:</strong> What are you going to do next year?<br><span class="muted">[ join / going / I / am / to / the / media / club ]</span></p>
+        <textarea class="autosave" id="d5" rows="2"></textarea>
+        <div class="hint" id="hint-d5"></div>
+      </div>
+      <div class="score-item" data-dialogue-id="d6">
+        <div class="item-label">6) Leo answer: <span class="mark" id="mark-d6"></span></div>
+        <p><strong>Jim:</strong> What is your main goal?<br><span class="muted">[ to / want / I / speak / clearly ]</span></p>
+        <textarea class="autosave" id="d6" rows="2"></textarea>
+        <div class="hint" id="hint-d6"></div>
+      </div>
+
+      <div id="dialogueScoreOutput" class="score-box">Dialogue score: not checked yet.</div>
+      <div id="dialogueScoreNote" class="score-note">Tip: Napoveda zmizne po kliknuti do pola.</div>
+    </div>
+
+    <div class="card">
+      <h2>5. Your Spotlight Script (personal presentation)</h2>
+      <p class="small">Write your own 2-minute talk. Use school-safe facts only.</p>
+      <div class="pitch-box">
+        <div class="q"><strong>1) Opening (who I am now):</strong><textarea class="autosave" id="n1" rows="2"></textarea></div>
+        <div class="q"><strong>2) Past chapter (one real story):</strong><textarea class="autosave" id="n2" rows="2"></textarea></div>
+        <div class="q"><strong>3) Experiences (I have… / I have never…):</strong><textarea class="autosave" id="n3" rows="2"></textarea></div>
+        <div class="q"><strong>4) Plans (I am going to… / I will…):</strong><textarea class="autosave" id="n4" rows="2"></textarea></div>
+        <div class="q"><strong>5) Closing message (one sentence):</strong><textarea class="autosave" id="n5" rows="2"></textarea></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>6. Grammar Box - Spotlight Talk</h2>
+      <p>
+        - <strong>Now:</strong> I am / I live / I like<br>
+        - <strong>Past story:</strong> Last year I joined… / I felt… / I learned…<br>
+        - <strong>Experience:</strong> I have practised… / I have never…<br>
+        - <strong>Plans:</strong> I am going to… / I will…
+      </p>
+      <div class="q"><strong>Affirmative line from your talk:</strong><input class="line-input autosave" id="b1" type="text"></div>
+      <div class="q"><strong>Past Simple line:</strong><input class="line-input autosave" id="b2" type="text"></div>
+      <div class="q"><strong>Present Perfect line:</strong><input class="line-input autosave" id="b3" type="text"></div>
+      <div class="q"><strong>going to / will line:</strong><input class="line-input autosave" id="b4" type="text"></div>
+    </div>
+
+    <div class="card" id="section7">
+      <h2>7. Classroom and Grammar Connection</h2>
+      <p>Choose one correct Slovak option for each English term.</p>
+      <div class="section-sticky-actions">
+        <button class="primary" onclick="checkScore()">Check Score</button>
+        <button id="toggleSec7AnswersBtn" onclick="toggleSec7Answers()">Show Correct Answers</button>
+      </div>
+      <div class="term-grid">
+        <div class="score-item" data-score-id="m1">
+          <div class="item-label">1) personal presentation: <span class="mark" id="mark-m1"></span></div>
+          <select class="autosave" id="m1" style="max-width:340px;display:inline-block;width:auto;min-width:240px;">
+            <option value=""></option>
+            <option>osobna prezentacia</option>
+            <option>domaca uloha</option>
+            <option>diktat</option>
+          </select>
+          <div class="hint" id="hint-m1"></div>
+        </div>
+        <div class="score-item" data-score-id="m2">
+          <div class="item-label">2) present simple: <span class="mark" id="mark-m2"></span></div>
+          <select class="autosave" id="m2" style="max-width:340px;display:inline-block;width:auto;min-width:240px;">
+            <option value=""></option>
+            <option>pritomny cas jednoduchy</option>
+            <option>minuly cas priebehovy</option>
+            <option>trpny rod</option>
+          </select>
+          <div class="hint" id="hint-m2"></div>
+        </div>
+        <div class="score-item" data-score-id="m3">
+          <div class="item-label">3) past simple: <span class="mark" id="mark-m3"></span></div>
+          <select class="autosave" id="m3" style="max-width:340px;display:inline-block;width:auto;min-width:240px;">
+            <option value=""></option>
+            <option>minuly cas jednoduchy</option>
+            <option>predpritomny cas</option>
+            <option>buduci cas</option>
+          </select>
+          <div class="hint" id="hint-m3"></div>
+        </div>
+        <div class="score-item" data-score-id="m4">
+          <div class="item-label">4) present perfect: <span class="mark" id="mark-m4"></span></div>
+          <select class="autosave" id="m4" style="max-width:340px;display:inline-block;width:auto;min-width:240px;">
+            <option value=""></option>
+            <option>predpritomny cas</option>
+            <option>minuly cas jednoduchy</option>
+            <option>rozcazovaci sposob</option>
+          </select>
+          <div class="hint" id="hint-m4"></div>
+        </div>
+        <div class="score-item" data-score-id="m5">
+          <div class="item-label">5) be going to: <span class="mark" id="mark-m5"></span></div>
+          <select class="autosave" id="m5" style="max-width:340px;display:inline-block;width:auto;min-width:240px;">
+            <option value=""></option>
+            <option>chystam sa / planujem</option>
+            <option>vzdy / nikdy</option>
+            <option>viac / najviac</option>
+          </select>
+          <div class="hint" id="hint-m5"></div>
+        </div>
+        <div class="score-item" data-score-id="m6">
+          <div class="item-label">6) opening: <span class="mark" id="mark-m6"></span></div>
+          <select class="autosave" id="m6" style="max-width:340px;display:inline-block;width:auto;min-width:240px;">
+            <option value=""></option>
+            <option>uvod prezentacie</option>
+            <option>záver</option>
+            <option>prestávka</option>
+          </select>
+          <div class="hint" id="hint-m6"></div>
+        </div>
+        <div class="score-item" data-score-id="m7">
+          <div class="item-label">7) closing: <span class="mark" id="mark-m7"></span></div>
+          <select class="autosave" id="m7" style="max-width:340px;display:inline-block;width:auto;min-width:240px;">
+            <option value=""></option>
+            <option>záver prezentacie</option>
+            <option>uvod</option>
+            <option>otazka do publika</option>
+          </select>
+          <div class="hint" id="hint-m7"></div>
+        </div>
+        <div class="score-item" data-score-id="m8">
+          <div class="item-label">8) experience: <span class="mark" id="mark-m8"></span></div>
+          <select class="autosave" id="m8" style="max-width:340px;display:inline-block;width:auto;min-width:240px;">
+            <option value=""></option>
+            <option>skusenost</option>
+            <option>domaca uloha</option>
+            <option>zoznam slov</option>
+          </select>
+          <div class="hint" id="hint-m8"></div>
+        </div>
+        <div class="score-item" data-score-id="m9">
+          <div class="item-label">9) goal: <span class="mark" id="mark-m9"></span></div>
+          <select class="autosave" id="m9" style="max-width:340px;display:inline-block;width:auto;min-width:240px;">
+            <option value=""></option>
+            <option>ciel</option>
+            <option>chyba</option>
+            <option>prestávka</option>
+          </select>
+          <div class="hint" id="hint-m9"></div>
+        </div>
+        <div class="score-item" data-score-id="m10">
+          <div class="item-label">10) thank you for your attention: <span class="mark" id="mark-m10"></span></div>
+          <select class="autosave" id="m10" style="max-width:340px;display:inline-block;width:auto;min-width:240px;">
+            <option value=""></option>
+            <option>dakujem za pozornost</option>
+            <option>dobry den</option>
+            <option>prepacte</option>
+          </select>
+          <div class="hint" id="hint-m10"></div>
+        </div>
+        <div class="score-item" data-score-id="m11">
+          <div class="item-label">11) put the words in the correct order: <span class="mark" id="mark-m11"></span></div>
+          <select class="autosave" id="m11" style="max-width:340px;display:inline-block;width:auto;min-width:240px;">
+            <option value=""></option>
+            <option>dajte slova do spravneho poradia</option>
+            <option>vypnite kameru</option>
+            <option>otvorte chat</option>
+          </select>
+          <div class="hint" id="hint-m11"></div>
+        </div>
+      </div>
+      <div id="scoreOutput" class="score-box">Score: not checked yet.</div>
+      <div id="scoreNote" class="score-note">Tip: Po Check Score uvidis OK/X + hint.</div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "esl-class-24-v1";
+    const BLOCK_TITLES = {
+      1: "1. Opening: Who I Am Now",
+      2: "2. Past Chapter: What Changed Me",
+      3: "3. Skills and Experiences",
+      4: "4. Closing: Plans and Message"
+    };
+    const WORD_BANKS = {
+      1: "spotlight, fifteen, introduce, nervous, presentation",
+      2: "interview, clapped, project, report, shy",
+      3: "practised, interviews, visited, mistake, progress",
+      4: "media, videos, goal, improve, chapter"
+    };
+
+    function setStatus(msg) {
+      document.getElementById("copyStatus").textContent = msg || "";
+    }
+    function val(id) {
+      var el = document.getElementById(id);
+      return el ? (el.value || "").trim() : "";
+    }
+    function blankOr(id) {
+      var v = val(id);
+      return v || "_________";
+    }
+    function copyText(text, okMsg) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function () {
+          setStatus(okMsg || "Copied.");
+        }).catch(function () { fallbackCopy(text, okMsg); });
+      } else fallbackCopy(text, okMsg);
+    }
+    function fallbackCopy(text, okMsg) {
+      var ta = document.createElement("textarea");
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand("copy"); setStatus(okMsg || "Copied."); }
+      catch (e) { setStatus("Copy failed."); }
+      document.body.removeChild(ta);
+    }
+    function saveData() {
+      var data = {};
+      document.querySelectorAll(".autosave").forEach(function (el) {
+        if (el.id) data[el.id] = el.value;
+      });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+    function loadData() {
+      try {
+        var raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return;
+        var data = JSON.parse(raw);
+        Object.keys(data).forEach(function (id) {
+          var el = document.getElementById(id);
+          if (el) el.value = data[id];
+        });
+      } catch (e) {}
+    }
+    function clearData() {
+      if (!confirm("Clear all answers for Class 24?")) return;
+      document.querySelectorAll(".autosave").forEach(function (el) {
+        if (el.tagName === "SELECT") el.selectedIndex = 0;
+        else el.value = "";
+      });
+      localStorage.removeItem(STORAGE_KEY);
+      resetScoreStyles();
+      resetDialogueStyles();
+      answersRevealed = false;
+      scoreFeedbackVisible = false;
+      dialogueFeedbackVisible = false;
+      setSec7ToggleLabel(false);
+      document.getElementById("scoreOutput").textContent = "Score: not checked yet.";
+      document.getElementById("dialogueScoreOutput").textContent = "Dialogue score: not checked yet.";
+      setStatus("Cleared.");
+    }
+    function savePdf() { window.print(); }
+    function toggleFullText() {
+      var panel = document.getElementById("fullTextPanel");
+      var btn = document.getElementById("toggleFullBtn");
+      var show = panel.style.display !== "block";
+      panel.style.display = show ? "block" : "none";
+      btn.textContent = show ? "Hide Full Text" : "Show Full Text";
+    }
+    function copyFullListening() {
+      var text = [1, 2, 3, 4].map(function (n) {
+        return BLOCK_TITLES[n] + "\n" + document.getElementById("full" + n).textContent.trim();
+      }).join("\n\n");
+      copyText(text, "Full listening text copied.");
+    }
+    function gapParagraph(n) {
+      if (n === 1) {
+        return "Good morning. My name is Leo and today I want to share my story " + blankOr("l1a") +
+          ". I am " + blankOr("l1b") +
+          " years old and I live in Kosice with my family. I am a year-nine student and I am interested in sport, music, and simple design. In this short talk I am going to " + blankOr("l1c") +
+          " myself, explain one important past experience, and finish with my plans. I am a little " + blankOr("l1d") +
+          ", but I am ready. Thank you for listening to my personal " + blankOr("l1e") + ".";
+      }
+      if (n === 2) {
+        return "Last year I joined a school " + blankOr("l2a") +
+          " about local history. At first I felt " + blankOr("l2b") +
+          " and I did not want to speak. Then our teacher asked me to " + blankOr("l2c") +
+          " my grandfather. I prepared questions, I recorded his answers, and I wrote a short " + blankOr("l2d") +
+          " in English. The presentation day was difficult, but I finished my part and my classmates " + blankOr("l2e") +
+          ". That project taught me that practice beats fear. I also learned that real stories are stronger than perfect grammar.";
+      }
+      if (n === 3) {
+        return "Since that project I have " + blankOr("l3a") +
+          " English more often. I have watched " + blankOr("l3b") +
+          ", I have written short posts, and I have spoken with friends online. I have never travelled alone, but I have " + blankOr("l3c") +
+          " Bratislava with my class. These experiences help me sound more natural. When I make a " + blankOr("l3d") +
+          " now, I correct it and continue. That is part of my spotlight story: " + blankOr("l3e") +
+          " is not a straight line, but I keep moving.";
+      }
+      return "Next year I am going to join the school " + blankOr("l4a") +
+        " club. I am going to make short " + blankOr("l4b") +
+        " about teenage hobbies, and I will ask guests simple questions in English. My " + blankOr("l4c") +
+        " is clear: I want to speak for two minutes without stopping. If I practise every week, I will " + blankOr("l4d") +
+        ". That is my message. My story is still open, and I am excited about the next " + blankOr("l4e") +
+        ". Thank you for your attention.";
+    }
+    function gapParagraphBlankTemplate(n) {
+      var map = {
+        1: ["l1a", "l1b", "l1c", "l1d", "l1e"],
+        2: ["l2a", "l2b", "l2c", "l2d", "l2e"],
+        3: ["l3a", "l3b", "l3c", "l3d", "l3e"],
+        4: ["l4a", "l4b", "l4c", "l4d", "l4e"]
+      };
+      var originals = {};
+      map[n].forEach(function (id) {
+        originals[id] = val(id);
+        document.getElementById(id).value = "";
+      });
+      var text = gapParagraph(n);
+      map[n].forEach(function (id) { document.getElementById(id).value = originals[id]; });
+      return text;
+    }
+    function copyBlock(n) {
+      copyText([BLOCK_TITLES[n], "Word bank: " + WORD_BANKS[n], "", gapParagraph(n)].join("\n"), "Block " + n + " copied.");
+    }
+    function copyGapFill() {
+      var parts = [1, 2, 3, 4].map(function (n) {
+        return [BLOCK_TITLES[n], "Word bank: " + WORD_BANKS[n], gapParagraphBlankTemplate(n), ""].join("\n");
+      });
+      copyText(["LISTENING GAP FILL - CLASS 24", "My Story Spotlight", "", parts.join("\n")].join("\n"), "Gap fill copied.");
+    }
+    function copyPlainLesson() {
+      var text = [
+        "WORKSHEET - CLASS 24",
+        "Topic: My Story Spotlight (personal presentation)",
+        "Date: " + val("date"),
+        "Student: " + val("student"),
+        "Unit: " + val("unit"),
+        "Main focus: " + val("focus"),
+        "",
+        "1. GRAMMAR",
+        "A: " + [val("g1"), val("g2"), val("g3"), val("g4")].join(" | "),
+        "B: " + [val("g5"), val("g6"), val("g7"), val("g8")].join(" | "),
+        "C: " + [val("g9"), val("g10"), val("g11"), val("g12")].join(" | "),
+        "",
+        "2. LISTENING",
+        gapParagraph(1), "", gapParagraph(2), "", gapParagraph(3), "", gapParagraph(4),
+        "",
+        "3. T/F",
+        [val("tf1"), val("tf2"), val("tf3"), val("tf4"), val("tf5"), val("tf6"), val("tf7"), val("tf8"), val("tf9"), val("tf10")].join(", "),
+        "",
+        "4. DIALOGUE",
+        val("d1"), val("d2"), val("d3"), val("d4"), val("d5"), val("d6"),
+        "",
+        "5. MY SPOTLIGHT SCRIPT",
+        "Opening: " + val("n1"),
+        "Past: " + val("n2"),
+        "Experiences: " + val("n3"),
+        "Plans: " + val("n4"),
+        "Closing: " + val("n5"),
+        "",
+        "6. GRAMMAR BOX",
+        val("b1"), val("b2"), val("b3"), val("b4"),
+        "",
+        "7. MATCHING",
+        ["m1","m2","m3","m4","m5","m6","m7","m8","m9","m10","m11"].map(val).join(" | ")
+      ].join("\n");
+      copyText(text, "Full lesson plain text copied.");
+    }
+
+    const SCORE_KEY = {
+      m1: { answer: "osobna prezentacia", hint: "Hint: personal presentation = osobn\u00e1 prezent\u00e1cia." },
+      m2: { answer: "pritomny cas jednoduchy", hint: "Hint: I live / I like = pr\u00edtomn\u00fd \u010das jednoduch\u00fd." },
+      m3: { answer: "minuly cas jednoduchy", hint: "Hint: Last year I joined = minul\u00fd \u010das jednoduch\u00fd." },
+      m4: { answer: "predpritomny cas", hint: "Hint: I have practised = predpr\u00edtomn\u00fd \u010das." },
+      m5: { answer: "chystam sa / planujem", hint: "Hint: be going to = chyst\u00e1m sa / pl\u00e1nujem." },
+      m6: { answer: "uvod prezentacie", hint: "Hint: opening = \u00favod prezent\u00e1cie." },
+      m7: { answer: "záver prezentacie", hint: "Hint: closing = z\u00e1ver prezent\u00e1cie." },
+      m8: { answer: "skusenost", hint: "Hint: experience = sk\u00fasenos\u0165." },
+      m9: { answer: "ciel", hint: "Hint: goal = cie\u013e." },
+      m10: { answer: "dakujem za pozornost", hint: "Hint: Thank you for your attention = \u010fakujem za pozornos\u0165." },
+      m11: { answer: "dajte slova do spravneho poradia", hint: "Hint: put words in order = dajte slov\u00e1 do spr\u00e1vneho poradia." }
+    };
+
+    var answersRevealed = false;
+    var scoreFeedbackVisible = false;
+    var hideAnswersLock = false;
+
+    function resetScoreStyles() {
+      document.querySelectorAll("[data-score-id]").forEach(function (item) {
+        item.classList.remove("scored-correct", "scored-wrong", "reveal-correct");
+      });
+      Object.keys(SCORE_KEY).forEach(function (id) {
+        var mark = document.getElementById("mark-" + id);
+        var hint = document.getElementById("hint-" + id);
+        if (mark) mark.textContent = "";
+        if (hint) { hint.classList.remove("show"); hint.textContent = ""; }
+      });
+    }
+    function setSec7ToggleLabel(revealed) {
+      var b1 = document.getElementById("toggleSec7AnswersBtn");
+      if (b1) b1.textContent = revealed ? "Hide Correct Answers" : "Show Correct Answers";
+    }
+    function hideCorrectAnswersOnEdit(changedId) {
+      if (hideAnswersLock) return;
+      if (!answersRevealed && !scoreFeedbackVisible) return;
+      hideAnswersLock = true;
+      var keepValue = "";
+      if (answersRevealed && changedId) {
+        keepValue = val(changedId);
+        if (keepValue === SCORE_KEY[changedId].answer) keepValue = "";
+      }
+      resetScoreStyles();
+      if (answersRevealed) {
+        Object.keys(SCORE_KEY).forEach(function (id) {
+          var el = document.getElementById(id);
+          if (!el) return;
+          if (id === changedId && keepValue) el.value = keepValue;
+          else el.selectedIndex = 0;
+        });
+        answersRevealed = false;
+        document.getElementById("scoreOutput").textContent = "Score: not checked yet.";
+        document.getElementById("scoreNote").textContent = "Podfarbenie zmizlo. Pokracuj a stlac Check Score.";
+        saveData();
+      } else {
+        document.getElementById("scoreOutput").textContent = "Score: not checked yet.";
+        document.getElementById("scoreNote").textContent = "Podfarbenie z Check Score zmizlo.";
+      }
+      scoreFeedbackVisible = false;
+      setSec7ToggleLabel(false);
+      hideAnswersLock = false;
+    }
+    function checkScore() {
+      resetScoreStyles();
+      answersRevealed = false;
+      scoreFeedbackVisible = true;
+      setSec7ToggleLabel(false);
+      var score = 0;
+      var total = Object.keys(SCORE_KEY).length;
+      Object.keys(SCORE_KEY).forEach(function (id) {
+        var item = document.querySelector('.score-item[data-score-id="' + id + '"]');
+        var mark = document.getElementById("mark-" + id);
+        var hint = document.getElementById("hint-" + id);
+        var correct = SCORE_KEY[id].answer;
+        var chosen = val(id);
+        var isCorrect = chosen === correct;
+        if (item) item.classList.add(isCorrect ? "scored-correct" : "scored-wrong");
+        if (mark) mark.textContent = isCorrect ? "OK" : "X";
+        if (hint) {
+          if (isCorrect) hint.textContent = "Spravne. " + SCORE_KEY[id].hint;
+          else if (!chosen) hint.textContent = "Neoznacene. Spravne: " + correct + ". " + SCORE_KEY[id].hint;
+          else hint.textContent = "Nespravne. Spravne: " + correct + ". " + SCORE_KEY[id].hint;
+          hint.classList.add("show");
+        }
+        if (isCorrect) score += 1;
+      });
+      document.getElementById("scoreOutput").textContent =
+        "Score: " + score + "/" + total + " (" + Math.round((score / total) * 100) + "%)";
+      document.getElementById("scoreNote").textContent = "Check Score hodnotil polozky 1-11.";
+      setStatus("Score checked: " + score + "/" + total);
+    }
+    function showCorrectAnswers() {
+      hideAnswersLock = true;
+      resetScoreStyles();
+      answersRevealed = true;
+      scoreFeedbackVisible = true;
+      Object.keys(SCORE_KEY).forEach(function (id) {
+        var el = document.getElementById(id);
+        var item = document.querySelector('.score-item[data-score-id="' + id + '"]');
+        var mark = document.getElementById("mark-" + id);
+        var hint = document.getElementById("hint-" + id);
+        var correct = SCORE_KEY[id].answer;
+        if (el) el.value = correct;
+        if (item) item.classList.add("reveal-correct");
+        if (mark) mark.textContent = "ANSWER";
+        if (hint) { hint.textContent = "Spravna moznost: " + correct + ". " + SCORE_KEY[id].hint; hint.classList.add("show"); }
+      });
+      saveData();
+      document.getElementById("scoreOutput").textContent = "Correct answers shown (11/11).";
+      setSec7ToggleLabel(true);
+      hideAnswersLock = false;
+    }
+    function hideCorrectAnswers() {
+      hideAnswersLock = true;
+      resetScoreStyles();
+      answersRevealed = false;
+      scoreFeedbackVisible = false;
+      Object.keys(SCORE_KEY).forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) el.selectedIndex = 0;
+      });
+      document.getElementById("scoreOutput").textContent = "Score: not checked yet.";
+      setSec7ToggleLabel(false);
+      saveData();
+      hideAnswersLock = false;
+    }
+    function toggleSec7Answers() {
+      if (answersRevealed) hideCorrectAnswers();
+      else showCorrectAnswers();
+    }
+
+    const DIALOGUE_KEY = {
+      d1: {
+        display: "My Story Spotlight.",
+        words: ["my", "story", "spotlight"],
+        answers: ["my story spotlight"],
+        hint: "Hint: My Story Spotlight."
+      },
+      d2: {
+        display: "I live in Kosice.",
+        words: ["i", "live", "in", "kosice"],
+        answers: ["i live in kosice"],
+        hint: "Hint: I live in Kosice."
+      },
+      d3: {
+        display: "I joined a project.",
+        words: ["i", "joined", "a", "project"],
+        answers: ["i joined a project", "i joined a school project"],
+        hint: "Hint: I joined a project."
+      },
+      d4: {
+        display: "I have practised English.",
+        words: ["i", "have", "practised", "english"],
+        answers: ["i have practised english", "i have practiced english"],
+        hint: "Hint: I have practised English."
+      },
+      d5: {
+        display: "I am going to join the media club.",
+        words: ["i", "am", "going", "to", "join", "the", "media", "club"],
+        answers: ["i am going to join the media club", "i am going to join the school media club"],
+        hint: "Hint: I am going to join the media club."
+      },
+      d6: {
+        display: "I want to speak clearly.",
+        words: ["i", "want", "to", "speak", "clearly"],
+        answers: ["i want to speak clearly", "i want to speak for two minutes without stopping"],
+        hint: "Hint: I want to speak clearly."
+      }
+    };
+
+    var dialogueRevealed = false;
+    var dialogueFeedbackVisible = false;
+    var hideDialogueLock = false;
+
+    function normalizeAnswer(text) {
+      return (text || "").toLowerCase().replace(/[.,!?;:'"()\-]/g, " ").replace(/\s+/g, " ").trim();
+    }
+    function sameWordBag(a, b) {
+      return (a || []).slice().sort().join(" ") === (b || []).slice().sort().join(" ");
+    }
+    function isDialogueCorrect(id, text) {
+      var norm = normalizeAnswer(text);
+      if (!norm) return false;
+      var key = DIALOGUE_KEY[id];
+      if (!key) return false;
+      if (key.answers.indexOf(norm) !== -1) return true;
+      return sameWordBag(norm.split(" ").filter(Boolean), key.words);
+    }
+    function resetDialogueStyles() {
+      document.querySelectorAll("[data-dialogue-id]").forEach(function (item) {
+        item.classList.remove("scored-correct", "scored-wrong", "reveal-correct");
+      });
+      Object.keys(DIALOGUE_KEY).forEach(function (id) {
+        var mark = document.getElementById("mark-" + id);
+        var hint = document.getElementById("hint-" + id);
+        if (mark) mark.textContent = "";
+        if (hint) { hint.classList.remove("show"); hint.textContent = ""; }
+      });
+    }
+    function clearDialogueFeedback() {
+      if (hideDialogueLock) return;
+      if (!dialogueFeedbackVisible && !dialogueRevealed) return;
+      hideDialogueLock = true;
+      resetDialogueStyles();
+      dialogueRevealed = false;
+      dialogueFeedbackVisible = false;
+      document.getElementById("dialogueScoreOutput").textContent = "Dialogue score: not checked yet.";
+      document.getElementById("dialogueScoreNote").textContent = "Napoveda sa skryla. Stlac Check Dialogue znova.";
+      hideDialogueLock = false;
+    }
+    function checkDialogue() {
+      resetDialogueStyles();
+      dialogueRevealed = false;
+      dialogueFeedbackVisible = true;
+      var score = 0;
+      var total = Object.keys(DIALOGUE_KEY).length;
+      Object.keys(DIALOGUE_KEY).forEach(function (id) {
+        var item = document.querySelector('[data-dialogue-id="' + id + '"]');
+        var mark = document.getElementById("mark-" + id);
+        var hint = document.getElementById("hint-" + id);
+        var chosenNorm = normalizeAnswer(val(id));
+        var isCorrect = isDialogueCorrect(id, val(id));
+        if (item) item.classList.add(isCorrect ? "scored-correct" : "scored-wrong");
+        if (mark) mark.textContent = isCorrect ? "OK" : "X";
+        if (hint) {
+          if (isCorrect) hint.textContent = "Spravne. " + DIALOGUE_KEY[id].hint;
+          else if (!chosenNorm) hint.textContent = "Neoznacene. Spravne: " + DIALOGUE_KEY[id].display + " " + DIALOGUE_KEY[id].hint;
+          else hint.textContent = "Nespravne. Spravne: " + DIALOGUE_KEY[id].display + " " + DIALOGUE_KEY[id].hint;
+          hint.classList.add("show");
+        }
+        if (isCorrect) score += 1;
+      });
+      document.getElementById("dialogueScoreOutput").textContent =
+        "Dialogue score: " + score + "/" + total + " (" + Math.round((score / total) * 100) + "%)";
+      setStatus("Dialogue checked: " + score + "/" + total);
+    }
+
+    document.querySelectorAll(".autosave").forEach(function (el) {
+      el.addEventListener("input", function () {
+        if (el.id && SCORE_KEY[el.id]) hideCorrectAnswersOnEdit(el.id);
+        if (el.id && DIALOGUE_KEY[el.id]) clearDialogueFeedback();
+        saveData();
+      });
+      el.addEventListener("change", function () {
+        if (el.id && SCORE_KEY[el.id]) hideCorrectAnswersOnEdit(el.id);
+        if (el.id && DIALOGUE_KEY[el.id]) clearDialogueFeedback();
+        saveData();
+      });
+      el.addEventListener("focus", function () {
+        if (el.id && DIALOGUE_KEY[el.id]) clearDialogueFeedback();
+        if (el.id && SCORE_KEY[el.id]) hideCorrectAnswersOnEdit(el.id);
+      });
+    });
+    loadData();
+  </script>
+</body>
+</html>

@@ -50,10 +50,12 @@ They will **not** master every exception, advanced conditionals, full reported s
 | 21 | TBD | Who / Which / That | Relative clauses (basic) | Descriptions |
 | 22 | TBD | It Is Made Of… | Passive Present / Past (intro) | Past participle from PP |
 | 23 | TBD | Mixed Tenses Clinic | Diagnosis + repair of hours 01–22 | All core |
-| 24 | TBD | About Me 2.0 Portfolio | Extended intro + past + plans (writing/speaking) | Hours 01, 10, 16 |
+| 24 | `classes/24` | **My Story Spotlight** (personal presentation) | Extended intro + Past Simple + Present Perfect + *going to* / *will* | Hours 01, 10, 14, 16 |
 | 25 | TBD | Final Check | Self-assessment + mini oral exam tasks | Whole spine |
 
 `TBD` = create next with Class Rules + Class Check.
+
+**Hour 24 note:** Formerly “About Me 2.0”. Title is now **My Story Spotlight** — a 2-minute personal pitch (now → past chapter → experiences → plans).
 
 ---
 
