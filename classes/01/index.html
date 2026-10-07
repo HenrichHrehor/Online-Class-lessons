@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Class 01 - English Language: Powerful Tool</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #1c2430;
+      --muted: #5b6878;
+      --line: #d8deea;
+      --primary: #2d6cdf;
+      --accent: #fff8e1;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .wrap { max-width: 1060px; margin: 20px auto 40px; padding: 0 12px; }
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(245, 247, 251, 0.96);
+      backdrop-filter: blur(4px);
+      border-bottom: 1px solid var(--line);
+      padding: 10px 0;
+      margin-bottom: 12px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    button {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--text);
+      border-radius: 8px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    button:hover { opacity: 0.92; }
+    .primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    .listen-block {
+      background: var(--accent);
+      border: 1px solid #ffecb3;
+      border-radius: 10px;
+      padding: 14px;
+      margin: 12px 0;
+    }
+    .block-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+    .block-top h3 { margin: 0; color: var(--text); }
+    #fullTextPanel {
+      display: none;
+      background: var(--accent);
+      border: 1px solid #ffecb3;
+      border-radius: 10px;
+      padding: 14px;
+      margin-top: 10px;
+    }
+    h1, h2, h3, h4 { margin: 0 0 10px; }
+    h1 { font-size: 24px; }
+    h2 { font-size: 19px; border-bottom: 1px solid var(--line); padding-bottom: 6px; }
+    h3 { font-size: 16px; }
+    h4 { font-size: 15px; margin-top: 14px; color: var(--muted); }
+    .meta { display: grid; grid-template-columns: repeat(2, minmax(240px, 1fr)); gap: 8px 14px; }
+    .field-line { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .field-line label { min-width: 120px; font-weight: 600; }
+    input[type="text"], textarea, select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px 10px;
+      font: inherit;
+      color: var(--text);
+      background: #fff;
+    }
+    .inline-input {
+      min-width: 120px;
+      max-width: 190px;
+      display: inline-block;
+      margin: 0 2px;
+      vertical-align: middle;
+      border-bottom: 2px solid #2563eb;
+    }
+    .line-input { width: 100%; margin-top: 4px; }
+    .q { margin: 10px 0; }
+    .muted { color: var(--muted); }
+    .wordbank { font-size: 14px; margin-bottom: 8px; font-weight: 600; }
+    .tf-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 8px 0; }
+    .tf-row select { width: 90px; }
+    .small { font-size: 13px; color: var(--muted); }
+    .term-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
+    .score-box {
+      margin-top: 12px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #f8fbff;
+      font-weight: 700;
+    }
+    .status {
+      margin-left: auto;
+      font-size: 13px;
+      color: var(--muted);
+      align-self: center;
+    }
+    @media print {
+      .toolbar { display: none !important; }
+      #fullTextPanel { display: none !important; }
+      body { background: #fff; }
+    }
+    @media (max-width: 760px) {
+      .meta { grid-template-columns: 1fr; }
+      .inline-input { min-width: 95px; max-width: 130px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="toolbar">
+      <button class="primary" id="toggleFullBtn" onclick="toggleFullText()">Show Full Text</button>
+      <button onclick="copyFullListening()">Copy Full Listening</button>
+      <button onclick="copyGapFill()">Copy Gap Fill</button>
+      <button onclick="copyPlainLesson()">Copy Plain Text (Lesson)</button>
+      <button onclick="savePdf()">Save as PDF</button>
+      <button onclick="checkScore()">Check Score</button>
+      <button onclick="clearData()">Clear Answers</button>
+      <span class="status" id="copyStatus"></span>
+    </div>
+
+    <div class="card">
+      <h1>WORKSHEET - CLASS 01</h1>
+      <p class="muted">Topic: English Language - Powerful Tool</p>
+      <div class="meta">
+        <div class="field-line"><label>Date</label><input class="autosave" id="date" type="text" value="01.05.2026"></div>
+        <div class="field-line"><label>Student</label><input class="autosave" id="student" type="text" value=""></div>
+        <div class="field-line"><label>Unit</label><input class="autosave" id="unit" type="text" value="Unit 4 -> Unit 5"></div>
+        <div class="field-line"><label>Main focus</label><input class="autosave" id="focus" type="text" value="Past Simple regular/irregular"></div>
+      </div>
+    </div>
+
+    <!-- FULL LISTENING TEXT (show/hide) -->
+    <div class="card">
+      <h2>Listening - Full Text</h2>
+      <p class="small">Teacher / Natural Reader: use Show Full Text, then Copy Full Listening.</p>
+      <div id="fullTextPanel">
+        <h3>1. English for Global Connection</h3>
+        <p id="full1">English is more than a school subject. It is a powerful tool that helps people connect across countries and cultures. Teenagers use it to watch videos, follow creators, and join global gaming communities. When students understand English, they can read ideas from different perspectives and compare opinions. This builds confidence and curiosity. In class, even short daily practice can make a big difference. Over time, simple conversations turn into real communication, and learners begin to feel that the language belongs to them.</p>
+
+        <h3>2. English and Future Opportunities</h3>
+        <p id="full2">English also opens doors to opportunities in education and work. Many websites, courses, and science articles are written in English first. Students who read them can discover new topics earlier. Later, English can help with applications for scholarships, summer programs, or part-time jobs. During interviews, clear communication creates a strong first impression. Travel becomes easier too, because signs, tickets, and online reviews are often in English. For many young people, this language is a bridge to experiences they could not reach before.</p>
+
+        <h3>3. English and Brain Development</h3>
+        <p id="full3">Learning English can improve thinking skills, not only speaking. Students learn to choose words carefully, organize ideas, and explain reasons clearly. They also become more creative when they write stories, posts, or short presentations. Listening to songs, podcasts, and films in English trains the brain to notice rhythm and pronunciation. At first, mistakes feel uncomfortable, but they are part of progress. Each corrected sentence teaches something useful. Step by step, learners become more independent and can study other subjects with greater confidence.</p>
+
+        <h3>4. English for Real Life Communication</h3>
+        <p id="full4">English is powerful because it helps people share knowledge and feelings with a wider audience. It can reduce misunderstandings when people from different places work together. In online spaces, respectful English communication helps build friendships and teamwork. In school, students can ask better questions and join discussions with confidence. In the future, many careers will require international contact, and English will support that daily communication. It is not about being perfect. It is about being understood, showing empathy, and keeping doors open for growth.</p>
+      </div>
+    </div>
+
+    <!-- GAP FILL LISTENING - word-for-word sync -->
+    <div class="card" id="listeningSection">
+      <h2>2. Listening - Gap Fill</h2>
+      <p class="small">Fill in the blanks. Text matches the Full Text word-for-word.</p>
+
+      <div class="listen-block" id="block1">
+        <div class="block-top">
+          <h3>1. English for Global Connection</h3>
+          <button type="button" onclick="copyBlock(1)">Copy this block</button>
+        </div>
+        <div class="wordbank">Word bank: powerful, connect, confidence, practice, communication</div>
+        <p data-gap="1">
+          English is more than a school subject. It is a
+          <input class="inline-input autosave" id="l1a" type="text" data-blank="powerful">
+          tool that helps people
+          <input class="inline-input autosave" id="l1b" type="text" data-blank="connect">
+          across countries and cultures. Teenagers use it to watch videos, follow creators, and join global gaming communities. When students understand English, they can read ideas from different perspectives and compare opinions. This builds
+          <input class="inline-input autosave" id="l1c" type="text" data-blank="confidence">
+          and curiosity. In class, even short daily
+          <input class="inline-input autosave" id="l1d" type="text" data-blank="practice">
+          can make a big difference. Over time, simple conversations turn into real
+          <input class="inline-input autosave" id="l1e" type="text" data-blank="communication">,
+          and learners begin to feel that the language belongs to them.
+        </p>
+      </div>
+
+      <div class="listen-block" id="block2">
+        <div class="block-top">
+          <h3>2. English and Future Opportunities</h3>
+          <button type="button" onclick="copyBlock(2)">Copy this block</button>
+        </div>
+        <div class="wordbank">Word bank: opportunities, scholarships, interviews, Travel, experiences</div>
+        <p data-gap="2">
+          English also opens doors to
+          <input class="inline-input autosave" id="l2a" type="text" data-blank="opportunities">
+          in education and work. Many websites, courses, and science articles are written in English first. Students who read them can discover new topics earlier. Later, English can help with applications for
+          <input class="inline-input autosave" id="l2b" type="text" data-blank="scholarships">,
+          summer programs, or part-time jobs. During
+          <input class="inline-input autosave" id="l2c" type="text" data-blank="interviews">,
+          clear communication creates a strong first impression.
+          <input class="inline-input autosave" id="l2d" type="text" data-blank="Travel">
+          becomes easier too, because signs, tickets, and online reviews are often in English. For many young people, this language is a bridge to
+          <input class="inline-input autosave" id="l2e" type="text" data-blank="experiences">
+          they could not reach before.
+        </p>
+      </div>
+
+      <div class="listen-block" id="block3">
+        <div class="block-top">
+          <h3>3. English and Brain Development</h3>
+          <button type="button" onclick="copyBlock(3)">Copy this block</button>
+        </div>
+        <div class="wordbank">Word bank: creative, podcasts, pronunciation, progress, independent</div>
+        <p data-gap="3">
+          Learning English can improve thinking skills, not only speaking. Students learn to choose words carefully, organize ideas, and explain reasons clearly. They also become more
+          <input class="inline-input autosave" id="l3a" type="text" data-blank="creative">
+          when they write stories, posts, or short presentations. Listening to songs,
+          <input class="inline-input autosave" id="l3b" type="text" data-blank="podcasts">,
+          and films in English trains the brain to notice rhythm and
+          <input class="inline-input autosave" id="l3c" type="text" data-blank="pronunciation">.
+          At first, mistakes feel uncomfortable, but they are part of
+          <input class="inline-input autosave" id="l3d" type="text" data-blank="progress">.
+          Each corrected sentence teaches something useful. Step by step, learners become more
+          <input class="inline-input autosave" id="l3e" type="text" data-blank="independent">
+          and can study other subjects with greater confidence.
+        </p>
+      </div>
+
+      <div class="listen-block" id="block4">
+        <div class="block-top">
+          <h3>4. English for Real Life Communication</h3>
+          <button type="button" onclick="copyBlock(4)">Copy this block</button>
+        </div>
+        <div class="wordbank">Word bank: audience, misunderstandings, teamwork, careers, empathy</div>
+        <p data-gap="4">
+          English is powerful because it helps people share knowledge and feelings with a wider
+          <input class="inline-input autosave" id="l4a" type="text" data-blank="audience">.
+          It can reduce
+          <input class="inline-input autosave" id="l4b" type="text" data-blank="misunderstandings">
+          when people from different places work together. In online spaces, respectful English communication helps build friendships and
+          <input class="inline-input autosave" id="l4c" type="text" data-blank="teamwork">.
+          In school, students can ask better questions and join discussions with confidence. In the future, many
+          <input class="inline-input autosave" id="l4d" type="text" data-blank="careers">
+          will require international contact, and English will support that daily communication. It is not about being perfect. It is about being understood, showing
+          <input class="inline-input autosave" id="l4e" type="text" data-blank="empathy">,
+          and keeping doors open for growth.
+        </p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>1. Grammar Review</h2>
+      <h3>A) Present Perfect -> Past Simple</h3>
+      <div class="q">1) I have visited London three times.<input class="line-input autosave" id="g1" type="text"></div>
+      <div class="q">2) She has finished her project.<input class="line-input autosave" id="g2" type="text"></div>
+      <div class="q">3) We have not seen that film.<input class="line-input autosave" id="g3" type="text"></div>
+      <div class="q">4) Have they called the teacher?<input class="line-input autosave" id="g4" type="text"></div>
+
+      <h3>B) Past Simple -> Past Continuous</h3>
+      <div class="q">1) He played football at 5 p.m.<input class="line-input autosave" id="g5" type="text"></div>
+      <div class="q">2) I studied for the test last night.<input class="line-input autosave" id="g6" type="text"></div>
+      <div class="q">3) They watched TV after dinner.<input class="line-input autosave" id="g7" type="text"></div>
+      <div class="q">4) The dog ran in the garden.<input class="line-input autosave" id="g8" type="text"></div>
+
+      <h3>C) Mixed: Regular / Irregular Verbs</h3>
+      <div class="q">1) Yesterday I (walk) <input class="inline-input autosave" id="g9" type="text"> to school and (meet) <input class="inline-input autosave" id="g10" type="text"> my friend.</div>
+      <div class="q">2) She (study) <input class="inline-input autosave" id="g11" type="text"> hard and (get) <input class="inline-input autosave" id="g12" type="text"> a very good mark.</div>
+      <div class="q">3) We (watch) <input class="inline-input autosave" id="g13" type="text"> a video and (learn) <input class="inline-input autosave" id="g14" type="text"> new words.</div>
+      <div class="q">4) They (play) <input class="inline-input autosave" id="g15" type="text"> online, but they (not win) <input class="inline-input autosave" id="g16" type="text">.</div>
+    </div>
+
+    <div class="card">
+      <h2>3. True / False - Listening Check</h2>
+      <h4>3.1 English for Global Connection and Future Opportunities</h4>
+      <div class="tf-row"><span>1) English is more than a school subject.</span><select class="autosave" id="tf1"><option value=""></option><option>T</option><option>F</option></select></div>
+      <div class="tf-row"><span>2) The text says English cannot connect people across countries and cultures.</span><select class="autosave" id="tf2"><option value=""></option><option>T</option><option>F</option></select></div>
+      <div class="tf-row"><span>3) Teenagers use English in global online communities.</span><select class="autosave" id="tf3"><option value=""></option><option>T</option><option>F</option></select></div>
+      <div class="tf-row"><span>4) English can help with scholarships and interviews.</span><select class="autosave" id="tf4"><option value=""></option><option>T</option><option>F</option></select></div>
+      <div class="tf-row"><span>5) Travel becomes easier when people can use English.</span><select class="autosave" id="tf5"><option value=""></option><option>T</option><option>F</option></select></div>
+
+      <h4>3.2 English and Brain Development and Real Life Communication</h4>
+      <div class="tf-row"><span>1) Listening to songs, podcasts, and films can train the brain.</span><select class="autosave" id="tf6"><option value=""></option><option>T</option><option>F</option></select></div>
+      <div class="tf-row"><span>2) Mistakes are not part of progress.</span><select class="autosave" id="tf7"><option value=""></option><option>T</option><option>F</option></select></div>
+      <div class="tf-row"><span>3) English can reduce misunderstandings in teamwork.</span><select class="autosave" id="tf8"><option value=""></option><option>T</option><option>F</option></select></div>
+      <div class="tf-row"><span>4) The text says future careers may require international contact.</span><select class="autosave" id="tf9"><option value=""></option><option>T</option><option>F</option></select></div>
+      <div class="tf-row"><span>5) The text says English is only about being perfect.</span><select class="autosave" id="tf10"><option value=""></option><option>T</option><option>F</option></select></div>
+      <p class="small">True_False_MK</p>
+    </div>
+
+    <div class="card">
+      <h2>4. Talking - Scrambled Dialogue</h2>
+      <div class="q">
+        <p><strong>Jim:</strong> Why did English become important for your goals?<br><span class="muted">[ bridge / became / English / because / a ]</span></p>
+        <textarea class="autosave" id="d1" rows="2"></textarea>
+      </div>
+      <div class="q">
+        <p><strong>Jim:</strong> What did you watch in English last week?<br><span class="muted">[ watched / YouTube / I / interviews / and ]</span></p>
+        <textarea class="autosave" id="d2" rows="2"></textarea>
+      </div>
+      <div class="q">
+        <p><strong>Jim:</strong> How did English help you during travel?<br><span class="muted">[ read / could / and / signs / I ]</span></p>
+        <textarea class="autosave" id="d3" rows="2"></textarea>
+      </div>
+      <div class="q">
+        <p><strong>Jim:</strong> Why did you start practicing every day?<br><span class="muted">[ confidence / wanted / more / I / because ]</span></p>
+        <textarea class="autosave" id="d4" rows="2"></textarea>
+      </div>
+      <div class="q">
+        <p><strong>Jim:</strong> Which irregular verb did you use yesterday?<br><span class="muted">[ wrote / I / message / a / and ]</span></p>
+        <textarea class="autosave" id="d5" rows="2"></textarea>
+      </div>
+      <div class="q">
+        <p><strong>Jim:</strong> What regular verbs did you practice in class?<br><span class="muted">[ played / talked / and / practiced / we ]</span></p>
+        <textarea class="autosave" id="d6" rows="2"></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>5. New Topic Text - Unit 5</h2>
+      <div class="q"><strong>New Topic Title:</strong><input class="line-input autosave" id="n1" type="text"></div>
+      <div class="q"><strong>Difficult sentence 1:</strong><input class="line-input autosave" id="n2" type="text"></div>
+      <div class="q"><strong>Difficult sentence 2:</strong><input class="line-input autosave" id="n3" type="text"></div>
+      <div class="q"><strong>Difficult sentence 3:</strong><input class="line-input autosave" id="n4" type="text"></div>
+      <div class="q"><strong>One-sentence summary:</strong><textarea class="autosave" id="n5" rows="2"></textarea></div>
+    </div>
+
+    <div class="card">
+      <h2>6. Grammar Box - Unit 5</h2>
+      <p>- Regular verbs: verb + -ed<br>- Irregular verbs: special form (go -> went, see -> saw, write -> wrote)</p>
+      <div class="q"><strong>Affirmative example:</strong><input class="line-input autosave" id="b1" type="text"></div>
+      <div class="q"><strong>Negative example:</strong><input class="line-input autosave" id="b2" type="text"></div>
+      <div class="q"><strong>Question example:</strong><input class="line-input autosave" id="b3" type="text"></div>
+      <div class="q"><strong>Short answer example:</strong><input class="line-input autosave" id="b4" type="text"></div>
+    </div>
+
+    <div class="card">
+      <h2>7. Classroom and Grammar Connection</h2>
+      <p>Choose one correct Slovak option for each English term.</p>
+      <div class="term-grid">
+        <div>1) third person singular:
+          <select class="autosave" id="m1" style="max-width:320px;display:inline-block;width:auto;min-width:220px;">
+            <option value=""></option>
+            <option>tretia osoba jednotneho cisla</option>
+            <option>nepravidelne sloveso</option>
+            <option>zaporova veta</option>
+          </select>
+        </div>
+        <div>2) irregular verb:
+          <select class="autosave" id="m2" style="max-width:320px;display:inline-block;width:auto;min-width:220px;">
+            <option value=""></option>
+            <option>nepravidelne sloveso</option>
+            <option>kladna veta</option>
+            <option>predpritomny cas</option>
+          </select>
+        </div>
+        <div>3) present perfect:
+          <select class="autosave" id="m3" style="max-width:320px;display:inline-block;width:auto;min-width:220px;">
+            <option value=""></option>
+            <option>predpritomny cas</option>
+            <option>minuly cas jednoduchy</option>
+            <option>minuly cas priebehovy</option>
+          </select>
+        </div>
+        <div>4) past continuous:
+          <select class="autosave" id="m4" style="max-width:320px;display:inline-block;width:auto;min-width:220px;">
+            <option value=""></option>
+            <option>minuly cas priebehovy</option>
+            <option>predpritomny cas</option>
+            <option>zaporova veta</option>
+          </select>
+        </div>
+        <div>5) past simple:
+          <select class="autosave" id="m5" style="max-width:320px;display:inline-block;width:auto;min-width:220px;">
+            <option value=""></option>
+            <option>minuly cas jednoduchy</option>
+            <option>minuly cas priebehovy</option>
+            <option>kladna veta</option>
+          </select>
+        </div>
+        <div>6) affirmative sentence:
+          <select class="autosave" id="m6" style="max-width:320px;display:inline-block;width:auto;min-width:220px;">
+            <option value=""></option>
+            <option>kladna veta</option>
+            <option>zaporova veta</option>
+            <option>nepravidelne sloveso</option>
+          </select>
+        </div>
+        <div>7) negative sentence:
+          <select class="autosave" id="m7" style="max-width:320px;display:inline-block;width:auto;min-width:220px;">
+            <option value=""></option>
+            <option>zaporova veta</option>
+            <option>kladna veta</option>
+            <option>doplnte prazdne miesta</option>
+          </select>
+        </div>
+        <div>8) fill in the blanks:
+          <select class="autosave" id="m8" style="max-width:320px;display:inline-block;width:auto;min-width:220px;">
+            <option value=""></option>
+            <option>doplnte prazdne miesta</option>
+            <option>zakruzkujte spravnu moznost</option>
+            <option>opiste obrazok</option>
+          </select>
+        </div>
+        <div>9) circle the correct option:
+          <select class="autosave" id="m9" style="max-width:320px;display:inline-block;width:auto;min-width:220px;">
+            <option value=""></option>
+            <option>zakruzkujte spravnu moznost</option>
+            <option>dajte slova do spravneho poradia</option>
+            <option>predpritomny cas</option>
+          </select>
+        </div>
+        <div>10) describe the picture:
+          <select class="autosave" id="m10" style="max-width:320px;display:inline-block;width:auto;min-width:220px;">
+            <option value=""></option>
+            <option>opiste obrazok</option>
+            <option>doplnte prazdne miesta</option>
+            <option>zaporova veta</option>
+          </select>
+        </div>
+        <div>11) put the words in the correct order:
+          <select class="autosave" id="m11" style="max-width:320px;display:inline-block;width:auto;min-width:220px;">
+            <option value=""></option>
+            <option>dajte slova do spravneho poradia</option>
+            <option>minuly cas jednoduchy</option>
+            <option>nepravidelne sloveso</option>
+          </select>
+        </div>
+      </div>
+      <div id="scoreOutput" class="score-box">Score: not checked yet.</div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "class01WorksheetApp_v1";
+
+    const BLOCK_TITLES = {
+      1: "1. English for Global Connection",
+      2: "2. English and Future Opportunities",
+      3: "3. English and Brain Development",
+      4: "4. English for Real Life Communication"
+    };
+
+    const WORD_BANKS = {
+      1: "powerful, connect, confidence, practice, communication",
+      2: "opportunities, scholarships, interviews, Travel, experiences",
+      3: "creative, podcasts, pronunciation, progress, independent",
+      4: "audience, misunderstandings, teamwork, careers, empathy"
+    };
+
+    function val(id) {
+      const el = document.getElementById(id);
+      return el ? (el.value || "") : "";
+    }
+
+    function blankOr(id) {
+      const v = val(id).trim();
+      return v || "..........";
+    }
+
+    function setStatus(msg) {
+      const el = document.getElementById("copyStatus");
+      if (el) el.textContent = msg;
+    }
+
+    function copyText(text, okMsg) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        return navigator.clipboard.writeText(text).then(function () {
+          setStatus(okMsg || "Copied.");
+          alert(okMsg || "Copied to clipboard.");
+        }).catch(function () {
+          return fallbackCopy(text, okMsg);
+        });
+      }
+      return fallbackCopy(text, okMsg);
+    }
+
+    function fallbackCopy(text, okMsg) {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.setAttribute("readonly", "");
+      ta.style.position = "fixed";
+      ta.style.left = "-9999px";
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand("copy");
+        setStatus(okMsg || "Copied.");
+        alert(okMsg || "Copied to clipboard.");
+      } catch (e) {
+        alert("Copy failed. Please select and copy manually.");
+      }
+      document.body.removeChild(ta);
+      return Promise.resolve();
+    }
+
+    function getAllFields() {
+      return Array.from(document.querySelectorAll("input, textarea, select"))
+        .map(function (el) { return el.id; })
+        .filter(Boolean);
+    }
+
+    function saveData(showAlert) {
+      const data = {};
+      getAllFields().forEach(function (id) {
+        const el = document.getElementById(id);
+        data[id] = el.value;
+      });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      if (showAlert) alert("Answers saved.");
+    }
+
+    function loadData() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      try {
+        const data = JSON.parse(raw);
+        Object.keys(data).forEach(function (id) {
+          const el = document.getElementById(id);
+          if (el) el.value = data[id];
+        });
+      } catch (e) {}
+    }
+
+    function clearData() {
+      if (!confirm("Clear all answers?")) return;
+      getAllFields().forEach(function (id) {
+        const el = document.getElementById(id);
+        if (el.tagName === "SELECT") el.selectedIndex = 0;
+        else el.value = "";
+      });
+      localStorage.removeItem(STORAGE_KEY);
+      document.getElementById("scoreOutput").textContent = "Score: not checked yet.";
+      setStatus("Cleared.");
+    }
+
+    function savePdf() {
+      saveData(false);
+      window.print();
+    }
+
+    function toggleFullText() {
+      const panel = document.getElementById("fullTextPanel");
+      const btn = document.getElementById("toggleFullBtn");
+      const show = panel.style.display !== "block";
+      panel.style.display = show ? "block" : "none";
+      btn.textContent = show ? "Hide Full Text" : "Show Full Text";
+    }
+
+    function copyFullListening() {
+      const text = [
+        "LISTENING TEXT - CLASS 01",
+        "English Language: Powerful Tool (Full Version)",
+        "",
+        BLOCK_TITLES[1],
+        document.getElementById("full1").textContent.trim(),
+        "",
+        BLOCK_TITLES[2],
+        document.getElementById("full2").textContent.trim(),
+        "",
+        BLOCK_TITLES[3],
+        document.getElementById("full3").textContent.trim(),
+        "",
+        BLOCK_TITLES[4],
+        document.getElementById("full4").textContent.trim()
+      ].join("\n");
+      copyText(text, "Full listening text copied.");
+    }
+
+    function gapParagraph(n) {
+      if (n === 1) {
+        return "English is more than a school subject. It is a " + blankOr("l1a") +
+          " tool that helps people " + blankOr("l1b") +
+          " across countries and cultures. Teenagers use it to watch videos, follow creators, and join global gaming communities. When students understand English, they can read ideas from different perspectives and compare opinions. This builds " + blankOr("l1c") +
+          " and curiosity. In class, even short daily " + blankOr("l1d") +
+          " can make a big difference. Over time, simple conversations turn into real " + blankOr("l1e") +
+          ", and learners begin to feel that the language belongs to them.";
+      }
+      if (n === 2) {
+        return "English also opens doors to " + blankOr("l2a") +
+          " in education and work. Many websites, courses, and science articles are written in English first. Students who read them can discover new topics earlier. Later, English can help with applications for " + blankOr("l2b") +
+          ", summer programs, or part-time jobs. During " + blankOr("l2c") +
+          ", clear communication creates a strong first impression. " + blankOr("l2d") +
+          " becomes easier too, because signs, tickets, and online reviews are often in English. For many young people, this language is a bridge to " + blankOr("l2e") +
+          " they could not reach before.";
+      }
+      if (n === 3) {
+        return "Learning English can improve thinking skills, not only speaking. Students learn to choose words carefully, organize ideas, and explain reasons clearly. They also become more " + blankOr("l3a") +
+          " when they write stories, posts, or short presentations. Listening to songs, " + blankOr("l3b") +
+          ", and films in English trains the brain to notice rhythm and " + blankOr("l3c") +
+          ". At first, mistakes feel uncomfortable, but they are part of " + blankOr("l3d") +
+          ". Each corrected sentence teaches something useful. Step by step, learners become more " + blankOr("l3e") +
+          " and can study other subjects with greater confidence.";
+      }
+      return "English is powerful because it helps people share knowledge and feelings with a wider " + blankOr("l4a") +
+        ". It can reduce " + blankOr("l4b") +
+        " when people from different places work together. In online spaces, respectful English communication helps build friendships and " + blankOr("l4c") +
+        ". In school, students can ask better questions and join discussions with confidence. In the future, many " + blankOr("l4d") +
+        " will require international contact, and English will support that daily communication. It is not about being perfect. It is about being understood, showing " + blankOr("l4e") +
+        ", and keeping doors open for growth.";
+    }
+
+    function gapParagraphBlankTemplate(n) {
+      // Always dotted blanks for Docs (ignores student answers)
+      const map = {
+        1: ["l1a", "l1b", "l1c", "l1d", "l1e"],
+        2: ["l2a", "l2b", "l2c", "l2d", "l2e"],
+        3: ["l3a", "l3b", "l3c", "l3d", "l3e"],
+        4: ["l4a", "l4b", "l4c", "l4d", "l4e"]
+      };
+      const originals = {};
+      map[n].forEach(function (id) {
+        originals[id] = val(id);
+        document.getElementById(id).value = "";
+      });
+      const text = gapParagraph(n);
+      map[n].forEach(function (id) {
+        document.getElementById(id).value = originals[id];
+      });
+      return text;
+    }
+
+    function copyBlock(n) {
+      const text = [
+        BLOCK_TITLES[n],
+        "Word bank: " + WORD_BANKS[n],
+        "",
+        gapParagraph(n)
+      ].join("\n");
+      copyText(text, "Block " + n + " copied.");
+    }
+
+    function copyGapFill() {
+      const parts = [1, 2, 3, 4].map(function (n) {
+        return [
+          BLOCK_TITLES[n],
+          "Word bank: " + WORD_BANKS[n],
+          gapParagraphBlankTemplate(n),
+          ""
+        ].join("\n");
+      });
+      const text = [
+        "LISTENING GAP FILL - CLASS 01",
+        "English Language: Powerful Tool",
+        "",
+        parts.join("\n"),
+        "[TEACHER NOTE: After pasting into Google Docs, you can color blanks blue if needed.]"
+      ].join("\n");
+      copyText(text, "Gap fill copied.");
+    }
+
+    function copyPlainLesson() {
+      const text = [
+        "WORKSHEET - CLASS 01",
+        "Topic: English Language - Powerful Tool",
+        "Date: " + val("date"),
+        "Student: " + val("student"),
+        "Unit: " + val("unit"),
+        "Main focus: " + val("focus"),
+        "",
+        "==================================================",
+        "1. GRAMMAR REVIEW",
+        "==================================================",
+        "",
+        "A) Present Perfect -> Past Simple",
+        "1) I have visited London three times.",
+        "   -> " + (val("g1") || "................................................."),
+        "2) She has finished her project.",
+        "   -> " + (val("g2") || "................................................."),
+        "3) We have not seen that film.",
+        "   -> " + (val("g3") || "................................................."),
+        "4) Have they called the teacher?",
+        "   -> " + (val("g4") || "................................................."),
+        "",
+        "B) Past Simple -> Past Continuous",
+        "1) He played football at 5 p.m.",
+        "   -> " + (val("g5") || "................................................."),
+        "2) I studied for the test last night.",
+        "   -> " + (val("g6") || "................................................."),
+        "3) They watched TV after dinner.",
+        "   -> " + (val("g7") || "................................................."),
+        "4) The dog ran in the garden.",
+        "   -> " + (val("g8") || "................................................."),
+        "",
+        "C) Mixed: Regular / Irregular Verbs",
+        "1) Yesterday I (walk) " + blankOr("g9") + " to school and (meet) " + blankOr("g10") + " my friend.",
+        "2) She (study) " + blankOr("g11") + " hard and (get) " + blankOr("g12") + " a very good mark.",
+        "3) We (watch) " + blankOr("g13") + " a video and (learn) " + blankOr("g14") + " new words.",
+        "4) They (play) " + blankOr("g15") + " online, but they (not win) " + blankOr("g16") + ".",
+        "",
+        "==================================================",
+        "2. LISTENING - ENGLISH LANGUAGE: POWERFUL TOOL",
+        "==================================================",
+        "",
+        BLOCK_TITLES[1],
+        "Word bank: " + WORD_BANKS[1],
+        gapParagraph(1),
+        "",
+        BLOCK_TITLES[2],
+        "Word bank: " + WORD_BANKS[2],
+        gapParagraph(2),
+        "",
+        BLOCK_TITLES[3],
+        "Word bank: " + WORD_BANKS[3],
+        gapParagraph(3),
+        "",
+        BLOCK_TITLES[4],
+        "Word bank: " + WORD_BANKS[4],
+        gapParagraph(4),
+        "",
+        "==================================================",
+        "3. TRUE / FALSE - LISTENING CHECK",
+        "==================================================",
+        "",
+        "3.1 English for Global Connection and Future Opportunities",
+        "1) English is more than a school subject. " + (val("tf1") || "....."),
+        "2) The text says English cannot connect people across countries and cultures. " + (val("tf2") || "....."),
+        "3) Teenagers use English in global online communities. " + (val("tf3") || "....."),
+        "4) English can help with scholarships and interviews. " + (val("tf4") || "....."),
+        "5) Travel becomes easier when people can use English. " + (val("tf5") || "....."),
+        "",
+        "3.2 English and Brain Development and Real Life Communication",
+        "1) Listening to songs, podcasts, and films can train the brain. " + (val("tf6") || "....."),
+        "2) Mistakes are not part of progress. " + (val("tf7") || "....."),
+        "3) English can reduce misunderstandings in teamwork. " + (val("tf8") || "....."),
+        "4) The text says future careers may require international contact. " + (val("tf9") || "....."),
+        "5) The text says English is only about being perfect. " + (val("tf10") || "....."),
+        "",
+        "True_False_MK",
+        "",
+        "==================================================",
+        "4. TALKING - SCRAMBLED DIALOGUE",
+        "==================================================",
+        "",
+        "Jim: Why did English become important for your goals?",
+        "     [ bridge / became / English / because / a ]",
+        "Pete: " + (val("d1") || "................................................."),
+        "",
+        "Jim: What did you watch in English last week?",
+        "     [ watched / YouTube / I / interviews / and ]",
+        "Pete: " + (val("d2") || "................................................."),
+        "",
+        "Jim: How did English help you during travel?",
+        "     [ read / could / and / signs / I ]",
+        "Pete: " + (val("d3") || "................................................."),
+        "",
+        "Jim: Why did you start practicing every day?",
+        "     [ confidence / wanted / more / I / because ]",
+        "Pete: " + (val("d4") || "................................................."),
+        "",
+        "Jim: Which irregular verb did you use yesterday?",
+        "     [ wrote / I / message / a / and ]",
+        "Pete: " + (val("d5") || "................................................."),
+        "",
+        "Jim: What regular verbs did you practice in class?",
+        "     [ played / talked / and / practiced / we ]",
+        "Pete: " + (val("d6") || "................................................."),
+        "",
+        "==================================================",
+        "5. NEW TOPIC TEXT - UNIT 5",
+        "==================================================",
+        "",
+        "New Topic Title: " + (val("n1") || "................................................."),
+        "Difficult sentence 1: " + (val("n2") || "................................................."),
+        "Difficult sentence 2: " + (val("n3") || "................................................."),
+        "Difficult sentence 3: " + (val("n4") || "................................................."),
+        "One-sentence summary: " + (val("n5") || "................................................."),
+        "",
+        "==================================================",
+        "6. GRAMMAR BOX - UNIT 5",
+        "==================================================",
+        "",
+        "- Regular verbs: verb + -ed",
+        "- Irregular verbs: special form (go -> went, see -> saw, write -> wrote)",
+        "Affirmative example: " + (val("b1") || "................................................."),
+        "Negative example: " + (val("b2") || "................................................."),
+        "Question example: " + (val("b3") || "................................................."),
+        "Short answer example: " + (val("b4") || "................................................."),
+        "",
+        "==================================================",
+        "7. CLASSROOM AND GRAMMAR CONNECTION",
+        "==================================================",
+        "",
+        "1) third person singular: " + (val("m1") || "................................................."),
+        "2) irregular verb: " + (val("m2") || "................................................."),
+        "3) present perfect: " + (val("m3") || "................................................."),
+        "4) past continuous: " + (val("m4") || "................................................."),
+        "5) past simple: " + (val("m5") || "................................................."),
+        "6) affirmative sentence: " + (val("m6") || "................................................."),
+        "7) negative sentence: " + (val("m7") || "................................................."),
+        "8) fill in the blanks: " + (val("m8") || "................................................."),
+        "9) circle the correct option: " + (val("m9") || "................................................."),
+        "10) describe the picture: " + (val("m10") || "................................................."),
+        "11) put the words in the correct order: " + (val("m11") || "................................................."),
+        "",
+        "Score: " + (document.getElementById("scoreOutput").textContent || "")
+      ].join("\n");
+
+      copyText(text, "Full lesson plain text copied. Paste into Google Docs with Ctrl+V.");
+    }
+
+    function checkScore() {
+      const answerKey = {
+        m1: "tretia osoba jednotneho cisla",
+        m2: "nepravidelne sloveso",
+        m3: "predpritomny cas",
+        m4: "minuly cas priebehovy",
+        m5: "minuly cas jednoduchy",
+        m6: "kladna veta",
+        m7: "zaporova veta",
+        m8: "doplnte prazdne miesta",
+        m9: "zakruzkujte spravnu moznost",
+        m10: "opiste obrazok",
+        m11: "dajte slova do spravneho poradia"
+      };
+      let score = 0;
+      const total = Object.keys(answerKey).length;
+      Object.keys(answerKey).forEach(function (id) {
+        if (val(id) === answerKey[id]) score += 1;
+      });
+      const percent = Math.round((score / total) * 100);
+      document.getElementById("scoreOutput").textContent =
+        "Score: " + score + "/" + total + " (" + percent + "%)";
+    }
+
+    document.querySelectorAll(".autosave").forEach(function (el) {
+      el.addEventListener("input", function () { saveData(false); });
+      el.addEventListener("change", function () { saveData(false); });
+    });
+
+    loadData();
+  </script>
+</body>
+</html>
