@@ -124,8 +124,43 @@
     .q { margin: 10px 0; }
     .muted { color: var(--muted); }
     .wordbank { font-size: 14px; margin-bottom: 8px; font-weight: 600; }
-    .tf-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 8px 0; }
-    .tf-row select { width: 90px; }
+    .tf-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+      gap: 6px 10px;
+      margin: 10px 0;
+      line-height: 1.45;
+    }
+    .tf-sentence { flex: 0 1 auto; max-width: 100%; }
+    .tf-choices {
+      display: inline-flex;
+      gap: 6px;
+      vertical-align: baseline;
+      flex-shrink: 0;
+    }
+    .tf-btn {
+      min-width: 40px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--line);
+      background: #fff;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .tf-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .tf-btn.active-t {
+      background: #dcfce7;
+      border-color: #16a34a;
+      color: #166534;
+    }
+    .tf-btn.active-f {
+      background: #fee2e2;
+      border-color: #dc2626;
+      color: #991b1b;
+    }
+    .tf-row select.tf-store { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
     .small { font-size: 13px; color: var(--muted); }
     .term-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
     #listeningSection {
@@ -425,21 +460,62 @@
       <div class="q">4) I will (improve) <input class="inline-input autosave" id="g12" type="text"> if I practise.</div>
     </div>
 
-    <div class="card">
+    <div class="card" id="sectionTf">
       <h2>4. True / False - Listening Check</h2>
-      <h4>3.1 Opening and Past Chapter</h4>
-      <div class="tf-row"><span>1) Leo is fifteen years old.</span><select class="autosave" id="tf1"><option value=""></option><option>T</option><option>F</option></select></div>
-      <div class="tf-row"><span>2) Leo lives in Bratislava.</span><select class="autosave" id="tf2"><option value=""></option><option>T</option><option>F</option></select></div>
-      <div class="tf-row"><span>3) Last year he joined a school project.</span><select class="autosave" id="tf3"><option value=""></option><option>T</option><option>F</option></select></div>
-      <div class="tf-row"><span>4) He interviewed his grandfather.</span><select class="autosave" id="tf4"><option value=""></option><option>T</option><option>F</option></select></div>
-      <div class="tf-row"><span>5) His classmates laughed and left.</span><select class="autosave" id="tf5"><option value=""></option><option>T</option><option>F</option></select></div>
+      <p class="small">Klikni <strong>T</strong> alebo <strong>F</strong> hned za vetou.</p>
+      <h4>4.1 Opening and Past Chapter</h4>
+      <div class="tf-row">
+        <span class="tf-sentence">1) Leo is fifteen years old.</span>
+        <span class="tf-choices"><button type="button" class="tf-btn" data-tf="tf1" data-val="T">T</button><button type="button" class="tf-btn" data-tf="tf1" data-val="F">F</button></span>
+        <select class="autosave tf-store" id="tf1" tabindex="-1" aria-hidden="true"><option value=""></option><option>T</option><option>F</option></select>
+      </div>
+      <div class="tf-row">
+        <span class="tf-sentence">2) Leo lives in Bratislava.</span>
+        <span class="tf-choices"><button type="button" class="tf-btn" data-tf="tf2" data-val="T">T</button><button type="button" class="tf-btn" data-tf="tf2" data-val="F">F</button></span>
+        <select class="autosave tf-store" id="tf2" tabindex="-1" aria-hidden="true"><option value=""></option><option>T</option><option>F</option></select>
+      </div>
+      <div class="tf-row">
+        <span class="tf-sentence">3) Last year he joined a school project.</span>
+        <span class="tf-choices"><button type="button" class="tf-btn" data-tf="tf3" data-val="T">T</button><button type="button" class="tf-btn" data-tf="tf3" data-val="F">F</button></span>
+        <select class="autosave tf-store" id="tf3" tabindex="-1" aria-hidden="true"><option value=""></option><option>T</option><option>F</option></select>
+      </div>
+      <div class="tf-row">
+        <span class="tf-sentence">4) He interviewed his grandfather.</span>
+        <span class="tf-choices"><button type="button" class="tf-btn" data-tf="tf4" data-val="T">T</button><button type="button" class="tf-btn" data-tf="tf4" data-val="F">F</button></span>
+        <select class="autosave tf-store" id="tf4" tabindex="-1" aria-hidden="true"><option value=""></option><option>T</option><option>F</option></select>
+      </div>
+      <div class="tf-row">
+        <span class="tf-sentence">5) His classmates laughed and left.</span>
+        <span class="tf-choices"><button type="button" class="tf-btn" data-tf="tf5" data-val="T">T</button><button type="button" class="tf-btn" data-tf="tf5" data-val="F">F</button></span>
+        <select class="autosave tf-store" id="tf5" tabindex="-1" aria-hidden="true"><option value=""></option><option>T</option><option>F</option></select>
+      </div>
 
-      <h4>3.2 Experiences and Plans</h4>
-      <div class="tf-row"><span>1) Leo has practised English more often.</span><select class="autosave" id="tf6"><option value=""></option><option>T</option><option>F</option></select></div>
-      <div class="tf-row"><span>2) He has travelled alone many times.</span><select class="autosave" id="tf7"><option value=""></option><option>T</option><option>F</option></select></div>
-      <div class="tf-row"><span>3) He is going to join the school media club.</span><select class="autosave" id="tf8"><option value=""></option><option>T</option><option>F</option></select></div>
-      <div class="tf-row"><span>4) His goal is to speak for two minutes without stopping.</span><select class="autosave" id="tf9"><option value=""></option><option>T</option><option>F</option></select></div>
-      <div class="tf-row"><span>5) He says his story is finished forever.</span><select class="autosave" id="tf10"><option value=""></option><option>T</option><option>F</option></select></div>
+      <h4>4.2 Experiences and Plans</h4>
+      <div class="tf-row">
+        <span class="tf-sentence">1) Leo has practised English more often.</span>
+        <span class="tf-choices"><button type="button" class="tf-btn" data-tf="tf6" data-val="T">T</button><button type="button" class="tf-btn" data-tf="tf6" data-val="F">F</button></span>
+        <select class="autosave tf-store" id="tf6" tabindex="-1" aria-hidden="true"><option value=""></option><option>T</option><option>F</option></select>
+      </div>
+      <div class="tf-row">
+        <span class="tf-sentence">2) He has travelled alone many times.</span>
+        <span class="tf-choices"><button type="button" class="tf-btn" data-tf="tf7" data-val="T">T</button><button type="button" class="tf-btn" data-tf="tf7" data-val="F">F</button></span>
+        <select class="autosave tf-store" id="tf7" tabindex="-1" aria-hidden="true"><option value=""></option><option>T</option><option>F</option></select>
+      </div>
+      <div class="tf-row">
+        <span class="tf-sentence">3) He is going to join the school media club.</span>
+        <span class="tf-choices"><button type="button" class="tf-btn" data-tf="tf8" data-val="T">T</button><button type="button" class="tf-btn" data-tf="tf8" data-val="F">F</button></span>
+        <select class="autosave tf-store" id="tf8" tabindex="-1" aria-hidden="true"><option value=""></option><option>T</option><option>F</option></select>
+      </div>
+      <div class="tf-row">
+        <span class="tf-sentence">4) His goal is to speak for two minutes without stopping.</span>
+        <span class="tf-choices"><button type="button" class="tf-btn" data-tf="tf9" data-val="T">T</button><button type="button" class="tf-btn" data-tf="tf9" data-val="F">F</button></span>
+        <select class="autosave tf-store" id="tf9" tabindex="-1" aria-hidden="true"><option value=""></option><option>T</option><option>F</option></select>
+      </div>
+      <div class="tf-row">
+        <span class="tf-sentence">5) He says his story is finished forever.</span>
+        <span class="tf-choices"><button type="button" class="tf-btn" data-tf="tf10" data-val="T">T</button><button type="button" class="tf-btn" data-tf="tf10" data-val="F">F</button></span>
+        <select class="autosave tf-store" id="tf10" tabindex="-1" aria-hidden="true"><option value=""></option><option>T</option><option>F</option></select>
+      </div>
       <p class="small">True_False_MK</p>
     </div>
 
@@ -700,6 +776,7 @@
         var raw = localStorage.getItem(STORAGE_KEY);
         if (!raw) {
           newTransformSet();
+          syncAllTfButtons();
           return;
         }
         var data = JSON.parse(raw);
@@ -715,9 +792,33 @@
         } else {
           newTransformSet();
         }
+        syncAllTfButtons();
       } catch (e) {
         newTransformSet();
+        syncAllTfButtons();
       }
+    }
+
+    function syncTfButtons(id) {
+      var sel = document.getElementById(id);
+      var v = sel ? sel.value : "";
+      document.querySelectorAll('.tf-btn[data-tf="' + id + '"]').forEach(function (btn) {
+        btn.classList.remove("active-t", "active-f");
+        if (v && btn.getAttribute("data-val") === v) {
+          btn.classList.add(v === "T" ? "active-t" : "active-f");
+        }
+      });
+    }
+    function syncAllTfButtons() {
+      ["tf1","tf2","tf3","tf4","tf5","tf6","tf7","tf8","tf9","tf10"].forEach(syncTfButtons);
+    }
+    function setTfAnswer(id, val) {
+      var sel = document.getElementById(id);
+      if (!sel) return;
+      sel.value = val;
+      syncTfButtons(id);
+      saveData();
+      setStatus("T/F: " + id.replace("tf", "") + " = " + val);
     }
     function clearData() {
       if (!confirm("Clear all answers for Class 24?")) return;
@@ -738,6 +839,7 @@
       document.getElementById("dialogueScoreOutput").textContent = "Dialogue score: not checked yet.";
       document.getElementById("transformScoreOutput").textContent = "Exercise 2: 6 tasks — not checked yet.";
       newTransformSet();
+      syncAllTfButtons();
       setStatus("Cleared.");
     }
     function savePdf() { window.print(); }
@@ -1475,6 +1577,12 @@
       if (e.target && e.target.classList.contains("transform-input")) {
         clearTransformFeedback();
       }
+    });
+
+    document.getElementById("sectionTf").addEventListener("click", function (e) {
+      var btn = e.target.closest(".tf-btn");
+      if (!btn) return;
+      setTfAnswer(btn.getAttribute("data-tf"), btn.getAttribute("data-val"));
     });
 
     loadData();
