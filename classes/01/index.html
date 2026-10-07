@@ -191,8 +191,10 @@
       <button onclick="copyGapFill()">Copy Gap Fill</button>
       <button onclick="copyPlainLesson()">Copy Plain Text (Lesson)</button>
       <button onclick="savePdf()">Save as PDF</button>
-      <button onclick="checkScore()">Check Score</button>
-      <button onclick="showCorrectAnswers()">Show Correct Answers</button>
+      <button onclick="checkScore()">Check Score (Sec.7)</button>
+      <button onclick="showCorrectAnswers()">Show Answers (Sec.7)</button>
+      <button onclick="checkDialogue()">Check Dialogue</button>
+      <button onclick="showDialogueAnswers()">Show Dialogue Answers</button>
       <button onclick="clearData()">Clear Answers</button>
       <span class="status" id="copyStatus"></span>
     </div>
@@ -356,34 +358,59 @@
       <p class="small">True_False_MK</p>
     </div>
 
-    <div class="card">
+    <div class="card" id="section4">
       <h2>4. Talking - Scrambled Dialogue</h2>
-      <div class="q">
+      <p class="small"><strong>Check Dialogue hodnoti tieto odpovede (1-6).</strong> Usporiadaj slova z banky do spravnej vety.</p>
+
+      <div class="score-item" data-dialogue-id="d1">
+        <div class="item-label">1) Pete answer: <span class="mark" id="mark-d1"></span></div>
         <p><strong>Jim:</strong> Why did English become important for your goals?<br><span class="muted">[ bridge / became / English / because / a ]</span></p>
         <textarea class="autosave" id="d1" rows="2"></textarea>
+        <div class="hint" id="hint-d1"></div>
       </div>
-      <div class="q">
+
+      <div class="score-item" data-dialogue-id="d2">
+        <div class="item-label">2) Pete answer: <span class="mark" id="mark-d2"></span></div>
         <p><strong>Jim:</strong> What did you watch in English last week?<br><span class="muted">[ watched / YouTube / I / interviews / and ]</span></p>
         <textarea class="autosave" id="d2" rows="2"></textarea>
+        <div class="hint" id="hint-d2"></div>
       </div>
-      <div class="q">
+
+      <div class="score-item" data-dialogue-id="d3">
+        <div class="item-label">3) Pete answer: <span class="mark" id="mark-d3"></span></div>
         <p><strong>Jim:</strong> How did English help you during travel?<br><span class="muted">[ read / could / and / signs / I ]</span></p>
         <textarea class="autosave" id="d3" rows="2"></textarea>
+        <div class="hint" id="hint-d3"></div>
       </div>
-      <div class="q">
+
+      <div class="score-item" data-dialogue-id="d4">
+        <div class="item-label">4) Pete answer: <span class="mark" id="mark-d4"></span></div>
         <p><strong>Jim:</strong> Why did you start practicing every day?<br><span class="muted">[ confidence / wanted / more / I / because ]</span></p>
         <textarea class="autosave" id="d4" rows="2"></textarea>
+        <div class="hint" id="hint-d4"></div>
       </div>
-      <div class="q">
+
+      <div class="score-item" data-dialogue-id="d5">
+        <div class="item-label">5) Pete answer: <span class="mark" id="mark-d5"></span></div>
         <p><strong>Jim:</strong> Which irregular verb did you use yesterday?<br><span class="muted">[ wrote / I / message / a / and ]</span></p>
         <textarea class="autosave" id="d5" rows="2"></textarea>
+        <div class="hint" id="hint-d5"></div>
       </div>
-      <div class="q">
+
+      <div class="score-item" data-dialogue-id="d6">
+        <div class="item-label">6) Pete answer: <span class="mark" id="mark-d6"></span></div>
         <p><strong>Jim:</strong> What regular verbs did you practice in class?<br><span class="muted">[ played / talked / and / practiced / we ]</span></p>
         <textarea class="autosave" id="d6" rows="2"></textarea>
+        <div class="hint" id="hint-d6"></div>
       </div>
-    </div>
 
+      <div class="score-actions">
+        <button class="primary" onclick="checkDialogue()">Check Dialogue</button>
+        <button onclick="showDialogueAnswers()">Show Correct Answers</button>
+      </div>
+      <div id="dialogueScoreOutput" class="score-box">Dialogue score: not checked yet.</div>
+      <div id="dialogueScoreNote" class="score-note">Tip: Check Dialogue oznaci spravne/nespravne vety a ukaze hint. Pri uprave sa feedback skryje.</div>
+    </div>
     <div class="card">
       <h2>5. New Topic Text - Unit 5</h2>
       <div class="q"><strong>New Topic Title:</strong><input class="line-input autosave" id="n1" type="text"></div>
@@ -629,6 +656,13 @@
       document.getElementById("scoreOutput").textContent = "Score: not checked yet.";
       var note = document.getElementById("scoreNote");
       if (note) note.textContent = "Tip: Check Score oznaci spravne (zelena) a nespravne (cervena) polozky a ukaze kratke zdovodnenie.";
+      if (typeof resetDialogueStyles === "function") resetDialogueStyles();
+      dialogueRevealed = false;
+      dialogueFeedbackVisible = false;
+      var dOut = document.getElementById("dialogueScoreOutput");
+      var dNote = document.getElementById("dialogueScoreNote");
+      if (dOut) dOut.textContent = "Dialogue score: not checked yet.";
+      if (dNote) dNote.textContent = "Tip: Check Dialogue oznaci spravne/nespravne vety a ukaze hint. Pri uprave sa feedback skryje.";
       setStatus("Cleared.");
     }
 
@@ -1029,13 +1063,172 @@
       hideAnswersLock = false;
     }
 
+
+    const DIALOGUE_KEY = {
+      d1: {
+        display: "Because English became a bridge.",
+        answers: ["because english became a bridge", "english became a bridge because"],
+        hint: "Hint: Use all words -> Because English became a bridge."
+      },
+      d2: {
+        display: "I watched YouTube and interviews.",
+        answers: ["i watched youtube and interviews", "i watched interviews and youtube"],
+        hint: "Hint: Use all words -> I watched YouTube and interviews."
+      },
+      d3: {
+        display: "And I could read signs.",
+        answers: ["and i could read signs", "i could read signs and", "i could read and signs"],
+        hint: "Hint: Best answer -> And I could read signs."
+      },
+      d4: {
+        display: "Because I wanted more confidence.",
+        answers: ["because i wanted more confidence", "i wanted more confidence because"],
+        hint: "Hint: Use all words -> Because I wanted more confidence."
+      },
+      d5: {
+        display: "And I wrote a message.",
+        answers: ["and i wrote a message", "i wrote a message and"],
+        hint: "Hint: Best answer -> And I wrote a message. (irregular: write -> wrote)"
+      },
+      d6: {
+        display: "We played, talked and practiced.",
+        answers: ["we played talked and practiced", "we played and talked and practiced", "we practiced played and talked"],
+        hint: "Hint: Use all words -> We played, talked and practiced."
+      }
+    };
+
+    var dialogueRevealed = false;
+    var dialogueFeedbackVisible = false;
+    var hideDialogueLock = false;
+
+    function normalizeAnswer(text) {
+      return (text || "")
+        .toLowerCase()
+        .replace(/[.,!?;:'"]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function resetDialogueStyles() {
+      document.querySelectorAll("[data-dialogue-id]").forEach(function (item) {
+        item.classList.remove("scored-correct", "scored-wrong", "reveal-correct");
+      });
+      Object.keys(DIALOGUE_KEY).forEach(function (id) {
+        var mark = document.getElementById("mark-" + id);
+        var hint = document.getElementById("hint-" + id);
+        if (mark) mark.textContent = "";
+        if (hint) {
+          hint.classList.remove("show");
+          hint.textContent = "";
+        }
+      });
+    }
+
+    function hideDialogueOnEdit(changedId) {
+      if (hideDialogueLock) return;
+      if (!dialogueRevealed && !dialogueFeedbackVisible) return;
+
+      hideDialogueLock = true;
+      resetDialogueStyles();
+
+      if (dialogueRevealed) {
+        Object.keys(DIALOGUE_KEY).forEach(function (id) {
+          if (changedId && id === changedId) return;
+          var el = document.getElementById(id);
+          if (el) el.value = "";
+        });
+        dialogueRevealed = false;
+        document.getElementById("dialogueScoreOutput").textContent = "Dialogue score: not checked yet.";
+        document.getElementById("dialogueScoreNote").textContent =
+          "Spravne dialogy su skryte. Napis odpovede znova a stlac Check Dialogue.";
+        setStatus("Dialogue answers hidden.");
+        saveData(false);
+      } else {
+        document.getElementById("dialogueScoreOutput").textContent = "Dialogue score: not checked yet.";
+        document.getElementById("dialogueScoreNote").textContent =
+          "Feedback skryty po uprave. Po vyplneni stlac Check Dialogue znova.";
+        setStatus("Dialogue feedback hidden.");
+      }
+
+      dialogueFeedbackVisible = false;
+      hideDialogueLock = false;
+    }
+
+    function checkDialogue() {
+      resetDialogueStyles();
+      dialogueRevealed = false;
+      dialogueFeedbackVisible = true;
+      var score = 0;
+      var total = Object.keys(DIALOGUE_KEY).length;
+
+      Object.keys(DIALOGUE_KEY).forEach(function (id) {
+        var item = document.querySelector('[data-dialogue-id="' + id + '"]');
+        var mark = document.getElementById("mark-" + id);
+        var hint = document.getElementById("hint-" + id);
+        var chosenNorm = normalizeAnswer(val(id));
+        var isCorrect = DIALOGUE_KEY[id].answers.indexOf(chosenNorm) !== -1;
+
+        if (item) item.classList.add(isCorrect ? "scored-correct" : "scored-wrong");
+        if (mark) mark.textContent = isCorrect ? "OK" : "X";
+        if (hint) {
+          if (isCorrect) {
+            hint.textContent = "Spravne. " + DIALOGUE_KEY[id].hint;
+          } else if (!chosenNorm) {
+            hint.textContent = "Neoznacene. Spravna odpoved: " + DIALOGUE_KEY[id].display + " " + DIALOGUE_KEY[id].hint;
+          } else {
+            hint.textContent = "Nespravne. Spravne: " + DIALOGUE_KEY[id].display + " " + DIALOGUE_KEY[id].hint;
+          }
+          hint.classList.add("show");
+        }
+        if (isCorrect) score += 1;
+      });
+
+      var percent = Math.round((score / total) * 100);
+      document.getElementById("dialogueScoreOutput").textContent =
+        "Dialogue score: " + score + "/" + total + " (" + percent + "%)";
+      document.getElementById("dialogueScoreNote").textContent =
+        "Check Dialogue hodnotil vety 1-6. Zelena = spravne, cervena = nespravne. Pri uprave sa feedback skryje.";
+      setStatus("Dialogue checked: " + score + "/" + total);
+      var section = document.getElementById("section4");
+      if (section) section.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function showDialogueAnswers() {
+      hideDialogueLock = true;
+      resetDialogueStyles();
+      dialogueRevealed = true;
+      dialogueFeedbackVisible = true;
+      Object.keys(DIALOGUE_KEY).forEach(function (id) {
+        var el = document.getElementById(id);
+        var item = document.querySelector('[data-dialogue-id="' + id + '"]');
+        var mark = document.getElementById("mark-" + id);
+        var hint = document.getElementById("hint-" + id);
+
+        if (el) el.value = DIALOGUE_KEY[id].display;
+        if (item) item.classList.add("reveal-correct");
+        if (mark) mark.textContent = "ANSWER";
+        if (hint) {
+          hint.textContent = "Spravna moznost: " + DIALOGUE_KEY[id].display + " " + DIALOGUE_KEY[id].hint;
+          hint.classList.add("show");
+        }
+      });
+      saveData(false);
+      document.getElementById("dialogueScoreOutput").textContent =
+        "Correct dialogue answers shown (6/6). Ak zacnes menit text, odpovede sa skryju.";
+      document.getElementById("dialogueScoreNote").textContent =
+        "Show Correct Answers je aktivne. Pri prvej uprave sa spravne dialogy a hinty skryju.";
+      setStatus("Dialogue answers revealed.");
+      hideDialogueLock = false;
+    }
     document.querySelectorAll(".autosave").forEach(function (el) {
       el.addEventListener("input", function () {
         if (el.id && SCORE_KEY[el.id]) hideCorrectAnswersOnEdit(el.id);
+        if (el.id && DIALOGUE_KEY[el.id]) hideDialogueOnEdit(el.id);
         saveData(false);
       });
       el.addEventListener("change", function () {
         if (el.id && SCORE_KEY[el.id]) hideCorrectAnswersOnEdit(el.id);
+        if (el.id && DIALOGUE_KEY[el.id]) hideDialogueOnEdit(el.id);
         saveData(false);
       });
     });
