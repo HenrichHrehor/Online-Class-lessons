@@ -291,54 +291,8 @@
       </div>
     </div>
 
-    <div class="card">
-      <h2>1. Grammar Review (for your pitch)</h2>
-      <h3>A) Present Simple - who you are</h3>
-      <div class="q">1) I (be) <input class="inline-input autosave" id="g1" type="text"> a year-nine student.</div>
-      <div class="q">2) I (live) <input class="inline-input autosave" id="g2" type="text"> in ________.</div>
-      <div class="q">3) I (not like) <input class="inline-input autosave" id="g3" type="text"> long boring talks.</div>
-      <div class="q">4) What (do / you / enjoy) <input class="inline-input autosave" id="g4" type="text">?</div>
-
-      <h3>B) Past Simple - one real story</h3>
-      <div class="q">1) Last year I (join) <input class="inline-input autosave" id="g5" type="text"> a project.</div>
-      <div class="q">2) I (feel) <input class="inline-input autosave" id="g6" type="text"> nervous at first.</div>
-      <div class="q">3) Then I (write) <input class="inline-input autosave" id="g7" type="text"> a short report.</div>
-      <div class="q">4) My classmates (clap) <input class="inline-input autosave" id="g8" type="text">.</div>
-
-      <h3>C) Present Perfect + going to</h3>
-      <div class="q">1) I have (practise) <input class="inline-input autosave" id="g9" type="text"> English more often.</div>
-      <div class="q">2) I have never (travel) <input class="inline-input autosave" id="g10" type="text"> alone.</div>
-      <div class="q">3) Next year I am going to (join) <input class="inline-input autosave" id="g11" type="text"> a club.</div>
-      <div class="q">4) I will (improve) <input class="inline-input autosave" id="g12" type="text"> if I practise.</div>
-    </div>
-
-    <div class="card" id="sectionTransform">
-      <h2>2. Exercise 2 – Sentence Transformations</h2>
-      <p class="small">
-        <strong>Exercise 2</strong> — kompletna aktivita: <strong>6 uloh</strong> na transformaciu viet
-        (Make affirmative / Make negative / Make question).
-        Kazdy cas ma pool 9 viet (3 + 3 + 3). Vyber pool, vypln vsetkych 6 odpovedi, potom Check.
-        <strong>New set</strong> = novych 6 uloh.
-      </p>
-      <div class="section-sticky-actions">
-        <label class="small" for="transformPool">Pool</label>
-        <select id="transformPool" class="pool-select" onchange="newTransformSet()">
-          <option value="all">All tenses (mix)</option>
-          <option value="present_simple">Present Simple</option>
-          <option value="past_simple">Past Simple</option>
-          <option value="present_perfect">Present Perfect</option>
-          <option value="going_to">be going to</option>
-        </select>
-        <button type="button" onclick="newTransformSet()">New set (6 tasks)</button>
-        <button type="button" class="primary" onclick="checkTransforms()">Check Exercise 2</button>
-      </div>
-      <div id="transformList" class="transform-grid" aria-label="Exercise 2 six transformation tasks"></div>
-      <div id="transformScoreOutput" class="score-box">Exercise 2: 6 tasks — not checked yet.</div>
-      <div id="transformScoreNote" class="score-note">Example: <em>I am going to study this year.</em> → Make question / Make negative. Always 6 tasks.</div>
-    </div>
-
     <div class="card" id="listeningSection">
-      <h2>3. Listening - Gap Fill</h2>
+      <h2>1. Listening - Gap Fill</h2>
       <p class="small">Fill in the blanks. Text matches the Full Text word-for-word.</p>
 
       <div class="listen-block" id="block1">
@@ -423,6 +377,52 @@
           Thank you for your attention.
         </p>
       </div>
+    </div>
+
+    <div class="card" id="sectionTransform">
+      <h2>2. Exercise 2 – Sentence Transformations</h2>
+      <p class="small">
+        <strong>Exercise 2</strong> — kompletna aktivita: <strong>6 uloh</strong> na transformaciu viet
+        (Make affirmative / Make negative / Make question).
+        Kazdy cas ma pool 9 viet (3 + 3 + 3). Vyber pool, vypln vsetkych 6 odpovedi, potom Check.
+        <strong>New set</strong> = novych 6 uloh.
+      </p>
+      <div class="section-sticky-actions">
+        <label class="small" for="transformPool">Pool</label>
+        <select id="transformPool" class="pool-select" onchange="newTransformSet()">
+          <option value="all">All tenses (mix)</option>
+          <option value="present_simple">Present Simple</option>
+          <option value="past_simple">Past Simple</option>
+          <option value="present_perfect">Present Perfect</option>
+          <option value="going_to">be going to</option>
+        </select>
+        <button type="button" onclick="newTransformSet()">New set (6 tasks)</button>
+        <button type="button" class="primary" onclick="checkTransforms()">Check Exercise 2</button>
+      </div>
+      <div id="transformList" class="transform-grid" aria-label="Exercise 2 six transformation tasks"></div>
+      <div id="transformScoreOutput" class="score-box">Exercise 2: 6 tasks — not checked yet.</div>
+      <div id="transformScoreNote" class="score-note">Example: <em>I am going to study this year.</em> → Make question / Make negative. Always 6 tasks.</div>
+    </div>
+
+    <div class="card">
+      <h2>3. Grammar Review (for your pitch)</h2>
+      <h3>A) Present Simple - who you are</h3>
+      <div class="q">1) I (be) <input class="inline-input autosave" id="g1" type="text"> a year-nine student.</div>
+      <div class="q">2) I (live) <input class="inline-input autosave" id="g2" type="text"> in ________.</div>
+      <div class="q">3) I (not like) <input class="inline-input autosave" id="g3" type="text"> long boring talks.</div>
+      <div class="q">4) What (do / you / enjoy) <input class="inline-input autosave" id="g4" type="text">?</div>
+
+      <h3>B) Past Simple - one real story</h3>
+      <div class="q">1) Last year I (join) <input class="inline-input autosave" id="g5" type="text"> a project.</div>
+      <div class="q">2) I (feel) <input class="inline-input autosave" id="g6" type="text"> nervous at first.</div>
+      <div class="q">3) Then I (write) <input class="inline-input autosave" id="g7" type="text"> a short report.</div>
+      <div class="q">4) My classmates (clap) <input class="inline-input autosave" id="g8" type="text">.</div>
+
+      <h3>C) Present Perfect + going to</h3>
+      <div class="q">1) I have (practise) <input class="inline-input autosave" id="g9" type="text"> English more often.</div>
+      <div class="q">2) I have never (travel) <input class="inline-input autosave" id="g10" type="text"> alone.</div>
+      <div class="q">3) Next year I am going to (join) <input class="inline-input autosave" id="g11" type="text"> a club.</div>
+      <div class="q">4) I will (improve) <input class="inline-input autosave" id="g12" type="text"> if I practise.</div>
     </div>
 
     <div class="card">
