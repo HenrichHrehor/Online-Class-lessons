@@ -161,6 +161,19 @@
       color: #991b1b;
     }
     .tf-row select.tf-store { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+    .tf-row.scored-correct {
+      background: #f0fdf4;
+      border-radius: 8px;
+      padding: 6px 8px;
+      border: 1px solid #22c55e;
+    }
+    .tf-row.scored-wrong {
+      background: #fef2f2;
+      border-radius: 8px;
+      padding: 6px 8px;
+      border: 1px solid #ef4444;
+    }
+    .tf-row .mark { margin-left: 4px; font-weight: 700; }
     .small { font-size: 13px; color: var(--muted); }
     .term-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
     #listeningSection {
@@ -462,61 +475,65 @@
 
     <div class="card" id="sectionTf">
       <h2>4. True / False - Listening Check</h2>
-      <p class="small">Klikni <strong>T</strong> alebo <strong>F</strong> hned za vetou. Mix je <strong>5 True + 5 False</strong>.</p>
+      <p class="small">Klikni <strong>T</strong> alebo <strong>F</strong> hned za vetou, potom stlac Check True/False.</p>
+      <div class="section-sticky-actions">
+        <button type="button" class="primary" onclick="checkTrueFalse()">Check True/False</button>
+      </div>
       <h4>4.1 Opening and Past Chapter</h4>
-      <div class="tf-row">
-        <span class="tf-sentence">1) Leo is fifteen years old.</span>
+      <div class="tf-row" data-tf-id="tf1">
+        <span class="tf-sentence">1) Leo is fifteen years old. <span class="mark" id="mark-tf1"></span></span>
         <span class="tf-choices"><button type="button" class="tf-btn" data-tf="tf1" data-val="T">T</button><button type="button" class="tf-btn" data-tf="tf1" data-val="F">F</button></span>
         <select class="autosave tf-store" id="tf1" tabindex="-1" aria-hidden="true"><option value=""></option><option>T</option><option>F</option></select>
       </div>
-      <div class="tf-row">
-        <span class="tf-sentence">2) Leo lives in Bratislava.</span>
+      <div class="tf-row" data-tf-id="tf2">
+        <span class="tf-sentence">2) Leo lives in Bratislava. <span class="mark" id="mark-tf2"></span></span>
         <span class="tf-choices"><button type="button" class="tf-btn" data-tf="tf2" data-val="T">T</button><button type="button" class="tf-btn" data-tf="tf2" data-val="F">F</button></span>
         <select class="autosave tf-store" id="tf2" tabindex="-1" aria-hidden="true"><option value=""></option><option>T</option><option>F</option></select>
       </div>
-      <div class="tf-row">
-        <span class="tf-sentence">3) Last year he joined a school project.</span>
+      <div class="tf-row" data-tf-id="tf3">
+        <span class="tf-sentence">3) Last year he joined a school project. <span class="mark" id="mark-tf3"></span></span>
         <span class="tf-choices"><button type="button" class="tf-btn" data-tf="tf3" data-val="T">T</button><button type="button" class="tf-btn" data-tf="tf3" data-val="F">F</button></span>
         <select class="autosave tf-store" id="tf3" tabindex="-1" aria-hidden="true"><option value=""></option><option>T</option><option>F</option></select>
       </div>
-      <div class="tf-row">
-        <span class="tf-sentence">4) He wrote his short report in Slovak.</span>
+      <div class="tf-row" data-tf-id="tf4">
+        <span class="tf-sentence">4) He wrote his short report in Slovak. <span class="mark" id="mark-tf4"></span></span>
         <span class="tf-choices"><button type="button" class="tf-btn" data-tf="tf4" data-val="T">T</button><button type="button" class="tf-btn" data-tf="tf4" data-val="F">F</button></span>
         <select class="autosave tf-store" id="tf4" tabindex="-1" aria-hidden="true"><option value=""></option><option>T</option><option>F</option></select>
       </div>
-      <div class="tf-row">
-        <span class="tf-sentence">5) His classmates laughed and left.</span>
+      <div class="tf-row" data-tf-id="tf5">
+        <span class="tf-sentence">5) His classmates laughed and left. <span class="mark" id="mark-tf5"></span></span>
         <span class="tf-choices"><button type="button" class="tf-btn" data-tf="tf5" data-val="T">T</button><button type="button" class="tf-btn" data-tf="tf5" data-val="F">F</button></span>
         <select class="autosave tf-store" id="tf5" tabindex="-1" aria-hidden="true"><option value=""></option><option>T</option><option>F</option></select>
       </div>
 
       <h4>4.2 Experiences and Plans</h4>
-      <div class="tf-row">
-        <span class="tf-sentence">1) Leo has practised English more often.</span>
+      <div class="tf-row" data-tf-id="tf6">
+        <span class="tf-sentence">1) Leo has practised English more often. <span class="mark" id="mark-tf6"></span></span>
         <span class="tf-choices"><button type="button" class="tf-btn" data-tf="tf6" data-val="T">T</button><button type="button" class="tf-btn" data-tf="tf6" data-val="F">F</button></span>
         <select class="autosave tf-store" id="tf6" tabindex="-1" aria-hidden="true"><option value=""></option><option>T</option><option>F</option></select>
       </div>
-      <div class="tf-row">
-        <span class="tf-sentence">2) He has travelled alone many times.</span>
+      <div class="tf-row" data-tf-id="tf7">
+        <span class="tf-sentence">2) He has travelled alone many times. <span class="mark" id="mark-tf7"></span></span>
         <span class="tf-choices"><button type="button" class="tf-btn" data-tf="tf7" data-val="T">T</button><button type="button" class="tf-btn" data-tf="tf7" data-val="F">F</button></span>
         <select class="autosave tf-store" id="tf7" tabindex="-1" aria-hidden="true"><option value=""></option><option>T</option><option>F</option></select>
       </div>
-      <div class="tf-row">
-        <span class="tf-sentence">3) He is going to join the school media club.</span>
+      <div class="tf-row" data-tf-id="tf8">
+        <span class="tf-sentence">3) He is going to join the school media club. <span class="mark" id="mark-tf8"></span></span>
         <span class="tf-choices"><button type="button" class="tf-btn" data-tf="tf8" data-val="T">T</button><button type="button" class="tf-btn" data-tf="tf8" data-val="F">F</button></span>
         <select class="autosave tf-store" id="tf8" tabindex="-1" aria-hidden="true"><option value=""></option><option>T</option><option>F</option></select>
       </div>
-      <div class="tf-row">
-        <span class="tf-sentence">4) His goal is to speak for one hour without stopping.</span>
+      <div class="tf-row" data-tf-id="tf9">
+        <span class="tf-sentence">4) His goal is to speak for one hour without stopping. <span class="mark" id="mark-tf9"></span></span>
         <span class="tf-choices"><button type="button" class="tf-btn" data-tf="tf9" data-val="T">T</button><button type="button" class="tf-btn" data-tf="tf9" data-val="F">F</button></span>
         <select class="autosave tf-store" id="tf9" tabindex="-1" aria-hidden="true"><option value=""></option><option>T</option><option>F</option></select>
       </div>
-      <div class="tf-row">
-        <span class="tf-sentence">5) He says his story is finished forever.</span>
+      <div class="tf-row" data-tf-id="tf10">
+        <span class="tf-sentence">5) He says his story is finished forever. <span class="mark" id="mark-tf10"></span></span>
         <span class="tf-choices"><button type="button" class="tf-btn" data-tf="tf10" data-val="T">T</button><button type="button" class="tf-btn" data-tf="tf10" data-val="F">F</button></span>
         <select class="autosave tf-store" id="tf10" tabindex="-1" aria-hidden="true"><option value=""></option><option>T</option><option>F</option></select>
       </div>
-      <p class="small">True_False_MK · Answer key (teacher): T F T F F &nbsp;|&nbsp; T F T F F</p>
+      <div id="tfScoreOutput" class="score-box">True/False: not checked yet.</div>
+      <div id="tfScoreNote" class="score-note">Po Check True/False uvidis OK/X pri kazdej vete.</div>
     </div>
 
     <div class="card" id="section4">
@@ -812,11 +829,71 @@
     function syncAllTfButtons() {
       ["tf1","tf2","tf3","tf4","tf5","tf6","tf7","tf8","tf9","tf10"].forEach(syncTfButtons);
     }
+    var TF_KEY = {
+      tf1: "T",
+      tf2: "F",
+      tf3: "T",
+      tf4: "F",
+      tf5: "F",
+      tf6: "T",
+      tf7: "F",
+      tf8: "T",
+      tf9: "F",
+      tf10: "F"
+    };
+    var tfFeedbackVisible = false;
+
+    function resetTfStyles() {
+      document.querySelectorAll("#sectionTf .tf-row").forEach(function (row) {
+        row.classList.remove("scored-correct", "scored-wrong");
+      });
+      Object.keys(TF_KEY).forEach(function (id) {
+        var mark = document.getElementById("mark-" + id);
+        if (mark) mark.textContent = "";
+      });
+    }
+
+    function clearTfFeedback() {
+      if (!tfFeedbackVisible) return;
+      resetTfStyles();
+      tfFeedbackVisible = false;
+      document.getElementById("tfScoreOutput").textContent = "True/False: not checked yet.";
+      document.getElementById("tfScoreNote").textContent =
+        "Podfarbenie zmizlo. Uprav odpoved a stlac Check True/False znova.";
+    }
+
+    function checkTrueFalse() {
+      resetTfStyles();
+      tfFeedbackVisible = true;
+      var score = 0;
+      var total = Object.keys(TF_KEY).length;
+      Object.keys(TF_KEY).forEach(function (id) {
+        var row = document.querySelector('.tf-row[data-tf-id="' + id + '"]');
+        var mark = document.getElementById("mark-" + id);
+        var chosen = val(id);
+        var correct = TF_KEY[id];
+        var ok = chosen === correct;
+        if (row) row.classList.add(ok ? "scored-correct" : "scored-wrong");
+        if (mark) {
+          if (!chosen) mark.textContent = "—";
+          else mark.textContent = ok ? "OK" : "X";
+        }
+        if (ok) score += 1;
+      });
+      var percent = Math.round((score / total) * 100);
+      document.getElementById("tfScoreOutput").textContent =
+        "True/False: " + score + "/" + total + " (" + percent + "%)";
+      document.getElementById("tfScoreNote").textContent =
+        "Check True/False hotovy. Ked zmenis T/F, farby zmiznu.";
+      setStatus("True/False checked: " + score + "/" + total);
+    }
+
     function setTfAnswer(id, val) {
       var sel = document.getElementById(id);
       if (!sel) return;
       sel.value = val;
       syncTfButtons(id);
+      clearTfFeedback();
       saveData();
       setStatus("T/F: " + id.replace("tf", "") + " = " + val);
     }
@@ -840,6 +917,10 @@
       document.getElementById("transformScoreOutput").textContent = "Exercise 2: 6 tasks — not checked yet.";
       newTransformSet();
       syncAllTfButtons();
+      resetTfStyles();
+      tfFeedbackVisible = false;
+      document.getElementById("tfScoreOutput").textContent = "True/False: not checked yet.";
+      document.getElementById("tfScoreNote").textContent = "Po Check True/False uvidis OK/X pri kazdej vete.";
       setStatus("Cleared.");
     }
     function savePdf() { window.print(); }
