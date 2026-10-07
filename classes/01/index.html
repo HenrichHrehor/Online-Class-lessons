@@ -53,6 +53,18 @@
     }
     button:hover { opacity: 0.92; }
     .primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+    a.home-btn {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--line);
+      background: #1c2430;
+      color: #fff;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+    a.home-btn:hover { opacity: 0.92; color: #fff; }
     .card {
       background: var(--card);
       border: 1px solid var(--line);
@@ -240,6 +252,7 @@
 <body>
   <div class="wrap">
     <div class="toolbar">
+      <a class="home-btn" href="../../">← Home</a>
       <button class="primary" id="toggleFullBtn" onclick="toggleFullText()">Show Full Text</button>
       <button onclick="copyFullListening()">Copy Full Listening</button>
       <button onclick="copyGapFill()">Copy Gap Fill</button>
