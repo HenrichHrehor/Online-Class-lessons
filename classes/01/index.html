@@ -192,11 +192,9 @@
       <button onclick="copyPlainLesson()">Copy Plain Text (Lesson)</button>
       <button onclick="savePdf()">Save as PDF</button>
       <button onclick="checkScore()">Check Score (Sec.7)</button>
-      <button onclick="showCorrectAnswers()">Show Answers (Sec.7)</button>
-      <button onclick="hideCorrectAnswers()">Hide Answers (Sec.7)</button>
+      <button id="toggleSec7AnswersBtn" onclick="toggleSec7Answers()">Show Answers (Sec.7)</button>
       <button onclick="checkDialogue()">Check Dialogue</button>
-      <button onclick="showDialogueAnswers()">Show Dialogue Answers</button>
-      <button onclick="hideDialogueAnswers()">Hide Dialogue Answers</button>
+      <button id="toggleDialogueAnswersBtn" onclick="toggleDialogueAnswers()">Show Dialogue Answers</button>
       <button onclick="clearData()">Clear Answers</button>
       <span class="status" id="copyStatus"></span>
     </div>
@@ -408,8 +406,7 @@
 
       <div class="score-actions">
         <button class="primary" onclick="checkDialogue()">Check Dialogue</button>
-        <button onclick="showDialogueAnswers()">Show Correct Answers</button>
-        <button onclick="hideDialogueAnswers()">Hide Correct Answers</button>
+        <button id="toggleDialogueAnswersBtn2" onclick="toggleDialogueAnswers()">Show Correct Answers</button>
       </div>
       <div id="dialogueScoreOutput" class="score-box">Dialogue score: not checked yet.</div>
       <div id="dialogueScoreNote" class="score-note">Tip: Check Dialogue oznaci spravne/nespravne vety a ukaze hint. Pri uprave sa feedback skryje.</div>
@@ -550,8 +547,7 @@
       </div>
       <div class="score-actions">
         <button class="primary" onclick="checkScore()">Check Score</button>
-        <button onclick="showCorrectAnswers()">Show Correct Answers</button>
-        <button onclick="hideCorrectAnswers()">Hide Correct Answers</button>
+        <button id="toggleSec7AnswersBtn2" onclick="toggleSec7Answers()">Show Correct Answers</button>
       </div>
       <div id="scoreOutput" class="score-box">Score: not checked yet.</div>
       <div id="scoreNote" class="score-note">Tip: Check Score oznaci spravne (zelena) a nespravne (cervena) polozky a ukaze kratke zdovodnenie.</div>
@@ -968,33 +964,62 @@
       });
     }
 
+    function setSec7ToggleLabel(revealed) {
+      var label = revealed ? "Hide Answers (Sec.7)" : "Show Answers (Sec.7)";
+      var label2 = revealed ? "Hide Correct Answers" : "Show Correct Answers";
+      var b1 = document.getElementById("toggleSec7AnswersBtn");
+      var b2 = document.getElementById("toggleSec7AnswersBtn2");
+      if (b1) b1.textContent = label;
+      if (b2) b2.textContent = label2;
+    }
+
+    function setDialogueToggleLabel(revealed) {
+      var label = revealed ? "Hide Dialogue Answers" : "Show Dialogue Answers";
+      var label2 = revealed ? "Hide Correct Answers" : "Show Correct Answers";
+      var b1 = document.getElementById("toggleDialogueAnswersBtn");
+      var b2 = document.getElementById("toggleDialogueAnswersBtn2");
+      if (b1) b1.textContent = label;
+      if (b2) b2.textContent = label2;
+    }
+
     function hideCorrectAnswersOnEdit(changedId) {
       if (hideAnswersLock) return;
       if (!answersRevealed && !scoreFeedbackVisible) return;
 
       hideAnswersLock = true;
+      var keepValue = "";
+      if (answersRevealed && changedId) {
+        keepValue = val(changedId);
+        if (keepValue === SCORE_KEY[changedId].answer) keepValue = "";
+      }
+
       resetScoreStyles();
 
       if (answersRevealed) {
         Object.keys(SCORE_KEY).forEach(function (id) {
-          if (changedId && id === changedId) return;
           var el = document.getElementById(id);
-          if (el) el.value = "";
+          if (!el) return;
+          if (id === changedId && keepValue) {
+            el.value = keepValue;
+          } else {
+            el.selectedIndex = 0;
+          }
         });
         answersRevealed = false;
         document.getElementById("scoreOutput").textContent = "Score: not checked yet.";
         document.getElementById("scoreNote").textContent =
-          "Spravne odpovede su skryte. Vypln Section 7 znova a potom stlac Check Score.";
-        setStatus("Correct answers hidden.");
+          "Podfarbenie a spravne odpovede zmizli. Pokracuj vo vyplnani a potom stlac Check Score.";
+        setStatus("Section 7 answers/feedback hidden.");
         saveData(false);
       } else {
         document.getElementById("scoreOutput").textContent = "Score: not checked yet.";
         document.getElementById("scoreNote").textContent =
-          "Feedback skryty po uprave. Po vyplneni stlac Check Score znova.";
-        setStatus("Score feedback hidden.");
+          "Podfarbenie z Check Score zmizlo. Pokracuj vo vyplnani a skontroluj znova.";
+        setStatus("Section 7 check colors hidden.");
       }
 
       scoreFeedbackVisible = false;
+      setSec7ToggleLabel(false);
       hideAnswersLock = false;
     }
 
@@ -1002,6 +1027,7 @@
       resetScoreStyles();
       answersRevealed = false;
       scoreFeedbackVisible = true;
+      setSec7ToggleLabel(false);
       var score = 0;
       var total = Object.keys(SCORE_KEY).length;
 
@@ -1032,7 +1058,7 @@
       document.getElementById("scoreOutput").textContent =
         "Score: " + score + "/" + total + " (" + percent + "%)";
       document.getElementById("scoreNote").textContent =
-        "Check Score hodnotil polozky 1-11. Zelena = spravne, cervena = nespravne. Ak zacnes menit odpoved, feedback sa skryje.";
+        "Check Score hodnotil polozky 1-11. Ked zacnes menit odpoved, podfarbenie zmizne.";
       setStatus("Score checked: " + score + "/" + total);
       var section = document.getElementById("section7");
       if (section) section.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -1060,10 +1086,11 @@
       });
       saveData(false);
       document.getElementById("scoreOutput").textContent =
-        "Correct answers shown (11/11). Ak zacnes menit odpoved, spravne odpovede sa skryju.";
+        "Correct answers shown (11/11). Toggle Hide, or start editing to hide them.";
       document.getElementById("scoreNote").textContent =
-        "Show Correct Answers je aktivne. Pri prvej uprave sa vsetky spravne odpovede a hinty skryju.";
+        "Show Answers je aktivne. Toggle na Hide, alebo zacni vyplnat - odpovede a farby zmiznu.";
       setStatus("Correct answers revealed.");
+      setSec7ToggleLabel(true);
       hideAnswersLock = false;
     }
 
@@ -1080,12 +1107,16 @@
       document.getElementById("scoreNote").textContent =
         "Odpovede Section 7 su skryte. Vypln znova a stlac Check Score.";
       setStatus("Section 7 answers hidden.");
+      setSec7ToggleLabel(false);
       saveData(false);
       hideAnswersLock = false;
     }
 
-
-    const DIALOGUE_KEY = {
+    function toggleSec7Answers() {
+      if (answersRevealed) hideCorrectAnswers();
+      else showCorrectAnswers();
+    }
+const DIALOGUE_KEY = {
       d1: {
         display: "Because English became a bridge.",
         words: ["because", "english", "became", "a", "bridge"],
@@ -1174,28 +1205,39 @@
       if (!dialogueRevealed && !dialogueFeedbackVisible) return;
 
       hideDialogueLock = true;
+      var keepValue = "";
+      if (dialogueRevealed && changedId) {
+        keepValue = val(changedId);
+        if (normalizeAnswer(keepValue) === normalizeAnswer(DIALOGUE_KEY[changedId].display)) keepValue = "";
+      }
+
       resetDialogueStyles();
 
       if (dialogueRevealed) {
         Object.keys(DIALOGUE_KEY).forEach(function (id) {
-          if (changedId && id === changedId) return;
           var el = document.getElementById(id);
-          if (el) el.value = "";
+          if (!el) return;
+          if (id === changedId && keepValue) {
+            el.value = keepValue;
+          } else {
+            el.value = "";
+          }
         });
         dialogueRevealed = false;
         document.getElementById("dialogueScoreOutput").textContent = "Dialogue score: not checked yet.";
         document.getElementById("dialogueScoreNote").textContent =
-          "Spravne dialogy su skryte. Napis odpovede znova a stlac Check Dialogue.";
-        setStatus("Dialogue answers hidden.");
+          "Podfarbenie a spravne dialogy zmizli. Pokracuj vo vyplnani a stlac Check Dialogue.";
+        setStatus("Dialogue answers/feedback hidden.");
         saveData(false);
       } else {
         document.getElementById("dialogueScoreOutput").textContent = "Dialogue score: not checked yet.";
         document.getElementById("dialogueScoreNote").textContent =
-          "Feedback skryty po uprave. Po vyplneni stlac Check Dialogue znova.";
-        setStatus("Dialogue feedback hidden.");
+          "Podfarbenie z Check Dialogue zmizlo. Pokracuj vo vyplnani a skontroluj znova.";
+        setStatus("Dialogue check colors hidden.");
       }
 
       dialogueFeedbackVisible = false;
+      setDialogueToggleLabel(false);
       hideDialogueLock = false;
     }
 
@@ -1203,6 +1245,7 @@
       resetDialogueStyles();
       dialogueRevealed = false;
       dialogueFeedbackVisible = true;
+      setDialogueToggleLabel(false);
       var score = 0;
       var total = Object.keys(DIALOGUE_KEY).length;
 
@@ -1232,7 +1275,7 @@
       document.getElementById("dialogueScoreOutput").textContent =
         "Dialogue score: " + score + "/" + total + " (" + percent + "%)";
       document.getElementById("dialogueScoreNote").textContent =
-        "Check Dialogue hodnotil vety 1-6. Zelena = spravne, cervena = nespravne. Pri uprave sa feedback skryje.";
+        "Check Dialogue hodnotil vety 1-6. Ked zacnes menit text, podfarbenie zmizne.";
       setStatus("Dialogue checked: " + score + "/" + total);
       var section = document.getElementById("section4");
       if (section) section.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -1259,10 +1302,11 @@
       });
       saveData(false);
       document.getElementById("dialogueScoreOutput").textContent =
-        "Correct dialogue answers shown (6/6). Ak zacnes menit text, odpovede sa skryju.";
+        "Correct dialogue answers shown (6/6). Toggle Hide, or start editing to hide them.";
       document.getElementById("dialogueScoreNote").textContent =
-        "Show Correct Answers je aktivne. Pri prvej uprave sa spravne dialogy a hinty skryju.";
+        "Show Dialogue Answers je aktivne. Toggle na Hide, alebo zacni vyplnat - odpovede a farby zmiznu.";
       setStatus("Dialogue answers revealed.");
+      setDialogueToggleLabel(true);
       hideDialogueLock = false;
     }
 
@@ -1279,10 +1323,16 @@
       document.getElementById("dialogueScoreNote").textContent =
         "Dialogove odpovede su skryte. Napis vety znova a stlac Check Dialogue.";
       setStatus("Dialogue answers hidden.");
+      setDialogueToggleLabel(false);
       saveData(false);
       hideDialogueLock = false;
     }
-    document.querySelectorAll(".autosave").forEach(function (el) {
+
+    function toggleDialogueAnswers() {
+      if (dialogueRevealed) hideDialogueAnswers();
+      else showDialogueAnswers();
+    }
+document.querySelectorAll(".autosave").forEach(function (el) {
       el.addEventListener("input", function () {
         if (el.id && SCORE_KEY[el.id]) hideCorrectAnswersOnEdit(el.id);
         if (el.id && DIALOGUE_KEY[el.id]) hideDialogueOnEdit(el.id);
