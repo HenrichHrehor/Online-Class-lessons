@@ -1,0 +1,32 @@
+---
+description: QA checklist before shipping an Online Class lesson HTML
+globs: classes/**/*.html
+alwaysApply: false
+---
+
+# Class Check (before delivery)
+
+Run this checklist on the lesson file. Fix failures before push.
+
+## Sync
+- [ ] Full-text paragraphs === gap-fill paragraphs (word-for-word; only blanks differ)
+- [ ] Word banks shuffled (not text order); exactly 5 words / 5 blanks per block
+- [ ] T/F answerable only from listening text (no outside knowledge traps)
+
+## Grammar
+- [ ] Hour’s grammar focus matches `curriculum/25-hours.md` for this class number
+- [ ] Grammar Review + Grammar Box teach the same focus
+- [ ] At least one recycle of a prior tense/structure appears in dialogue or listening
+
+## App behavior
+- [ ] Unique `localStorage` key for this class
+- [ ] Check Dialogue sticky in Section 4; Check Score + Show Answers sticky in Section 7
+- [ ] No auto `scrollIntoView` on check
+- [ ] Hints use `\u` escapes for Slovak diacritics
+- [ ] Copy Plain Text exports full lesson; Copy Gap Fill uses blank templates
+- [ ] Hub `index.html` lists the class with correct relative URL
+
+## Pedagogy smoke test
+- [ ] A grade 8–9 student can finish main tasks in one online hour
+- [ ] Instructions are short; Slovak tips only where scoring/hints need them
+- [ ] About Me / personal output tasks do not require private data beyond school-safe intro

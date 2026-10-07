@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Class 02 - About Me: Introduction</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #1c2430;
+      --muted: #5b6878;
+      --line: #d8deea;
+      --primary: #2d6cdf;
+      --accent: #fff8e1;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .wrap { max-width: 1060px; margin: 20px auto 40px; padding: 0 12px; }
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(245, 247, 251, 0.96);
+      backdrop-filter: blur(4px);
+      border-bottom: 1px solid var(--line);
+      padding: 10px 0;
+      margin-bottom: 12px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    button {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--text);
+      border-radius: 8px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    button:hover { opacity: 0.92; }
+    .primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    .listen-block {
+      background: var(--accent);
+      border: 1px solid #ffecb3;
+      border-radius: 10px;
+      padding: 14px;
+      margin: 12px 0;
+    }
+    .block-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+    .block-top h3 { margin: 0; color: var(--text); }
+    #fullTextPanel {
+      display: none;
+      background: var(--accent);
+      border: 1px solid #ffecb3;
+      border-radius: 10px;
+      padding: 14px;
+      margin-top: 10px;
+    }
+    h1, h2, h3, h4 { margin: 0 0 10px; }
+    h1 { font-size: 24px; }
+    h2 { font-size: 19px; border-bottom: 1px solid var(--line); padding-bottom: 6px; }
+    h3 { font-size: 16px; }
+    h4 { font-size: 15px; margin-top: 14px; color: var(--muted); }
+    .meta { display: grid; grid-template-columns: repeat(2, minmax(240px, 1fr)); gap: 8px 14px; }
+    .field-line { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .field-line label { min-width: 120px; font-weight: 600; }
+    input[type="text"], textarea, select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px 10px;
+      font: inherit;
+      color: var(--text);
+      background: #fff;
+    }
+    .inline-input {
+      min-width: 120px;
+      max-width: 190px;
+      display: inline-block;
+      margin: 0 2px;
+      vertical-align: middle;
+      border-bottom: 2px solid #2563eb;
+    }
+    .line-input { width: 100%; margin-top: 4px; }
+    .q { margin: 10px 0; }
+    .muted { color: var(--muted); }
+    .wordbank { font-size: 14px; margin-bottom: 8px; font-weight: 600; }
+    .tf-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 8px 0; }
+    .tf-row select { width: 90px; }
+    .small { font-size: 13px; color: var(--muted); }
+    .term-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+    .score-item {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      background: #fff;
+    }
+    .score-item.scored-correct {
+      border-color: #22c55e;
+      background: #f0fdf4;
+    }
+    .score-item.scored-wrong {
+      border-color: #ef4444;
+      background: #fef2f2;
+    }
+    .score-item.reveal-correct {
+      border-color: #2563eb;
+      background: #eff6ff;
+    }
+    .score-item .item-label {
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .score-item .hint {
+      margin-top: 6px;
+      font-size: 13px;
+      color: #334155;
+      display: none;
+    }
+    .score-item .hint.show { display: block; }
+    .score-item .mark {
+      display: inline-block;
+      margin-left: 6px;
+      font-weight: 700;
+    }
+    .section-sticky-actions {
+      position: sticky;
+      top: 56px;
+      z-index: 9;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+      padding: 8px 10px;
+      margin: 0 0 12px;
+      background: rgba(245, 247, 251, 0.96);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      backdrop-filter: blur(4px);
+    }
+    .score-box {
+      margin-top: 12px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #f8fbff;
+      font-weight: 700;
+    }
+    .score-note {
+      margin-top: 8px;
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 400;
+    }
+    .status {
+      margin-left: auto;
+      font-size: 13px;
+      color: var(--muted);
+      align-self: center;
+    }
+    @media print {
+      .toolbar { display: none !important; }
+      #fullTextPanel { display: none !important; }
+      body { background: #fff; }
+    }
+    @media (max-width: 760px) {
+      .meta { grid-template-columns: 1fr; }
+      .inline-input { min-width: 95px; max-width: 130px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="toolbar">
+      <button class="primary" id="toggleFullBtn" onclick="toggleFullText()">Show Full Text</button>
+      <button onclick="copyFullListening()">Copy Full Listening</button>
+      <button onclick="copyGapFill()">Copy Gap Fill</button>
+      <button onclick="copyPlainLesson()">Copy Plain Text (Lesson)</button>
+      <button onclick="savePdf()">Save as PDF</button>
+      <button onclick="clearData()">Clear Answers</button>
+      <span class="status" id="copyStatus"></span>
+    </div>
+
+    <div class="card">
+      <h1>WORKSHEET - CLASS 02</h1>
+      <p class="muted">Topic: About Me - Introduction (Curriculum Hour 01)</p>
+      <div class="meta">
+        <div class="field-line"><label>Date</label><input class="autosave" id="date" type="text" value=""></div>
+        <div class="field-line"><label>Student</label><input class="autosave" id="student" type="text" value=""></div>
+        <div class="field-line"><label>Unit</label><input class="autosave" id="unit" type="text" value="Start -> Unit 1"></div>
+        <div class="field-line"><label>Main focus</label><input class="autosave" id="focus" type="text" value="be / have got / Present Simple"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Listening - Full Text</h2>
+      <p class="small">Teacher / Natural Reader: use Show Full Text, then Copy Full Listening.</p>
+      <div id="fullTextPanel">
+        <h3>1. Hello, My Name Is Maya</h3>
+        <p id="full1">Hello. My name is Maya and I am fourteen years old. I am from a small town near Bratislava, but I live in the city during the week. I am a student in year eight and I am usually friendly and curious. In English class I am not perfect, but I am ready to practise every day. My favourite colour is green and my lucky number is seven. When people ask about me, I smile and say that I am happy to meet new friends online and in school.</p>
+
+        <h3>2. Family, Home and Pets</h3>
+        <p id="full2">I have got a small family. I have got one brother and we share a room with posters on the wall. My parents have got busy jobs, but we have dinner together most evenings. We have got a quiet flat near the park and I have got my own desk for homework. I have also got a cat called Miso. He is soft and lazy. At weekends I am often at my grandparents' house because they have got a garden where I can read and play badminton.</p>
+
+        <h3>3. School, Hobbies and Daily Life</h3>
+        <p id="full3">I go to school by bus and my first lesson usually starts at eight. I like maths and art, but I love English videos about travel. After school I do my homework, then I play volleyball with friends. I do not watch TV every day. I prefer music and short walks. On Mondays I help my mum with shopping. On Fridays I meet my classmates online to practise speaking. These simple routines help me feel organised and calm during a busy week.</p>
+
+        <h3>4. Goals, Personality and First Impressions</h3>
+        <p id="full4">In the future I want to study design and I hope English helps me talk to people from other countries. I am sometimes shy at the beginning, but I ask questions when I do not understand. I am interested in photography and I take pictures of ordinary streets. If you meet me for the first time, please ask about my hobbies, my family, or my favourite place in town. I am glad to introduce myself, and I am ready to listen to your story too.</p>
+      </div>
+    </div>
+
+    <div class="card" id="listeningSection">
+      <h2>2. Listening - Gap Fill</h2>
+      <p class="small">Fill in the blanks. Text matches the Full Text word-for-word.</p>
+
+      <div class="listen-block" id="block1">
+        <div class="block-top">
+          <h3>1. Hello, My Name Is Maya</h3>
+          <button type="button" onclick="copyBlock(1)">Copy this block</button>
+        </div>
+        <div class="wordbank">Word bank: practise, fourteen, curious, green, friendly</div>
+        <p data-gap="1">
+          Hello. My name is Maya and I am
+          <input class="inline-input autosave" id="l1a" type="text" data-blank="fourteen">
+          years old. I am from a small town near Bratislava, but I live in the city during the week. I am a student in year eight and I am usually
+          <input class="inline-input autosave" id="l1b" type="text" data-blank="friendly">
+          and
+          <input class="inline-input autosave" id="l1c" type="text" data-blank="curious">.
+          In English class I am not perfect, but I am ready to
+          <input class="inline-input autosave" id="l1d" type="text" data-blank="practise">
+          every day. My favourite colour is
+          <input class="inline-input autosave" id="l1e" type="text" data-blank="green">
+          and my lucky number is seven. When people ask about me, I smile and say that I am happy to meet new friends online and in school.
+        </p>
+      </div>
+
+      <div class="listen-block" id="block2">
+        <div class="block-top">
+          <h3>2. Family, Home and Pets</h3>
+          <button type="button" onclick="copyBlock(2)">Copy this block</button>
+        </div>
+        <div class="wordbank">Word bank: garden, brother, dinner, desk, cat</div>
+        <p data-gap="2">
+          I have got a small family. I have got one
+          <input class="inline-input autosave" id="l2a" type="text" data-blank="brother">
+          and we share a room with posters on the wall. My parents have got busy jobs, but we have
+          <input class="inline-input autosave" id="l2b" type="text" data-blank="dinner">
+          together most evenings. We have got a quiet flat near the park and I have got my own
+          <input class="inline-input autosave" id="l2c" type="text" data-blank="desk">
+          for homework. I have also got a
+          <input class="inline-input autosave" id="l2d" type="text" data-blank="cat">
+          called Miso. He is soft and lazy. At weekends I am often at my grandparents' house because they have got a
+          <input class="inline-input autosave" id="l2e" type="text" data-blank="garden">
+          where I can read and play badminton.
+        </p>
+      </div>
+
+      <div class="listen-block" id="block3">
+        <div class="block-top">
+          <h3>3. School, Hobbies and Daily Life</h3>
+          <button type="button" onclick="copyBlock(3)">Copy this block</button>
+        </div>
+        <div class="wordbank">Word bank: volleyball, bus, organised, music, shopping</div>
+        <p data-gap="3">
+          I go to school by
+          <input class="inline-input autosave" id="l3a" type="text" data-blank="bus">
+          and my first lesson usually starts at eight. I like maths and art, but I love English videos about travel. After school I do my homework, then I play
+          <input class="inline-input autosave" id="l3b" type="text" data-blank="volleyball">
+          with friends. I do not watch TV every day. I prefer
+          <input class="inline-input autosave" id="l3c" type="text" data-blank="music">
+          and short walks. On Mondays I help my mum with
+          <input class="inline-input autosave" id="l3d" type="text" data-blank="shopping">.
+          On Fridays I meet my classmates online to practise speaking. These simple routines help me feel
+          <input class="inline-input autosave" id="l3e" type="text" data-blank="organised">
+          and calm during a busy week.
+        </p>
+      </div>
+
+      <div class="listen-block" id="block4">
+        <div class="block-top">
+          <h3>4. Goals, Personality and First Impressions</h3>
+          <button type="button" onclick="copyBlock(4)">Copy this block</button>
+        </div>
+        <div class="wordbank">Word bank: photography, design, shy, introduce, listen</div>
+        <p data-gap="4">
+          In the future I want to study
+          <input class="inline-input autosave" id="l4a" type="text" data-blank="design">
+          and I hope English helps me talk to people from other countries. I am sometimes
+          <input class="inline-input autosave" id="l4b" type="text" data-blank="shy">
+          at the beginning, but I ask questions when I do not understand. I am interested in
+          <input class="inline-input autosave" id="l4c" type="text" data-blank="photography">
+          and I take pictures of ordinary streets. If you meet me for the first time, please ask about my hobbies, my family, or my favourite place in town. I am glad to
+          <input class="inline-input autosave" id="l4d" type="text" data-blank="introduce">
+          myself, and I am ready to
+          <input class="inline-input autosave" id="l4e" type="text" data-blank="listen">
+          to your story too.
+        </p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>1. Grammar Review</h2>
+      <h3>A) am / is / are</h3>
+      <div class="q">1) I ___ fourteen. <input class="inline-input autosave" id="g1" type="text"></div>
+      <div class="q">2) She ___ from Slovakia. <input class="inline-input autosave" id="g2" type="text"></div>
+      <div class="q">3) We ___ students in year eight. <input class="inline-input autosave" id="g3" type="text"></div>
+      <div class="q">4) ___ you ready to start? <input class="inline-input autosave" id="g4" type="text"></div>
+
+      <h3>B) have got / has got</h3>
+      <div class="q">1) I ___ a brother. <input class="inline-input autosave" id="g5" type="text"></div>
+      <div class="q">2) Maya ___ a cat. <input class="inline-input autosave" id="g6" type="text"></div>
+      <div class="q">3) They ___ a quiet flat. <input class="inline-input autosave" id="g7" type="text"></div>
+      <div class="q">4) ___ you got a favourite hobby? <input class="inline-input autosave" id="g8" type="text"></div>
+
+      <h3>C) Present Simple (+ / - / ?)</h3>
+      <div class="q">1) Affirmative: I (live) <input class="inline-input autosave" id="g9" type="text"> in the city.</div>
+      <div class="q">2) Negative: I (not watch) <input class="inline-input autosave" id="g10" type="text"> TV every day.</div>
+      <div class="q">3) Question: (do / you / like) <input class="inline-input autosave" id="g11" type="text"> English?</div>
+      <div class="q">4) 3rd person: She (go) <input class="inline-input autosave" id="g12" type="text"> to school by bus.</div>
+    </div>
+
+    <div class="card">
+      <h2>3. True / False - Listening Check</h2>
+      <h4>3.1 Name, Family and Home</h4>
+      <div class="tf-row"><span>1) Maya is fourteen years old.</span><select class="autosave" id="tf1"><option value=""></option><option>T</option><option>F</option></select></div>
+      <div class="tf-row"><span>2) Maya says she is never curious.</span><select class="autosave" id="tf2"><option value=""></option><option>T</option><option>F</option></select></div>
+      <div class="tf-row"><span>3) Maya has got one brother.</span><select class="autosave" id="tf3"><option value=""></option><option>T</option><option>F</option></select></div>
+      <div class="tf-row"><span>4) Maya has got a dog called Miso.</span><select class="autosave" id="tf4"><option value=""></option><option>T</option><option>F</option></select></div>
+      <div class="tf-row"><span>5) Her grandparents have got a garden.</span><select class="autosave" id="tf5"><option value=""></option><option>T</option><option>F</option></select></div>
+
+      <h4>3.2 School, Hobbies and Goals</h4>
+      <div class="tf-row"><span>1) Maya goes to school by bus.</span><select class="autosave" id="tf6"><option value=""></option><option>T</option><option>F</option></select></div>
+      <div class="tf-row"><span>2) She watches TV every day.</span><select class="autosave" id="tf7"><option value=""></option><option>T</option><option>F</option></select></div>
+      <div class="tf-row"><span>3) On Fridays she practises speaking online.</span><select class="autosave" id="tf8"><option value=""></option><option>T</option><option>F</option></select></div>
+      <div class="tf-row"><span>4) She wants to study design in the future.</span><select class="autosave" id="tf9"><option value=""></option><option>T</option><option>F</option></select></div>
+      <div class="tf-row"><span>5) She is never shy at the beginning.</span><select class="autosave" id="tf10"><option value=""></option><option>T</option><option>F</option></select></div>
+      <p class="small">True_False_MK</p>
+    </div>
+
+    <div class="card" id="section4">
+      <h2>4. Talking - Scrambled Dialogue</h2>
+      <p class="small"><strong>Check Dialogue hodnoti odpovede (1-6).</strong> Usporiadaj slova do spravnej vety o sebe.</p>
+      <div class="section-sticky-actions">
+        <button class="primary" onclick="checkDialogue()">Check Dialogue</button>
+      </div>
+
+      <div class="score-item" data-dialogue-id="d1">
+        <div class="item-label">1) Pete answer: <span class="mark" id="mark-d1"></span></div>
+        <p><strong>Jim:</strong> What is your name?<br><span class="muted">[ is / name / My / Maya ]</span></p>
+        <textarea class="autosave" id="d1" rows="2"></textarea>
+        <div class="hint" id="hint-d1"></div>
+      </div>
+
+      <div class="score-item" data-dialogue-id="d2">
+        <div class="item-label">2) Pete answer: <span class="mark" id="mark-d2"></span></div>
+        <p><strong>Jim:</strong> How old are you?<br><span class="muted">[ am / I / fourteen ]</span></p>
+        <textarea class="autosave" id="d2" rows="2"></textarea>
+        <div class="hint" id="hint-d2"></div>
+      </div>
+
+      <div class="score-item" data-dialogue-id="d3">
+        <div class="item-label">3) Pete answer: <span class="mark" id="mark-d3"></span></div>
+        <p><strong>Jim:</strong> Have you got any brothers or sisters?<br><span class="muted">[ got / I / one / have / brother ]</span></p>
+        <textarea class="autosave" id="d3" rows="2"></textarea>
+        <div class="hint" id="hint-d3"></div>
+      </div>
+
+      <div class="score-item" data-dialogue-id="d4">
+        <div class="item-label">4) Pete answer: <span class="mark" id="mark-d4"></span></div>
+        <p><strong>Jim:</strong> What do you do after school?<br><span class="muted">[ volleyball / I / play ]</span></p>
+        <textarea class="autosave" id="d4" rows="2"></textarea>
+        <div class="hint" id="hint-d4"></div>
+      </div>
+
+      <div class="score-item" data-dialogue-id="d5">
+        <div class="item-label">5) Pete answer: <span class="mark" id="mark-d5"></span></div>
+        <p><strong>Jim:</strong> Do you watch TV every day?<br><span class="muted">[ do / I / not / No ]</span></p>
+        <textarea class="autosave" id="d5" rows="2"></textarea>
+        <div class="hint" id="hint-d5"></div>
+      </div>
+
+      <div class="score-item" data-dialogue-id="d6">
+        <div class="item-label">6) Pete answer: <span class="mark" id="mark-d6"></span></div>
+        <p><strong>Jim:</strong> What do you want to study?<br><span class="muted">[ to / want / I / design / study ]</span></p>
+        <textarea class="autosave" id="d6" rows="2"></textarea>
+        <div class="hint" id="hint-d6"></div>
+      </div>
+
+      <div id="dialogueScoreOutput" class="score-box">Dialogue score: not checked yet.</div>
+      <div id="dialogueScoreNote" class="score-note">Tip: Napoveda zmizne hned po kliknuti do pola.</div>
+    </div>
+
+    <div class="card">
+      <h2>5. About You - Write Your Introduction</h2>
+      <div class="q"><strong>My name / age / town:</strong><input class="line-input autosave" id="n1" type="text"></div>
+      <div class="q"><strong>Family / have got:</strong><input class="line-input autosave" id="n2" type="text"></div>
+      <div class="q"><strong>School / hobbies (Present Simple):</strong><input class="line-input autosave" id="n3" type="text"></div>
+      <div class="q"><strong>One goal for English:</strong><input class="line-input autosave" id="n4" type="text"></div>
+      <div class="q"><strong>3-sentence About Me summary:</strong><textarea class="autosave" id="n5" rows="3"></textarea></div>
+    </div>
+
+    <div class="card">
+      <h2>6. Grammar Box - About Me</h2>
+      <p>- <strong>be:</strong> I am / you are / he-she-it is / we-they are<br>
+         - <strong>have got:</strong> I/you/we/they have got | he/she/it has got<br>
+         - <strong>Present Simple:</strong> I live | She lives | I do not live | Do you live?</p>
+      <div class="q"><strong>Affirmative about you:</strong><input class="line-input autosave" id="b1" type="text"></div>
+      <div class="q"><strong>Negative about you:</strong><input class="line-input autosave" id="b2" type="text"></div>
+      <div class="q"><strong>Question for a partner:</strong><input class="line-input autosave" id="b3" type="text"></div>
+      <div class="q"><strong>Short answer:</strong><input class="line-input autosave" id="b4" type="text"></div>
+    </div>
+
+    <div class="card" id="section7">
+      <h2>7. Classroom and Grammar Connection</h2>
+      <p>Choose one correct Slovak option for each English term.</p>
+      <div class="section-sticky-actions">
+        <button class="primary" onclick="checkScore()">Check Score</button>
+        <button id="toggleSec7AnswersBtn" onclick="toggleSec7Answers()">Show Correct Answers</button>
+      </div>
+      <div class="term-grid" id="scoreItems">
+        <div class="score-item" data-score-id="m1">
+          <div class="item-label">1) verb to be: <span class="mark" id="mark-m1"></span></div>
+          <select class="autosave" id="m1" style="max-width:320px;display:inline-block;width:auto;min-width:220px;">
+            <option value=""></option>
+            <option>sloveso byt (am/is/are)</option>
+            <option>minuly cas</option>
+            <option>nepravidelne sloveso</option>
+          </select>
+          <div class="hint" id="hint-m1"></div>
+        </div>
+        <div class="score-item" data-score-id="m2">
+          <div class="item-label">2) have got: <span class="mark" id="mark-m2"></span></div>
+          <select class="autosave" id="m2" style="max-width:320px;display:inline-block;width:auto;min-width:220px;">
+            <option value=""></option>
+            <option>mat (have got / has got)</option>
+            <option>ist</option>
+            <option>chciet</option>
+          </select>
+          <div class="hint" id="hint-m2"></div>
+        </div>
+        <div class="score-item" data-score-id="m3">
+          <div class="item-label">3) present simple: <span class="mark" id="mark-m3"></span></div>
+          <select class="autosave" id="m3" style="max-width:320px;display:inline-block;width:auto;min-width:220px;">
+            <option value=""></option>
+            <option>pritomny cas jednoduchy</option>
+            <option>predpritomny cas</option>
+            <option>minuly cas priebehovy</option>
+          </select>
+          <div class="hint" id="hint-m3"></div>
+        </div>
+        <div class="score-item" data-score-id="m4">
+          <div class="item-label">4) third person singular -s: <span class="mark" id="mark-m4"></span></div>
+          <select class="autosave" id="m4" style="max-width:320px;display:inline-block;width:auto;min-width:220px;">
+            <option value=""></option>
+            <option>koncovka -s pre he/she/it</option>
+            <option>mnozne cislo</option>
+            <option>pridavne meno</option>
+          </select>
+          <div class="hint" id="hint-m4"></div>
+        </div>
+        <div class="score-item" data-score-id="m5">
+          <div class="item-label">5) subject pronoun: <span class="mark" id="mark-m5"></span></div>
+          <select class="autosave" id="m5" style="max-width:320px;display:inline-block;width:auto;min-width:220px;">
+            <option value=""></option>
+            <option>osobne zameno podmetove (I, you, she)</option>
+            <option>privlastnovacie pridavne meno</option>
+            <option>clen</option>
+          </select>
+          <div class="hint" id="hint-m5"></div>
+        </div>
+        <div class="score-item" data-score-id="m6">
+          <div class="item-label">6) affirmative sentence: <span class="mark" id="mark-m6"></span></div>
+          <select class="autosave" id="m6" style="max-width:320px;display:inline-block;width:auto;min-width:220px;">
+            <option value=""></option>
+            <option>kladna veta</option>
+            <option>zaporova veta</option>
+            <option>otazka</option>
+          </select>
+          <div class="hint" id="hint-m6"></div>
+        </div>
+        <div class="score-item" data-score-id="m7">
+          <div class="item-label">7) negative sentence: <span class="mark" id="mark-m7"></span></div>
+          <select class="autosave" id="m7" style="max-width:320px;display:inline-block;width:auto;min-width:220px;">
+            <option value=""></option>
+            <option>zaporova veta</option>
+            <option>kladna veta</option>
+            <option>rozcazovaci sposob</option>
+          </select>
+          <div class="hint" id="hint-m7"></div>
+        </div>
+        <div class="score-item" data-score-id="m8">
+          <div class="item-label">8) yes/no question: <span class="mark" id="mark-m8"></span></div>
+          <select class="autosave" id="m8" style="max-width:320px;display:inline-block;width:auto;min-width:220px;">
+            <option value=""></option>
+            <option>otazka ano/nie (Do you...?)</option>
+            <option>vedlajsia veta</option>
+            <option>citoslovce</option>
+          </select>
+          <div class="hint" id="hint-m8"></div>
+        </div>
+        <div class="score-item" data-score-id="m9">
+          <div class="item-label">9) introduce yourself: <span class="mark" id="mark-m9"></span></div>
+          <select class="autosave" id="m9" style="max-width:320px;display:inline-block;width:auto;min-width:220px;">
+            <option value=""></option>
+            <option>predstavit sa</option>
+            <option>rozlucit sa</option>
+            <option>ospravedlnit sa</option>
+          </select>
+          <div class="hint" id="hint-m9"></div>
+        </div>
+        <div class="score-item" data-score-id="m10">
+          <div class="item-label">10) fill in the blanks: <span class="mark" id="mark-m10"></span></div>
+          <select class="autosave" id="m10" style="max-width:320px;display:inline-block;width:auto;min-width:220px;">
+            <option value=""></option>
+            <option>doplnte prazdne miesta</option>
+            <option>prelozte vetu</option>
+            <option>spocitajte body</option>
+          </select>
+          <div class="hint" id="hint-m10"></div>
+        </div>
+        <div class="score-item" data-score-id="m11">
+          <div class="item-label">11) put the words in the correct order: <span class="mark" id="mark-m11"></span></div>
+          <select class="autosave" id="m11" style="max-width:320px;display:inline-block;width:auto;min-width:220px;">
+            <option value=""></option>
+            <option>dajte slova do spravneho poradia</option>
+            <option>nakreslite obrazok</option>
+            <option>vypnite mikrofon</option>
+          </select>
+          <div class="hint" id="hint-m11"></div>
+        </div>
+      </div>
+      <div id="scoreOutput" class="score-box">Score: not checked yet.</div>
+      <div id="scoreNote" class="score-note">Tip: Po Check Score uvidis OK/X + hint. Pri editovani farby zmiznu.</div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "esl-class-02-v1";
+    const BLOCK_TITLES = {
+      1: "1. Hello, My Name Is Maya",
+      2: "2. Family, Home and Pets",
+      3: "3. School, Hobbies and Daily Life",
+      4: "4. Goals, Personality and First Impressions"
+    };
+    const WORD_BANKS = {
+      1: "practise, fourteen, curious, green, friendly",
+      2: "garden, brother, dinner, desk, cat",
+      3: "volleyball, bus, organised, music, shopping",
+      4: "photography, design, shy, introduce, listen"
+    };
+
+    function setStatus(msg) {
+      document.getElementById("copyStatus").textContent = msg || "";
+    }
+
+    function val(id) {
+      var el = document.getElementById(id);
+      return el ? (el.value || "").trim() : "";
+    }
+
+    function blankOr(id) {
+      var v = val(id);
+      return v || "_________";
+    }
+
+    function copyText(text, okMsg) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function () {
+          setStatus(okMsg || "Copied.");
+        }).catch(function () {
+          fallbackCopy(text, okMsg);
+        });
+      } else {
+        fallbackCopy(text, okMsg);
+      }
+    }
+
+    function fallbackCopy(text, okMsg) {
+      var ta = document.createElement("textarea");
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand("copy");
+        setStatus(okMsg || "Copied.");
+      } catch (e) {
+        setStatus("Copy failed. Select text manually.");
+      }
+      document.body.removeChild(ta);
+    }
+
+    function saveData(showMsg) {
+      var data = {};
+      document.querySelectorAll(".autosave").forEach(function (el) {
+        if (el.id) data[el.id] = el.value;
+      });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      if (showMsg) setStatus("Saved.");
+    }
+
+    function loadData() {
+      try {
+        var raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return;
+        var data = JSON.parse(raw);
+        Object.keys(data).forEach(function (id) {
+          var el = document.getElementById(id);
+          if (el) el.value = data[id];
+        });
+      } catch (e) {}
+    }
+
+    function clearData() {
+      if (!confirm("Clear all answers for Class 02?")) return;
+      document.querySelectorAll(".autosave").forEach(function (el) {
+        if (el.tagName === "SELECT") el.selectedIndex = 0;
+        else el.value = "";
+      });
+      localStorage.removeItem(STORAGE_KEY);
+      resetScoreStyles();
+      resetDialogueStyles();
+      answersRevealed = false;
+      scoreFeedbackVisible = false;
+      dialogueFeedbackVisible = false;
+      setSec7ToggleLabel(false);
+      document.getElementById("scoreOutput").textContent = "Score: not checked yet.";
+      document.getElementById("dialogueScoreOutput").textContent = "Dialogue score: not checked yet.";
+      setStatus("Cleared.");
+    }
+
+    function savePdf() {
+      window.print();
+    }
+
+    function toggleFullText() {
+      var panel = document.getElementById("fullTextPanel");
+      var btn = document.getElementById("toggleFullBtn");
+      var show = panel.style.display !== "block";
+      panel.style.display = show ? "block" : "none";
+      btn.textContent = show ? "Hide Full Text" : "Show Full Text";
+    }
+
+    function copyFullListening() {
+      var text = [
+        BLOCK_TITLES[1],
+        document.getElementById("full1").textContent.trim(),
+        "",
+        BLOCK_TITLES[2],
+        document.getElementById("full2").textContent.trim(),
+        "",
+        BLOCK_TITLES[3],
+        document.getElementById("full3").textContent.trim(),
+        "",
+        BLOCK_TITLES[4],
+        document.getElementById("full4").textContent.trim()
+      ].join("\n");
+      copyText(text, "Full listening text copied.");
+    }
+
+    function gapParagraph(n) {
+      if (n === 1) {
+        return "Hello. My name is Maya and I am " + blankOr("l1a") +
+          " years old. I am from a small town near Bratislava, but I live in the city during the week. I am a student in year eight and I am usually " + blankOr("l1b") +
+          " and " + blankOr("l1c") +
+          ". In English class I am not perfect, but I am ready to " + blankOr("l1d") +
+          " every day. My favourite colour is " + blankOr("l1e") +
+          " and my lucky number is seven. When people ask about me, I smile and say that I am happy to meet new friends online and in school.";
+      }
+      if (n === 2) {
+        return "I have got a small family. I have got one " + blankOr("l2a") +
+          " and we share a room with posters on the wall. My parents have got busy jobs, but we have " + blankOr("l2b") +
+          " together most evenings. We have got a quiet flat near the park and I have got my own " + blankOr("l2c") +
+          " for homework. I have also got a " + blankOr("l2d") +
+          " called Miso. He is soft and lazy. At weekends I am often at my grandparents' house because they have got a " + blankOr("l2e") +
+          " where I can read and play badminton.";
+      }
+      if (n === 3) {
+        return "I go to school by " + blankOr("l3a") +
+          " and my first lesson usually starts at eight. I like maths and art, but I love English videos about travel. After school I do my homework, then I play " + blankOr("l3b") +
+          " with friends. I do not watch TV every day. I prefer " + blankOr("l3c") +
+          " and short walks. On Mondays I help my mum with " + blankOr("l3d") +
+          ". On Fridays I meet my classmates online to practise speaking. These simple routines help me feel " + blankOr("l3e") +
+          " and calm during a busy week.";
+      }
+      return "In the future I want to study " + blankOr("l4a") +
+        " and I hope English helps me talk to people from other countries. I am sometimes " + blankOr("l4b") +
+        " at the beginning, but I ask questions when I do not understand. I am interested in " + blankOr("l4c") +
+        " and I take pictures of ordinary streets. If you meet me for the first time, please ask about my hobbies, my family, or my favourite place in town. I am glad to " + blankOr("l4d") +
+        " myself, and I am ready to " + blankOr("l4e") +
+        " to your story too.";
+    }
+
+    function gapParagraphBlankTemplate(n) {
+      const map = {
+        1: ["l1a", "l1b", "l1c", "l1d", "l1e"],
+        2: ["l2a", "l2b", "l2c", "l2d", "l2e"],
+        3: ["l3a", "l3b", "l3c", "l3d", "l3e"],
+        4: ["l4a", "l4b", "l4c", "l4d", "l4e"]
+      };
+      const originals = {};
+      map[n].forEach(function (id) {
+        originals[id] = val(id);
+        document.getElementById(id).value = "";
+      });
+      const text = gapParagraph(n);
+      map[n].forEach(function (id) {
+        document.getElementById(id).value = originals[id];
+      });
+      return text;
+    }
+
+    function copyBlock(n) {
+      const text = [
+        BLOCK_TITLES[n],
+        "Word bank: " + WORD_BANKS[n],
+        "",
+        gapParagraph(n)
+      ].join("\n");
+      copyText(text, "Block " + n + " copied.");
+    }
+
+    function copyGapFill() {
+      const parts = [1, 2, 3, 4].map(function (n) {
+        return [
+          BLOCK_TITLES[n],
+          "Word bank: " + WORD_BANKS[n],
+          gapParagraphBlankTemplate(n),
+          ""
+        ].join("\n");
+      });
+      const text = [
+        "LISTENING GAP FILL - CLASS 02",
+        "About Me - Introduction",
+        "",
+        parts.join("\n"),
+        "[TEACHER NOTE: After pasting into Google Docs, you can color blanks blue if needed.]"
+      ].join("\n");
+      copyText(text, "Gap fill copied.");
+    }
+
+    function copyPlainLesson() {
+      const text = [
+        "WORKSHEET - CLASS 02",
+        "Topic: About Me - Introduction",
+        "Date: " + val("date"),
+        "Student: " + val("student"),
+        "Unit: " + val("unit"),
+        "Main focus: " + val("focus"),
+        "",
+        "1. GRAMMAR REVIEW",
+        "A) am/is/are: " + [val("g1"), val("g2"), val("g3"), val("g4")].join(" | "),
+        "B) have got: " + [val("g5"), val("g6"), val("g7"), val("g8")].join(" | "),
+        "C) Present Simple: " + [val("g9"), val("g10"), val("g11"), val("g12")].join(" | "),
+        "",
+        "2. LISTENING",
+        gapParagraph(1), "", gapParagraph(2), "", gapParagraph(3), "", gapParagraph(4),
+        "",
+        "3. TRUE / FALSE",
+        "tf1-5: " + [val("tf1"), val("tf2"), val("tf3"), val("tf4"), val("tf5")].join(", "),
+        "tf6-10: " + [val("tf6"), val("tf7"), val("tf8"), val("tf9"), val("tf10")].join(", "),
+        "",
+        "4. DIALOGUE",
+        "d1: " + val("d1"), "d2: " + val("d2"), "d3: " + val("d3"),
+        "d4: " + val("d4"), "d5: " + val("d5"), "d6: " + val("d6"),
+        "",
+        "5. ABOUT YOU",
+        val("n1"), val("n2"), val("n3"), val("n4"), val("n5"),
+        "",
+        "6. GRAMMAR BOX",
+        val("b1"), val("b2"), val("b3"), val("b4"),
+        "",
+        "7. MATCHING",
+        "m1-m11: " + ["m1","m2","m3","m4","m5","m6","m7","m8","m9","m10","m11"].map(val).join(" | ")
+      ].join("\n");
+      copyText(text, "Full lesson plain text copied.");
+    }
+
+    const SCORE_KEY = {
+      m1: { answer: "sloveso byt (am/is/are)", hint: "Hint: am/is/are = sloveso by\u0165." },
+      m2: { answer: "mat (have got / has got)", hint: "Hint: have got / has got = ma\u0165." },
+      m3: { answer: "pritomny cas jednoduchy", hint: "Hint: I live / She lives = pr\u00edtomn\u00fd \u010das jednoduch\u00fd." },
+      m4: { answer: "koncovka -s pre he/she/it", hint: "Hint: he/she/it + verb-s = tretia osoba." },
+      m5: { answer: "osobne zameno podmetove (I, you, she)", hint: "Hint: I/you/he/she/it/we/they = podmetov\u00e9 z\u00e1meno." },
+      m6: { answer: "kladna veta", hint: "Hint: affirmative = kladn\u00e1 veta." },
+      m7: { answer: "zaporova veta", hint: "Hint: do not / does not = z\u00e1porov\u00e1 veta." },
+      m8: { answer: "otazka ano/nie (Do you...?)", hint: "Hint: Do/Does... ? = ot\u00e1zka \u00e1no/\u00e1nie." },
+      m9: { answer: "predstavit sa", hint: "Hint: introduce yourself = predstavi\u0165 sa." },
+      m10: { answer: "doplnte prazdne miesta", hint: "Hint: fill in the blanks = dopl\u0148te pr\u00e1zdne miesta." },
+      m11: { answer: "dajte slova do spravneho poradia", hint: "Hint: put words in order = dajte slov\u00e1 do spr\u00e1vneho poradia." }
+    };
+
+    var answersRevealed = false;
+    var scoreFeedbackVisible = false;
+    var hideAnswersLock = false;
+
+    function resetScoreStyles() {
+      document.querySelectorAll("[data-score-id]").forEach(function (item) {
+        item.classList.remove("scored-correct", "scored-wrong", "reveal-correct");
+      });
+      Object.keys(SCORE_KEY).forEach(function (id) {
+        var mark = document.getElementById("mark-" + id);
+        var hint = document.getElementById("hint-" + id);
+        if (mark) mark.textContent = "";
+        if (hint) {
+          hint.classList.remove("show");
+          hint.textContent = "";
+        }
+      });
+    }
+
+    function setSec7ToggleLabel(revealed) {
+      var b1 = document.getElementById("toggleSec7AnswersBtn");
+      if (b1) b1.textContent = revealed ? "Hide Correct Answers" : "Show Correct Answers";
+    }
+
+    function hideCorrectAnswersOnEdit(changedId) {
+      if (hideAnswersLock) return;
+      if (!answersRevealed && !scoreFeedbackVisible) return;
+      hideAnswersLock = true;
+      var keepValue = "";
+      if (answersRevealed && changedId) {
+        keepValue = val(changedId);
+        if (keepValue === SCORE_KEY[changedId].answer) keepValue = "";
+      }
+      resetScoreStyles();
+      if (answersRevealed) {
+        Object.keys(SCORE_KEY).forEach(function (id) {
+          var el = document.getElementById(id);
+          if (!el) return;
+          if (id === changedId && keepValue) el.value = keepValue;
+          else el.selectedIndex = 0;
+        });
+        answersRevealed = false;
+        document.getElementById("scoreOutput").textContent = "Score: not checked yet.";
+        document.getElementById("scoreNote").textContent =
+          "Podfarbenie a spravne odpovede zmizli. Pokracuj a potom stlac Check Score.";
+        setStatus("Section 7 answers/feedback hidden.");
+        saveData(false);
+      } else {
+        document.getElementById("scoreOutput").textContent = "Score: not checked yet.";
+        document.getElementById("scoreNote").textContent =
+          "Podfarbenie z Check Score zmizlo. Skontroluj znova.";
+        setStatus("Section 7 check colors hidden.");
+      }
+      scoreFeedbackVisible = false;
+      setSec7ToggleLabel(false);
+      hideAnswersLock = false;
+    }
+
+    function checkScore() {
+      resetScoreStyles();
+      answersRevealed = false;
+      scoreFeedbackVisible = true;
+      setSec7ToggleLabel(false);
+      var score = 0;
+      var total = Object.keys(SCORE_KEY).length;
+      Object.keys(SCORE_KEY).forEach(function (id) {
+        var item = document.querySelector('.score-item[data-score-id="' + id + '"]');
+        var mark = document.getElementById("mark-" + id);
+        var hint = document.getElementById("hint-" + id);
+        var correct = SCORE_KEY[id].answer;
+        var chosen = val(id);
+        var isCorrect = chosen === correct;
+        if (item) item.classList.add(isCorrect ? "scored-correct" : "scored-wrong");
+        if (mark) mark.textContent = isCorrect ? "OK" : "X";
+        if (hint) {
+          if (isCorrect) hint.textContent = "Spravne. " + SCORE_KEY[id].hint;
+          else if (!chosen) hint.textContent = "Neoznacene. Spravna odpoved: " + correct + ". " + SCORE_KEY[id].hint;
+          else hint.textContent = "Nespravne. Tvoja odpoved: " + chosen + ". Spravne: " + correct + ". " + SCORE_KEY[id].hint;
+          hint.classList.add("show");
+        }
+        if (isCorrect) score += 1;
+      });
+      var percent = Math.round((score / total) * 100);
+      document.getElementById("scoreOutput").textContent =
+        "Score: " + score + "/" + total + " (" + percent + "%)";
+      document.getElementById("scoreNote").textContent =
+        "Check Score hodnotil polozky 1-11. Ked zacnes menit odpoved, podfarbenie zmizne.";
+      setStatus("Score checked: " + score + "/" + total);
+    }
+
+    function showCorrectAnswers() {
+      hideAnswersLock = true;
+      resetScoreStyles();
+      answersRevealed = true;
+      scoreFeedbackVisible = true;
+      Object.keys(SCORE_KEY).forEach(function (id) {
+        var el = document.getElementById(id);
+        var item = document.querySelector('.score-item[data-score-id="' + id + '"]');
+        var mark = document.getElementById("mark-" + id);
+        var hint = document.getElementById("hint-" + id);
+        var correct = SCORE_KEY[id].answer;
+        if (el) el.value = correct;
+        if (item) item.classList.add("reveal-correct");
+        if (mark) mark.textContent = "ANSWER";
+        if (hint) {
+          hint.textContent = "Spravna moznost: " + correct + ". " + SCORE_KEY[id].hint;
+          hint.classList.add("show");
+        }
+      });
+      saveData(false);
+      document.getElementById("scoreOutput").textContent =
+        "Correct answers shown (11/11). Toggle Hide, or start editing to hide them.";
+      document.getElementById("scoreNote").textContent =
+        "Show Answers je aktivne. Toggle na Hide, alebo zacni vyplnat.";
+      setStatus("Correct answers revealed.");
+      setSec7ToggleLabel(true);
+      hideAnswersLock = false;
+    }
+
+    function hideCorrectAnswers() {
+      hideAnswersLock = true;
+      resetScoreStyles();
+      answersRevealed = false;
+      scoreFeedbackVisible = false;
+      Object.keys(SCORE_KEY).forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) el.selectedIndex = 0;
+      });
+      document.getElementById("scoreOutput").textContent = "Score: not checked yet.";
+      document.getElementById("scoreNote").textContent =
+        "Odpovede Section 7 su skryte. Vypln znova a stlac Check Score.";
+      setStatus("Section 7 answers hidden.");
+      setSec7ToggleLabel(false);
+      saveData(false);
+      hideAnswersLock = false;
+    }
+
+    function toggleSec7Answers() {
+      if (answersRevealed) hideCorrectAnswers();
+      else showCorrectAnswers();
+    }
+
+    const DIALOGUE_KEY = {
+      d1: {
+        display: "My name is Maya.",
+        words: ["my", "name", "is", "maya"],
+        answers: ["my name is maya"],
+        hint: "Hint: My name is Maya."
+      },
+      d2: {
+        display: "I am fourteen.",
+        words: ["i", "am", "fourteen"],
+        answers: ["i am fourteen", "i am fourteen years old"],
+        hint: "Hint: I am fourteen."
+      },
+      d3: {
+        display: "I have got one brother.",
+        words: ["i", "have", "got", "one", "brother"],
+        answers: ["i have got one brother", "i have one brother"],
+        hint: "Hint: I have got one brother."
+      },
+      d4: {
+        display: "I play volleyball.",
+        words: ["i", "play", "volleyball"],
+        answers: ["i play volleyball"],
+        hint: "Hint: I play volleyball."
+      },
+      d5: {
+        display: "No I do not.",
+        words: ["no", "i", "do", "not"],
+        answers: ["no i do not", "no i don't", "i do not", "no i do not watch tv every day"],
+        hint: "Hint: No, I do not. (don't OK)"
+      },
+      d6: {
+        display: "I want to study design.",
+        words: ["i", "want", "to", "study", "design"],
+        answers: ["i want to study design"],
+        hint: "Hint: I want to study design."
+      }
+    };
+
+    var dialogueRevealed = false;
+    var dialogueFeedbackVisible = false;
+    var hideDialogueLock = false;
+
+    function normalizeAnswer(text) {
+      return (text || "")
+        .toLowerCase()
+        .replace(/[.,!?;:'"()\-]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function sameWordBag(a, b) {
+      var sa = (a || []).slice().sort().join(" ");
+      var sb = (b || []).slice().sort().join(" ");
+      return sa === sb;
+    }
+
+    function isDialogueCorrect(id, text) {
+      var norm = normalizeAnswer(text);
+      if (!norm) return false;
+      var key = DIALOGUE_KEY[id];
+      if (!key) return false;
+      if (key.answers.indexOf(norm) !== -1) return true;
+      var tokens = norm.split(" ").filter(Boolean);
+      if (key.words && sameWordBag(tokens, key.words)) return true;
+      return false;
+    }
+
+    function resetDialogueStyles() {
+      document.querySelectorAll("[data-dialogue-id]").forEach(function (item) {
+        item.classList.remove("scored-correct", "scored-wrong", "reveal-correct");
+      });
+      Object.keys(DIALOGUE_KEY).forEach(function (id) {
+        var mark = document.getElementById("mark-" + id);
+        var hint = document.getElementById("hint-" + id);
+        if (mark) mark.textContent = "";
+        if (hint) {
+          hint.classList.remove("show");
+          hint.textContent = "";
+        }
+      });
+    }
+
+    function clearDialogueFeedback() {
+      if (hideDialogueLock) return;
+      if (!dialogueFeedbackVisible && !dialogueRevealed) return;
+      hideDialogueLock = true;
+      resetDialogueStyles();
+      dialogueRevealed = false;
+      dialogueFeedbackVisible = false;
+      document.getElementById("dialogueScoreOutput").textContent = "Dialogue score: not checked yet.";
+      document.getElementById("dialogueScoreNote").textContent =
+        "Napoveda sa skryla. Pokracuj a neskor stlac Check Dialogue znova.";
+      setStatus("Dialogue hints hidden.");
+      hideDialogueLock = false;
+    }
+
+    function checkDialogue() {
+      resetDialogueStyles();
+      dialogueRevealed = false;
+      dialogueFeedbackVisible = true;
+      var score = 0;
+      var total = Object.keys(DIALOGUE_KEY).length;
+      Object.keys(DIALOGUE_KEY).forEach(function (id) {
+        var item = document.querySelector('[data-dialogue-id="' + id + '"]');
+        var mark = document.getElementById("mark-" + id);
+        var hint = document.getElementById("hint-" + id);
+        var chosenNorm = normalizeAnswer(val(id));
+        var isCorrect = isDialogueCorrect(id, val(id));
+        if (item) item.classList.add(isCorrect ? "scored-correct" : "scored-wrong");
+        if (mark) mark.textContent = isCorrect ? "OK" : "X";
+        if (hint) {
+          if (isCorrect) hint.textContent = "Spravne. " + DIALOGUE_KEY[id].hint;
+          else if (!chosenNorm) hint.textContent = "Neoznacene. Spravna odpoved: " + DIALOGUE_KEY[id].display + " " + DIALOGUE_KEY[id].hint;
+          else hint.textContent = "Nespravne. Spravne: " + DIALOGUE_KEY[id].display + " " + DIALOGUE_KEY[id].hint;
+          hint.classList.add("show");
+        }
+        if (isCorrect) score += 1;
+      });
+      var percent = Math.round((score / total) * 100);
+      document.getElementById("dialogueScoreOutput").textContent =
+        "Dialogue score: " + score + "/" + total + " (" + percent + "%)";
+      document.getElementById("dialogueScoreNote").textContent =
+        "Check Dialogue hodnotil vety 1-6. Napoveda sa skryje po kliknuti do pola.";
+      setStatus("Dialogue checked: " + score + "/" + total);
+    }
+
+    document.querySelectorAll(".autosave").forEach(function (el) {
+      el.addEventListener("input", function () {
+        if (el.id && SCORE_KEY[el.id]) hideCorrectAnswersOnEdit(el.id);
+        if (el.id && DIALOGUE_KEY[el.id]) clearDialogueFeedback();
+        saveData(false);
+      });
+      el.addEventListener("change", function () {
+        if (el.id && SCORE_KEY[el.id]) hideCorrectAnswersOnEdit(el.id);
+        if (el.id && DIALOGUE_KEY[el.id]) clearDialogueFeedback();
+        saveData(false);
+      });
+      el.addEventListener("focus", function () {
+        if (el.id && DIALOGUE_KEY[el.id]) clearDialogueFeedback();
+        if (el.id && SCORE_KEY[el.id]) hideCorrectAnswersOnEdit(el.id);
+      });
+    });
+    loadData();
+  </script>
+</body>
+</html>

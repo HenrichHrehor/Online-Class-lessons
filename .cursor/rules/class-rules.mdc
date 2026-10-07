@@ -1,0 +1,33 @@
+---
+description: Rules for creating Online Class lesson topics (grades 8-9 ESL apps)
+globs: classes/**/*.html
+alwaysApply: false
+---
+
+# Class Rules (topic creation)
+
+## Product
+- One lesson = self-contained `classes/NN/index.html` (CSS + JS inline). No build step.
+- Target: Slovak grades 8–9, online 1× ~45–60 min. CEFR aim per course: solid **A2 → emerging B1** grammar core (not “all English grammar”).
+- Follow Martin worksheet spine: Grammar Review → Listening (4 blocks) → T/F → Scrambled Dialogue → New Topic → Grammar Box → Classroom/Grammar matching.
+
+## Before writing content
+Ask only if missing: (1) class number, (2) topic, (3) unit transition, (4) main grammar focus from `curriculum/25-hours.md`.
+
+## Content rules
+- Listening: 4 paragraphs, ~80–100 words each; 5 gaps + scrambled 5-word bank per block; full text word-for-word synced with gap text.
+- T/F: 8–10 items, factual to listening only.
+- Dialogue: 6 Jim questions + Pete scrambled answers; accept flexible order via `DIALOGUE_KEY`.
+- Grammar Review must match the hour’s focus and recycle 1–2 prior hours.
+- Section 7: 11 English terms → 3 Slovak options each; Unicode `\u` in JS hints.
+- Slovak diacritics: prefer `\uXXXX` in JS strings to avoid mojibake.
+
+## UX / app rules
+- Sticky toolbar: Show Full Text, Copy controls, Clear Answers.
+- Check Dialogue / Check Score: sticky bar **inside** Section 4 / 7 (not only global toolbar); no `scrollIntoView` jump.
+- Show/Hide toggles; hide check feedback on focus/edit.
+- `localStorage` key unique per class: `esl-class-NN-v1`.
+- Update root `index.html` hub link when adding a class.
+
+## Honesty constraint
+Do not promise “full English grammar in 25 hours”. Promise a **recycled functional core** (see curriculum). Each new topic carries old grammar forward.
