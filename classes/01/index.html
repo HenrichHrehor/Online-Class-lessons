@@ -152,6 +152,24 @@
       flex-wrap: wrap;
       margin-top: 10px;
     }
+    .section-sticky-actions {
+      position: sticky;
+      top: 56px;
+      z-index: 9;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+      padding: 8px 10px;
+      margin: 0 0 12px;
+      background: rgba(245, 247, 251, 0.96);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      backdrop-filter: blur(4px);
+    }
+    .section-sticky-actions .small {
+      margin: 0;
+    }
     .score-box {
       margin-top: 12px;
       padding: 10px;
@@ -191,9 +209,6 @@
       <button onclick="copyGapFill()">Copy Gap Fill</button>
       <button onclick="copyPlainLesson()">Copy Plain Text (Lesson)</button>
       <button onclick="savePdf()">Save as PDF</button>
-      <button onclick="checkScore()">Check Score (Sec.7)</button>
-      <button id="toggleSec7AnswersBtn" onclick="toggleSec7Answers()">Show Answers (Sec.7)</button>
-      <button onclick="checkDialogue()">Check Dialogue</button>
       <button onclick="clearData()">Clear Answers</button>
       <span class="status" id="copyStatus"></span>
     </div>
@@ -360,6 +375,9 @@
     <div class="card" id="section4">
       <h2>4. Talking - Scrambled Dialogue</h2>
       <p class="small"><strong>Check Dialogue hodnoti tieto odpovede (1-6).</strong> Usporiadaj slova z banky do spravnej vety.</p>
+      <div class="section-sticky-actions">
+        <button class="primary" onclick="checkDialogue()">Check Dialogue</button>
+      </div>
 
       <div class="score-item" data-dialogue-id="d1">
         <div class="item-label">1) Pete answer: <span class="mark" id="mark-d1"></span></div>
@@ -403,9 +421,6 @@
         <div class="hint" id="hint-d6"></div>
       </div>
 
-      <div class="score-actions">
-        <button class="primary" onclick="checkDialogue()">Check Dialogue</button>
-      </div>
       <div id="dialogueScoreOutput" class="score-box">Dialogue score: not checked yet.</div>
       <div id="dialogueScoreNote" class="score-note">Tip: Check Dialogue oznaci spravne/nespravne vety a ukaze napovedu. Napoveda zmizne hned po kliknuti do pola.</div>
     </div>
@@ -431,6 +446,10 @@
       <h2>7. Classroom and Grammar Connection</h2>
       <p>Choose one correct Slovak option for each English term.</p>
       <p class="small"><strong>Check Score hodnoti tieto polozky (1-11).</strong> Po skore uvidis spravne/nespravne oznacenie + hint.</p>
+      <div class="section-sticky-actions">
+        <button class="primary" onclick="checkScore()">Check Score</button>
+        <button id="toggleSec7AnswersBtn" onclick="toggleSec7Answers()">Show Correct Answers</button>
+      </div>
       <div class="term-grid" id="scoreItems">
         <div class="score-item" data-score-id="m1">
           <div class="item-label">1) third person singular: <span class="mark" id="mark-m1"></span></div>
@@ -542,10 +561,6 @@
           </select>
           <div class="hint" id="hint-m11"></div>
         </div>
-      </div>
-      <div class="score-actions">
-        <button class="primary" onclick="checkScore()">Check Score</button>
-        <button id="toggleSec7AnswersBtn2" onclick="toggleSec7Answers()">Show Correct Answers</button>
       </div>
       <div id="scoreOutput" class="score-box">Score: not checked yet.</div>
       <div id="scoreNote" class="score-note">Tip: Check Score oznaci spravne (zelena) a nespravne (cervena) polozky a ukaze kratke zdovodnenie.</div>
@@ -963,12 +978,8 @@
     }
 
     function setSec7ToggleLabel(revealed) {
-      var label = revealed ? "Hide Answers (Sec.7)" : "Show Answers (Sec.7)";
-      var label2 = revealed ? "Hide Correct Answers" : "Show Correct Answers";
       var b1 = document.getElementById("toggleSec7AnswersBtn");
-      var b2 = document.getElementById("toggleSec7AnswersBtn2");
-      if (b1) b1.textContent = label;
-      if (b2) b2.textContent = label2;
+      if (b1) b1.textContent = revealed ? "Hide Correct Answers" : "Show Correct Answers";
     }
 
 
@@ -1050,8 +1061,6 @@
       document.getElementById("scoreNote").textContent =
         "Check Score hodnotil polozky 1-11. Ked zacnes menit odpoved, podfarbenie zmizne.";
       setStatus("Score checked: " + score + "/" + total);
-      var section = document.getElementById("section7");
-      if (section) section.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
     function showCorrectAnswers() {
@@ -1240,8 +1249,6 @@ const DIALOGUE_KEY = {
       document.getElementById("dialogueScoreNote").textContent =
         "Check Dialogue hodnotil vety 1-6. Napoveda sa skryje hned, ked kliknes do pola na pisanie.";
       setStatus("Dialogue checked: " + score + "/" + total);
-      var section = document.getElementById("section4");
-      if (section) section.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 document.querySelectorAll(".autosave").forEach(function (el) {
       el.addEventListener("input", function () {
