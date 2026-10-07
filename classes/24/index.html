@@ -192,6 +192,39 @@
       padding: 12px;
       margin-top: 8px;
     }
+    .transform-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .transform-task .source-line {
+      margin: 0 0 6px;
+      font-size: 15px;
+    }
+    .transform-task .task-badge {
+      display: inline-block;
+      background: #dbeafe;
+      color: #1e3a8a;
+      border-radius: 6px;
+      padding: 2px 8px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .transform-task .tense-tag {
+      display: inline-block;
+      margin-left: 6px;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .pool-select {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 7px 10px;
+      font: inherit;
+      background: #fff;
+    }
     @media print {
       .toolbar { display: none !important; }
       #fullTextPanel { display: none !important; }
@@ -206,7 +239,8 @@
       .meta { grid-template-columns: repeat(2, minmax(180px, 1fr)); }
       #listeningSection,
       #section4,
-      .term-grid { grid-template-columns: 1fr; }
+      .term-grid,
+      .transform-grid { grid-template-columns: 1fr; }
     }
     @media (max-width: 760px) {
       .wrap { padding: 0 12px 20px; }
@@ -364,6 +398,30 @@
       <div class="q">2) I have never (travel) <input class="inline-input autosave" id="g10" type="text"> alone.</div>
       <div class="q">3) Next year I am going to (join) <input class="inline-input autosave" id="g11" type="text"> a club.</div>
       <div class="q">4) I will (improve) <input class="inline-input autosave" id="g12" type="text"> if I practise.</div>
+    </div>
+
+    <div class="card" id="sectionTransform">
+      <h2>1b. Sentence Transformations</h2>
+      <p class="small">
+        Kazdy cas ma pool <strong>9 viet</strong> (3 affirmative + 3 negative + 3 question).
+        Uloha ukaze jednu vetu a ty ju transformujes (napr. <em>Make negative</em> / <em>Make question</em>).
+        <strong>New set</strong> vytvori novy nahodny set.
+      </p>
+      <div class="section-sticky-actions">
+        <label class="small" for="transformPool">Pool</label>
+        <select id="transformPool" class="pool-select" onchange="newTransformSet()">
+          <option value="all">All tenses (mix)</option>
+          <option value="present_simple">Present Simple</option>
+          <option value="past_simple">Past Simple</option>
+          <option value="present_perfect">Present Perfect</option>
+          <option value="going_to">be going to</option>
+        </select>
+        <button type="button" onclick="newTransformSet()">New set</button>
+        <button type="button" class="primary" onclick="checkTransforms()">Check Transformations</button>
+      </div>
+      <div id="transformList" class="transform-grid"></div>
+      <div id="transformScoreOutput" class="score-box">Transformations: not checked yet.</div>
+      <div id="transformScoreNote" class="score-note">Tip: Example source — <em>I am going to study this year.</em> → Make question / Make negative.</div>
     </div>
 
     <div class="card">
@@ -629,18 +687,36 @@
       document.querySelectorAll(".autosave").forEach(function (el) {
         if (el.id) data[el.id] = el.value;
       });
+      data._transformState = {
+        pool: document.getElementById("transformPool").value,
+        tasks: currentTransformTasks,
+        answers: collectTransformAnswers()
+      };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     }
     function loadData() {
       try {
         var raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return;
+        if (!raw) {
+          newTransformSet();
+          return;
+        }
         var data = JSON.parse(raw);
         Object.keys(data).forEach(function (id) {
+          if (id === "_transformState") return;
           var el = document.getElementById(id);
           if (el) el.value = data[id];
         });
-      } catch (e) {}
+        if (data._transformState && data._transformState.tasks && data._transformState.tasks.length) {
+          document.getElementById("transformPool").value = data._transformState.pool || "all";
+          currentTransformTasks = data._transformState.tasks;
+          renderTransformTasks(data._transformState.answers || {});
+        } else {
+          newTransformSet();
+        }
+      } catch (e) {
+        newTransformSet();
+      }
     }
     function clearData() {
       if (!confirm("Clear all answers for Class 24?")) return;
@@ -651,12 +727,16 @@
       localStorage.removeItem(STORAGE_KEY);
       resetScoreStyles();
       resetDialogueStyles();
+      resetTransformStyles();
       answersRevealed = false;
       scoreFeedbackVisible = false;
       dialogueFeedbackVisible = false;
+      transformFeedbackVisible = false;
       setSec7ToggleLabel(false);
       document.getElementById("scoreOutput").textContent = "Score: not checked yet.";
       document.getElementById("dialogueScoreOutput").textContent = "Dialogue score: not checked yet.";
+      document.getElementById("transformScoreOutput").textContent = "Transformations: not checked yet.";
+      newTransformSet();
       setStatus("Cleared.");
     }
     function savePdf() { window.print(); }
@@ -752,6 +832,11 @@
         "4. DIALOGUE",
         val("d1"), val("d2"), val("d3"), val("d4"), val("d5"), val("d6"),
         "",
+        "1b. TRANSFORMATIONS",
+        currentTransformTasks.map(function (task, i) {
+          return (i + 1) + ") [" + task.target + "] " + task.sourceText + " -> " + (collectTransformAnswers()["t" + i] || ".....");
+        }).join("\n"),
+        "",
         "5. MY SPOTLIGHT SCRIPT",
         "Opening: " + val("n1"),
         "Past: " + val("n2"),
@@ -766,6 +851,332 @@
         ["m1","m2","m3","m4","m5","m6","m7","m8","m9","m10","m11"].map(val).join(" | ")
       ].join("\n");
       copyText(text, "Full lesson plain text copied.");
+    }
+
+    /* ===== Sentence Transformations (pool per tense) ===== */
+    var FORM_KEYS = ["affirmative", "negative", "question"];
+    var FORM_LABELS = {
+      affirmative: "Make affirmative",
+      negative: "Make negative",
+      question: "Make question"
+    };
+    var TRANSFORM_POOLS = {
+      present_simple: {
+        label: "Present Simple",
+        items: [
+          {
+            id: "ps1",
+            forms: {
+              affirmative: "I live in Kosice.",
+              negative: "I do not live in Kosice.",
+              question: "Do I live in Kosice?"
+            },
+            alts: {
+              negative: ["i don't live in kosice"],
+              question: ["do i live in kosice"]
+            }
+          },
+          {
+            id: "ps2",
+            forms: {
+              affirmative: "She plays volleyball after school.",
+              negative: "She does not play volleyball after school.",
+              question: "Does she play volleyball after school?"
+            },
+            alts: {
+              negative: ["she doesn't play volleyball after school"]
+            }
+          },
+          {
+            id: "ps3",
+            forms: {
+              affirmative: "We practise English every Friday.",
+              negative: "We do not practise English every Friday.",
+              question: "Do we practise English every Friday?"
+            },
+            alts: {
+              negative: ["we don't practise english every friday", "we do not practice english every friday", "we don't practice english every friday"],
+              affirmative: ["we practice english every friday"],
+              question: ["do we practice english every friday"]
+            }
+          }
+        ]
+      },
+      past_simple: {
+        label: "Past Simple",
+        items: [
+          {
+            id: "past1",
+            forms: {
+              affirmative: "I joined a school project last year.",
+              negative: "I did not join a school project last year.",
+              question: "Did I join a school project last year?"
+            },
+            alts: {
+              negative: ["i didn't join a school project last year"]
+            }
+          },
+          {
+            id: "past2",
+            forms: {
+              affirmative: "He wrote a short report in English.",
+              negative: "He did not write a short report in English.",
+              question: "Did he write a short report in English?"
+            },
+            alts: {
+              negative: ["he didn't write a short report in english"]
+            }
+          },
+          {
+            id: "past3",
+            forms: {
+              affirmative: "They clapped after my presentation.",
+              negative: "They did not clap after my presentation.",
+              question: "Did they clap after my presentation?"
+            },
+            alts: {
+              negative: ["they didn't clap after my presentation"]
+            }
+          }
+        ]
+      },
+      present_perfect: {
+        label: "Present Perfect",
+        items: [
+          {
+            id: "pp1",
+            forms: {
+              affirmative: "I have practised English more often.",
+              negative: "I have not practised English more often.",
+              question: "Have I practised English more often?"
+            },
+            alts: {
+              negative: ["i haven't practised english more often", "i have not practiced english more often", "i haven't practiced english more often"],
+              affirmative: ["i have practiced english more often"],
+              question: ["have i practiced english more often"]
+            }
+          },
+          {
+            id: "pp2",
+            forms: {
+              affirmative: "She has visited Bratislava with her class.",
+              negative: "She has not visited Bratislava with her class.",
+              question: "Has she visited Bratislava with her class?"
+            },
+            alts: {
+              negative: ["she hasn't visited bratislava with her class"]
+            }
+          },
+          {
+            id: "pp3",
+            forms: {
+              affirmative: "We have spoken with friends online.",
+              negative: "We have not spoken with friends online.",
+              question: "Have we spoken with friends online?"
+            },
+            alts: {
+              negative: ["we haven't spoken with friends online"]
+            }
+          }
+        ]
+      },
+      going_to: {
+        label: "be going to",
+        items: [
+          {
+            id: "gt1",
+            forms: {
+              affirmative: "I am going to study this year.",
+              negative: "I am not going to study this year.",
+              question: "Am I going to study this year?"
+            },
+            alts: {
+              affirmative: ["i'm going to study this year"],
+              negative: ["i'm not going to study this year"],
+              question: ["am i going to study this year"]
+            }
+          },
+          {
+            id: "gt2",
+            forms: {
+              affirmative: "He is going to join the media club.",
+              negative: "He is not going to join the media club.",
+              question: "Is he going to join the media club?"
+            },
+            alts: {
+              affirmative: ["he's going to join the media club"],
+              negative: ["he's not going to join the media club", "he isn't going to join the media club"]
+            }
+          },
+          {
+            id: "gt3",
+            forms: {
+              affirmative: "We are going to make short videos.",
+              negative: "We are not going to make short videos.",
+              question: "Are we going to make short videos?"
+            },
+            alts: {
+              affirmative: ["we're going to make short videos"],
+              negative: ["we're not going to make short videos", "we aren't going to make short videos"]
+            }
+          }
+        ]
+      }
+    };
+
+    var currentTransformTasks = [];
+    var transformFeedbackVisible = false;
+
+    function shuffle(arr) {
+      var a = arr.slice();
+      for (var i = a.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var t = a[i]; a[i] = a[j]; a[j] = t;
+      }
+      return a;
+    }
+
+    function findPoolItem(poolKey, itemId) {
+      var pool = TRANSFORM_POOLS[poolKey];
+      if (!pool) return null;
+      for (var i = 0; i < pool.items.length; i++) {
+        if (pool.items[i].id === itemId) return pool.items[i];
+      }
+      return null;
+    }
+
+    function acceptedAnswers(item, form) {
+      var list = [normalizeAnswer(item.forms[form])];
+      if (item.alts && item.alts[form]) {
+        item.alts[form].forEach(function (a) { list.push(normalizeAnswer(a)); });
+      }
+      return list;
+    }
+
+    function isTransformCorrect(task, text) {
+      var item = findPoolItem(task.pool, task.itemId);
+      if (!item) return false;
+      var norm = normalizeAnswer(text);
+      if (!norm) return false;
+      return acceptedAnswers(item, task.target).indexOf(norm) !== -1;
+    }
+
+    function collectTransformAnswers() {
+      var out = {};
+      currentTransformTasks.forEach(function (_, i) {
+        var el = document.getElementById("tr" + i);
+        out["t" + i] = el ? el.value : "";
+      });
+      return out;
+    }
+
+    function resetTransformStyles() {
+      document.querySelectorAll("#transformList .score-item").forEach(function (item) {
+        item.classList.remove("scored-correct", "scored-wrong");
+      });
+      currentTransformTasks.forEach(function (_, i) {
+        var mark = document.getElementById("mark-tr" + i);
+        var hint = document.getElementById("hint-tr" + i);
+        if (mark) mark.textContent = "";
+        if (hint) { hint.classList.remove("show"); hint.textContent = ""; }
+      });
+    }
+
+    function clearTransformFeedback() {
+      if (!transformFeedbackVisible) return;
+      resetTransformStyles();
+      transformFeedbackVisible = false;
+      document.getElementById("transformScoreOutput").textContent = "Transformations: not checked yet.";
+      document.getElementById("transformScoreNote").textContent =
+        "Podfarbenie zmizlo. Uprav odpoved a stlac Check Transformations znova.";
+    }
+
+    function renderTransformTasks(answers) {
+      answers = answers || {};
+      var box = document.getElementById("transformList");
+      box.innerHTML = currentTransformTasks.map(function (task, i) {
+        var saved = answers["t" + i] || "";
+        return [
+          '<div class="score-item transform-task" data-transform-i="' + i + '">',
+          '<div class="item-label">',
+          (i + 1) + ") <span class="task-badge">' + FORM_LABELS[task.target] + '</span>',
+          '<span class="tense-tag">' + task.poolLabel + '</span>',
+          ' <span class="mark" id="mark-tr' + i + '"></span>',
+          '</div>',
+          '<p class="source-line"><strong>Source:</strong> ' + task.sourceText + '</p>',
+          '<textarea class="autosave transform-input" id="tr' + i + '" rows="2" placeholder="Write the transformed sentence...">' +
+            saved.replace(/</g, "&lt;") + '</textarea>',
+          '<div class="hint" id="hint-tr' + i + '"></div>',
+          '</div>'
+        ].join("");
+      }).join("");
+      transformFeedbackVisible = false;
+      document.getElementById("transformScoreOutput").textContent = "Transformations: not checked yet.";
+    }
+
+    function newTransformSet() {
+      var poolKey = document.getElementById("transformPool").value;
+      var candidates = [];
+      Object.keys(TRANSFORM_POOLS).forEach(function (key) {
+        if (poolKey !== "all" && key !== poolKey) return;
+        TRANSFORM_POOLS[key].items.forEach(function (item) {
+          FORM_KEYS.forEach(function (source) {
+            FORM_KEYS.forEach(function (target) {
+              if (source === target) return;
+              candidates.push({
+                pool: key,
+                poolLabel: TRANSFORM_POOLS[key].label,
+                itemId: item.id,
+                source: source,
+                target: target,
+                sourceText: item.forms[source]
+              });
+            });
+          });
+        });
+      });
+      // Per tense pool = 9 source sentences (3×3 forms); tasks = transform to another form.
+      var setSize = 6;
+      currentTransformTasks = shuffle(candidates).slice(0, Math.min(setSize, candidates.length));
+      renderTransformTasks({});
+      document.getElementById("transformScoreNote").textContent =
+        "Novy set: " + currentTransformTasks.length + " uloh z poolu \"" +
+        (poolKey === "all" ? "All tenses" : TRANSFORM_POOLS[poolKey].label) +
+        "\" (v poole 9 viet / cas).";
+      setStatus("New transformation set ready.");
+      saveData();
+    }
+
+    function checkTransforms() {
+      resetTransformStyles();
+      transformFeedbackVisible = true;
+      var score = 0;
+      var total = currentTransformTasks.length;
+      currentTransformTasks.forEach(function (task, i) {
+        var item = findPoolItem(task.pool, task.itemId);
+        var wrap = document.querySelector('[data-transform-i="' + i + '"]');
+        var mark = document.getElementById("mark-tr" + i);
+        var hint = document.getElementById("hint-tr" + i);
+        var chosen = document.getElementById("tr" + i) ? document.getElementById("tr" + i).value : "";
+        var ok = isTransformCorrect(task, chosen);
+        if (wrap) wrap.classList.add(ok ? "scored-correct" : "scored-wrong");
+        if (mark) mark.textContent = ok ? "OK" : "X";
+        if (hint && item) {
+          var correct = item.forms[task.target];
+          if (ok) hint.textContent = "Spravne. " + FORM_LABELS[task.target] + ": " + correct;
+          else if (!normalizeAnswer(chosen)) hint.textContent = "Prazdne. Spravne: " + correct;
+          else hint.textContent = "Nespravne. Spravne: " + correct;
+          hint.classList.add("show");
+        }
+        if (ok) score += 1;
+      });
+      var percent = total ? Math.round((score / total) * 100) : 0;
+      document.getElementById("transformScoreOutput").textContent =
+        "Transformations: " + score + "/" + total + " (" + percent + "%)";
+      document.getElementById("transformScoreNote").textContent =
+        "Check hotovy. Ked zacnes editovat odpoved, farby zmiznu.";
+      setStatus("Transformations checked: " + score + "/" + total);
+      saveData();
     }
 
     const SCORE_KEY = {
@@ -1021,6 +1432,20 @@
         if (el.id && SCORE_KEY[el.id]) hideCorrectAnswersOnEdit(el.id);
       });
     });
+
+    var transformListEl = document.getElementById("transformList");
+    transformListEl.addEventListener("input", function (e) {
+      if (e.target && e.target.classList.contains("transform-input")) {
+        clearTransformFeedback();
+        saveData();
+      }
+    });
+    transformListEl.addEventListener("focusin", function (e) {
+      if (e.target && e.target.classList.contains("transform-input")) {
+        clearTransformFeedback();
+      }
+    });
+
     loadData();
   </script>
 </body>

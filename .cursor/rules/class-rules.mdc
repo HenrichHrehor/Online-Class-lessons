@@ -19,6 +19,7 @@ Ask only if missing: (1) class number, (2) topic, (3) unit transition, (4) main 
 - T/F: 8–10 items, factual to listening only.
 - Dialogue: 6 Jim questions + Pete scrambled answers; accept flexible order via `DIALOGUE_KEY`.
 - Grammar Review must match the hour’s focus and recycle 1–2 prior hours.
+- Optional **Sentence Transformations** pool: per tense 3 lemmas × 3 forms (affirmative/negative/question = 9 sentences); random New set; Check with flexible answers (`don't`/`do not`).
 - Section 7: 11 English terms → 3 Slovak options each; Unicode `\u` in JS hints.
 - Slovak diacritics: prefer `\uXXXX` in JS strings to avoid mojibake.
 
