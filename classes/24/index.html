@@ -1100,7 +1100,8 @@
         return [
           '<div class="score-item transform-task" data-transform-i="' + i + '">',
           '<div class="item-label">',
-          (i + 1) + ") <span class="task-badge">' + FORM_LABELS[task.target] + '</span>',
+          'Task ' + (i + 1) + '/6 ',
+          '<span class="task-badge">' + FORM_LABELS[task.target] + '</span>',
           '<span class="tense-tag">' + task.poolLabel + '</span>',
           ' <span class="mark" id="mark-tr' + i + '"></span>',
           '</div>',
@@ -1112,7 +1113,7 @@
         ].join("");
       }).join("");
       transformFeedbackVisible = false;
-      document.getElementById("transformScoreOutput").textContent = "Transformations: not checked yet.";
+      document.getElementById("transformScoreOutput").textContent = "Exercise 2: 6 tasks — not checked yet.";
     }
 
     function newTransformSet() {
