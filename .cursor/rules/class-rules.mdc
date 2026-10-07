@@ -23,6 +23,7 @@ Ask only if missing: (1) class number, (2) topic, (3) unit transition, (4) main 
 - Slovak diacritics: prefer `\uXXXX` in JS strings to avoid mojibake.
 
 ## UX / app rules
+- Desktop web layout (not A4): `.wrap` up to ~1480px; listening / dialogue / matching in 2 columns on wide screens; collapse under 1100px; A4 only in `@media print`.
 - Sticky toolbar: Show Full Text, Copy controls, Clear Answers.
 - Check Dialogue / Check Score: sticky bar **inside** Section 4 / 7 (not only global toolbar); no `scrollIntoView` jump.
 - Show/Hide toggles; hide check feedback on focus/edit.

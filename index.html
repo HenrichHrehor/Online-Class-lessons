@@ -29,7 +29,7 @@
       display: flex;
     }
     .rail {
-      width: 168px;
+      width: 196px;
       flex-shrink: 0;
       background: var(--panel);
       color: var(--panel-text);
@@ -101,9 +101,13 @@
     .main {
       flex: 1;
       min-width: 0;
-      padding: 28px 20px 40px;
+      padding: 20px 28px 36px;
     }
-    .wrap { max-width: 820px; margin: 0 auto; }
+    .wrap {
+      width: 100%;
+      max-width: none;
+      margin: 0;
+    }
     .card {
       background: var(--card);
       border: 1px solid var(--line);
@@ -120,7 +124,8 @@
     li { margin: 8px 0; }
     .preview-frame {
       width: 100%;
-      min-height: 72vh;
+      min-height: calc(100vh - 220px);
+      height: 78vh;
       border: 1px solid var(--line);
       border-radius: 12px;
       background: #fff;
