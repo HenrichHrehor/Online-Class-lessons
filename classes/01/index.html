@@ -110,7 +110,47 @@
     .tf-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 8px 0; }
     .tf-row select { width: 90px; }
     .small { font-size: 13px; color: var(--muted); }
-    .term-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
+    .term-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+    .score-item {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      background: #fff;
+    }
+    .score-item.scored-correct {
+      border-color: #22c55e;
+      background: #f0fdf4;
+    }
+    .score-item.scored-wrong {
+      border-color: #ef4444;
+      background: #fef2f2;
+    }
+    .score-item.reveal-correct {
+      border-color: #2563eb;
+      background: #eff6ff;
+    }
+    .score-item .item-label {
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .score-item .hint {
+      margin-top: 6px;
+      font-size: 13px;
+      color: #334155;
+      display: none;
+    }
+    .score-item .hint.show { display: block; }
+    .score-item .mark {
+      display: inline-block;
+      margin-left: 6px;
+      font-weight: 700;
+    }
+    .score-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
     .score-box {
       margin-top: 12px;
       padding: 10px;
@@ -118,6 +158,12 @@
       border-radius: 8px;
       background: #f8fbff;
       font-weight: 700;
+    }
+    .score-note {
+      margin-top: 8px;
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 400;
     }
     .status {
       margin-left: auto;
@@ -145,6 +191,7 @@
       <button onclick="copyPlainLesson()">Copy Plain Text (Lesson)</button>
       <button onclick="savePdf()">Save as PDF</button>
       <button onclick="checkScore()">Check Score</button>
+      <button onclick="showCorrectAnswers()">Show Correct Answers</button>
       <button onclick="clearData()">Clear Answers</button>
       <span class="status" id="copyStatus"></span>
     </div>
@@ -354,103 +401,130 @@
       <div class="q"><strong>Short answer example:</strong><input class="line-input autosave" id="b4" type="text"></div>
     </div>
 
-    <div class="card">
+    <div class="card" id="section7">
       <h2>7. Classroom and Grammar Connection</h2>
       <p>Choose one correct Slovak option for each English term.</p>
-      <div class="term-grid">
-        <div>1) third person singular:
+      <p class="small"><strong>Check Score hodnoti tieto polozky (1-11).</strong> Po skore uvidis spravne/nespravne oznacenie + hint.</p>
+      <div class="term-grid" id="scoreItems">
+        <div class="score-item" data-score-id="m1">
+          <div class="item-label">1) third person singular: <span class="mark" id="mark-m1"></span></div>
           <select class="autosave" id="m1" style="max-width:320px;display:inline-block;width:auto;min-width:220px;">
             <option value=""></option>
             <option>tretia osoba jednotneho cisla</option>
             <option>nepravidelne sloveso</option>
             <option>zaporova veta</option>
           </select>
+          <div class="hint" id="hint-m1"></div>
         </div>
-        <div>2) irregular verb:
+        <div class="score-item" data-score-id="m2">
+          <div class="item-label">2) irregular verb: <span class="mark" id="mark-m2"></span></div>
           <select class="autosave" id="m2" style="max-width:320px;display:inline-block;width:auto;min-width:220px;">
             <option value=""></option>
             <option>nepravidelne sloveso</option>
             <option>kladna veta</option>
             <option>predpritomny cas</option>
           </select>
+          <div class="hint" id="hint-m2"></div>
         </div>
-        <div>3) present perfect:
+        <div class="score-item" data-score-id="m3">
+          <div class="item-label">3) present perfect: <span class="mark" id="mark-m3"></span></div>
           <select class="autosave" id="m3" style="max-width:320px;display:inline-block;width:auto;min-width:220px;">
             <option value=""></option>
             <option>predpritomny cas</option>
             <option>minuly cas jednoduchy</option>
             <option>minuly cas priebehovy</option>
           </select>
+          <div class="hint" id="hint-m3"></div>
         </div>
-        <div>4) past continuous:
+        <div class="score-item" data-score-id="m4">
+          <div class="item-label">4) past continuous: <span class="mark" id="mark-m4"></span></div>
           <select class="autosave" id="m4" style="max-width:320px;display:inline-block;width:auto;min-width:220px;">
             <option value=""></option>
             <option>minuly cas priebehovy</option>
             <option>predpritomny cas</option>
             <option>zaporova veta</option>
           </select>
+          <div class="hint" id="hint-m4"></div>
         </div>
-        <div>5) past simple:
+        <div class="score-item" data-score-id="m5">
+          <div class="item-label">5) past simple: <span class="mark" id="mark-m5"></span></div>
           <select class="autosave" id="m5" style="max-width:320px;display:inline-block;width:auto;min-width:220px;">
             <option value=""></option>
             <option>minuly cas jednoduchy</option>
             <option>minuly cas priebehovy</option>
             <option>kladna veta</option>
           </select>
+          <div class="hint" id="hint-m5"></div>
         </div>
-        <div>6) affirmative sentence:
+        <div class="score-item" data-score-id="m6">
+          <div class="item-label">6) affirmative sentence: <span class="mark" id="mark-m6"></span></div>
           <select class="autosave" id="m6" style="max-width:320px;display:inline-block;width:auto;min-width:220px;">
             <option value=""></option>
             <option>kladna veta</option>
             <option>zaporova veta</option>
             <option>nepravidelne sloveso</option>
           </select>
+          <div class="hint" id="hint-m6"></div>
         </div>
-        <div>7) negative sentence:
+        <div class="score-item" data-score-id="m7">
+          <div class="item-label">7) negative sentence: <span class="mark" id="mark-m7"></span></div>
           <select class="autosave" id="m7" style="max-width:320px;display:inline-block;width:auto;min-width:220px;">
             <option value=""></option>
             <option>zaporova veta</option>
             <option>kladna veta</option>
             <option>doplnte prazdne miesta</option>
           </select>
+          <div class="hint" id="hint-m7"></div>
         </div>
-        <div>8) fill in the blanks:
+        <div class="score-item" data-score-id="m8">
+          <div class="item-label">8) fill in the blanks: <span class="mark" id="mark-m8"></span></div>
           <select class="autosave" id="m8" style="max-width:320px;display:inline-block;width:auto;min-width:220px;">
             <option value=""></option>
             <option>doplnte prazdne miesta</option>
             <option>zakruzkujte spravnu moznost</option>
             <option>opiste obrazok</option>
           </select>
+          <div class="hint" id="hint-m8"></div>
         </div>
-        <div>9) circle the correct option:
+        <div class="score-item" data-score-id="m9">
+          <div class="item-label">9) circle the correct option: <span class="mark" id="mark-m9"></span></div>
           <select class="autosave" id="m9" style="max-width:320px;display:inline-block;width:auto;min-width:220px;">
             <option value=""></option>
             <option>zakruzkujte spravnu moznost</option>
             <option>dajte slova do spravneho poradia</option>
             <option>predpritomny cas</option>
           </select>
+          <div class="hint" id="hint-m9"></div>
         </div>
-        <div>10) describe the picture:
+        <div class="score-item" data-score-id="m10">
+          <div class="item-label">10) describe the picture: <span class="mark" id="mark-m10"></span></div>
           <select class="autosave" id="m10" style="max-width:320px;display:inline-block;width:auto;min-width:220px;">
             <option value=""></option>
             <option>opiste obrazok</option>
             <option>doplnte prazdne miesta</option>
             <option>zaporova veta</option>
           </select>
+          <div class="hint" id="hint-m10"></div>
         </div>
-        <div>11) put the words in the correct order:
+        <div class="score-item" data-score-id="m11">
+          <div class="item-label">11) put the words in the correct order: <span class="mark" id="mark-m11"></span></div>
           <select class="autosave" id="m11" style="max-width:320px;display:inline-block;width:auto;min-width:220px;">
             <option value=""></option>
             <option>dajte slova do spravneho poradia</option>
             <option>minuly cas jednoduchy</option>
             <option>nepravidelne sloveso</option>
           </select>
+          <div class="hint" id="hint-m11"></div>
         </div>
       </div>
+      <div class="score-actions">
+        <button class="primary" onclick="checkScore()">Check Score</button>
+        <button onclick="showCorrectAnswers()">Show Correct Answers</button>
+      </div>
       <div id="scoreOutput" class="score-box">Score: not checked yet.</div>
+      <div id="scoreNote" class="score-note">Tip: Check Score oznaci spravne (zelena) a nespravne (cervena) polozky a ukaze kratke zdovodnenie.</div>
     </div>
   </div>
-
   <script>
     const STORAGE_KEY = "class01WorksheetApp_v1";
 
@@ -550,7 +624,10 @@
         else el.value = "";
       });
       localStorage.removeItem(STORAGE_KEY);
+      if (typeof resetScoreStyles === "function") resetScoreStyles();
       document.getElementById("scoreOutput").textContent = "Score: not checked yet.";
+      var note = document.getElementById("scoreNote");
+      if (note) note.textContent = "Tip: Check Score oznaci spravne (zelena) a nespravne (cervena) polozky a ukaze kratke zdovodnenie.";
       setStatus("Cleared.");
     }
 
@@ -819,28 +896,131 @@
       copyText(text, "Full lesson plain text copied. Paste into Google Docs with Ctrl+V.");
     }
 
-    function checkScore() {
-      const answerKey = {
-        m1: "tretia osoba jednotneho cisla",
-        m2: "nepravidelne sloveso",
-        m3: "predpritomny cas",
-        m4: "minuly cas priebehovy",
-        m5: "minuly cas jednoduchy",
-        m6: "kladna veta",
-        m7: "zaporova veta",
-        m8: "doplnte prazdne miesta",
-        m9: "zakruzkujte spravnu moznost",
-        m10: "opiste obrazok",
-        m11: "dajte slova do spravneho poradia"
-      };
-      let score = 0;
-      const total = Object.keys(answerKey).length;
-      Object.keys(answerKey).forEach(function (id) {
-        if (val(id) === answerKey[id]) score += 1;
+    const SCORE_KEY = {
+      m1: {
+        answer: "tretia osoba jednotneho cisla",
+        hint: "Hint: he/she/it forms (napr. goes, plays) = tretia osoba jednotnĂ©ho ÄŤĂ­sla."
+      },
+      m2: {
+        answer: "nepravidelne sloveso",
+        hint: "Hint: go-went, see-saw, write-wrote = irregular / nepravidelnĂ© sloveso."
+      },
+      m3: {
+        answer: "predpritomny cas",
+        hint: "Hint: have/has + past participle (I have visited) = present perfect / predprĂ­tomnĂ˝ ÄŤas."
+      },
+      m4: {
+        answer: "minuly cas priebehovy",
+        hint: "Hint: was/were + -ing (I was studying) = past continuous / minulĂ˝ ÄŤas priebehovĂ˝."
+      },
+      m5: {
+        answer: "minuly cas jednoduchy",
+        hint: "Hint: finished past action (I walked / I went) = past simple / minulĂ˝ ÄŤas jednoduchĂ˝."
+      },
+      m6: {
+        answer: "kladna veta",
+        hint: "Hint: kladnĂˇ veta = affirmative sentence (bez not / don't)."
+      },
+      m7: {
+        answer: "zaporova veta",
+        hint: "Hint: zĂˇporovĂˇ veta = negative sentence (not / don't / didn't)."
+      },
+      m8: {
+        answer: "doplnte prazdne miesta",
+        hint: "Hint: fill in the blanks = doplĹte prĂˇzdne miesta."
+      },
+      m9: {
+        answer: "zakruzkujte spravnu moznost",
+        hint: "Hint: circle the correct option = zakrĂşĹľkujte sprĂˇvnu moĹľnosĹĄ."
+      },
+      m10: {
+        answer: "opiste obrazok",
+        hint: "Hint: describe the picture = opĂ­Ĺˇte obrĂˇzok."
+      },
+      m11: {
+        answer: "dajte slova do spravneho poradia",
+        hint: "Hint: put the words in the correct order = dajte slovĂˇ do sprĂˇvneho poradia."
+      }
+    };
+
+    function resetScoreStyles() {
+      document.querySelectorAll(".score-item").forEach(function (item) {
+        item.classList.remove("scored-correct", "scored-wrong", "reveal-correct");
       });
+      Object.keys(SCORE_KEY).forEach(function (id) {
+        const mark = document.getElementById("mark-" + id);
+        const hint = document.getElementById("hint-" + id);
+        if (mark) mark.textContent = "";
+        if (hint) {
+          hint.classList.remove("show");
+          hint.textContent = "";
+        }
+      });
+    }
+
+    function checkScore() {
+      resetScoreStyles();
+      let score = 0;
+      const total = Object.keys(SCORE_KEY).length;
+      const details = [];
+
+      Object.keys(SCORE_KEY).forEach(function (id) {
+        const item = document.querySelector('.score-item[data-score-id="' + id + '"]');
+        const mark = document.getElementById("mark-" + id);
+        const hint = document.getElementById("hint-" + id);
+        const correct = SCORE_KEY[id].answer;
+        const chosen = val(id);
+        const isCorrect = chosen === correct;
+
+        if (item) item.classList.add(isCorrect ? "scored-correct" : "scored-wrong");
+        if (mark) mark.textContent = isCorrect ? "OK" : "X";
+        if (hint) {
+          if (isCorrect) {
+            hint.textContent = "Spravne. " + SCORE_KEY[id].hint;
+          } else if (!chosen) {
+            hint.textContent = "Neoznacene. Spravna odpoved: " + correct + ". " + SCORE_KEY[id].hint;
+          } else {
+            hint.textContent = "Nespravne. Tvoja odpoved: " + chosen + ". Spravne: " + correct + ". " + SCORE_KEY[id].hint;
+          }
+          hint.classList.add("show");
+        }
+        if (isCorrect) score += 1;
+        details.push((isCorrect ? "OK" : "X") + " " + id);
+      });
+
       const percent = Math.round((score / total) * 100);
       document.getElementById("scoreOutput").textContent =
         "Score: " + score + "/" + total + " (" + percent + "%)";
+      document.getElementById("scoreNote").textContent =
+        "Check Score hodnotil polozky 1-11. Zelena = spravne, cervena = nespravne. Kazda polozka ma hint/zdovodnenie.";
+      setStatus("Score checked: " + score + "/" + total);
+      const section = document.getElementById("section7");
+      if (section) section.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function showCorrectAnswers() {
+      resetScoreStyles();
+      Object.keys(SCORE_KEY).forEach(function (id) {
+        const el = document.getElementById(id);
+        const item = document.querySelector('.score-item[data-score-id="' + id + '"]');
+        const mark = document.getElementById("mark-" + id);
+        const hint = document.getElementById("hint-" + id);
+        const correct = SCORE_KEY[id].answer;
+
+        if (el) el.value = correct;
+        if (item) item.classList.add("reveal-correct");
+        if (mark) mark.textContent = "ANSWER";
+        if (hint) {
+          hint.textContent = "Spravna moznost: " + correct + ". " + SCORE_KEY[id].hint;
+          hint.classList.add("show");
+        }
+      });
+      saveData(false);
+      document.getElementById("scoreOutput").textContent =
+        "Correct answers shown (11/11). Run Check Score again if you want to re-test.";
+      document.getElementById("scoreNote").textContent =
+        "Show Correct Answers vyplnilo vsetky spravne moznosti a zobrazilo zdovodnenie pri kazdej polozke.";
+      setStatus("Correct answers revealed.");
     }
 
     document.querySelectorAll(".autosave").forEach(function (el) {
