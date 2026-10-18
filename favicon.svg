@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Online Class Lessons">
+  <rect width="64" height="64" rx="14" fill="#2d6cdf"/>
+  <text x="18" y="46" font-family="Arial, Helvetica, sans-serif" font-size="38" font-weight="700" fill="#ffffff">E</text>
+  <path d="M40 24c3.2 2.2 5.2 5.4 5.2 8.8S43.2 39.4 40 41.6" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+  <path d="M46 20c5 3.4 8 8.2 8 12.8s-3 9.4-8 12.8" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" opacity="0.85"/>
+</svg>
