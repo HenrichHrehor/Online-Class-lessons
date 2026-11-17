@@ -392,11 +392,23 @@
 
     <div class="card" id="listeningSection">
       <h2>1. Listening - Gap Fill</h2>
-      <p class="small">Fill in the blanks. The text matches the full text word for word.</p>
+      <p class="small">Fill in the blanks. The text matches the full text word for word. Repeat and Speed apply to each block Listen button.</p>
       <div class="section-sticky-actions">
         <button type="button" class="primary gram-toggle" onclick="toggleGrammarLines()">Highlight grammar lines</button>
         <button type="button" class="primary" onclick="checkGaps()">Check the answers</button>
         <button type="button" onclick="clearGaps()">Clear</button>
+        <label class="small" for="listenRepeat">Repeat</label>
+        <select id="listenRepeat" class="pool-select" aria-label="Repeat">
+          <option value="1" selected>1×</option>
+          <option value="2">2×</option>
+          <option value="3">3×</option>
+        </select>
+        <label class="small" for="listenSpeed">Speed</label>
+        <select id="listenSpeed" class="pool-select" aria-label="Speed">
+          <option value="0.75">Slow</option>
+          <option value="0.92" selected>Normal</option>
+          <option value="1.1">Fast</option>
+        </select>
       </div>
       <div class="gram-legend" aria-hidden="true">
         <span class="leg-while">while + past continuous → Review A</span>
@@ -1244,14 +1256,27 @@
       if (window.speechSynthesis) speechSynthesis.cancel();
       setListenLabels(null);
     }
+    function gapListenSettings() {
+      var repeatEl = document.getElementById("listenRepeat");
+      var speedEl = document.getElementById("listenSpeed");
+      var repeats = repeatEl ? parseInt(repeatEl.value, 10) : 1;
+      var rate = speedEl ? parseFloat(speedEl.value) : 0.92;
+      if (!repeats || repeats < 1) repeats = 1;
+      if (!rate) rate = 0.92;
+      return { repeats: repeats, rate: rate };
+    }
     function toggleListen(n) {
-      if (n) listenParts([n], String(n), 1, "Listening to block " + n + ".");
-      else listenParts([1, 2, 3, 4], "all", 1, "Listening to the full story.");
+      if (n) {
+        var set = gapListenSettings();
+        listenParts([n], String(n), set.repeats, "Listening to block " + n + ", " + set.repeats + "×.", set.rate);
+      } else {
+        listenParts([1, 2, 3, 4], "all", 1, "Listening to the full story.", 0.92);
+      }
     }
     function listenSectionTwice(parts, key) {
-      listenParts(parts, key, 2, "Playing this section twice.");
+      listenParts(parts, key, 2, "Playing this section twice.", 0.92);
     }
-    function listenParts(paragraphs, key, repeats, statusText) {
+    function listenParts(paragraphs, key, repeats, statusText, rate) {
       if (!window.speechSynthesis) {
         setStatus("This browser cannot read aloud.");
         return;
@@ -1284,7 +1309,7 @@
         }
         var utter = new SpeechSynthesisUtterance(queue[i]);
         utter.lang = "en-GB";
-        utter.rate = 0.92;
+        utter.rate = rate || 0.92;
         var voice = pickEnglishVoice();
         if (voice) utter.voice = voice;
         utter.onend = function () { speakNext(i + 1); };
