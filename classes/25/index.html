@@ -826,6 +826,16 @@
           </select>
           <div class="hint" id="hint-m11"></div>
         </div>
+        <div class="score-item" data-score-id="m12">
+          <div class="item-label">12) fill in the blanks: <span class="mark" id="mark-m12"></span></div>
+          <select class="autosave" id="m12" style="max-width:340px;display:inline-block;width:auto;min-width:240px;">
+            <option value=""></option>
+            <option>doplnte prazdne miesta</option>
+            <option>prelozte vetu</option>
+            <option>zatvorte okno</option>
+          </select>
+          <div class="hint" id="hint-m12"></div>
+        </div>
       </div>
       <div id="scoreOutput" class="score-box">Score: not checked yet.</div>
       <div id="scoreNote" class="score-note">Check shows the correct Slovak option for every term.</div>
@@ -1392,7 +1402,7 @@
         val("b1"), val("b2"), val("b3"), val("b4"),
         "",
         "7. MATCHING",
-        ["m1","m2","m3","m4","m5","m6","m7","m8","m9","m10","m11"].map(val).join(" | ")
+        ["m1","m2","m3","m4","m5","m6","m7","m8","m9","m10","m11","m12"].map(val).join(" | ")
       ].join("\n");
       copyText(text, "Full lesson plain text copied.");
     }
@@ -1768,7 +1778,8 @@
       m8: { answer: "problem", hint: "a broken dog at a secret party = a problem." },
       m9: { answer: "schovajte sa", hint: "hide in the kitchen = an instruction to hide." },
       m10: { answer: "porcelanova soska psa", hint: "china dog = a porcelain dog." },
-      m11: { answer: "dajte slova do spravneho poradia", hint: "put the words in the correct order." }
+      m11: { answer: "dajte slova do spravneho poradia", hint: "put the words in the correct order." },
+      m12: { answer: "doplnte prazdne miesta", hint: "fill in the blanks = write the missing words." }
     };
 
     var answersRevealed = false;
@@ -1879,7 +1890,7 @@
         if (hint) { hint.textContent = "Correct answer: " + correct + ". " + SCORE_KEY[id].hint; hint.classList.add("show"); }
       });
       saveData();
-      document.getElementById("scoreOutput").textContent = "Correct answers shown (11/11).";
+      document.getElementById("scoreOutput").textContent = "Correct answers shown (12/12).";
       setSec7ToggleLabel(true);
       hideAnswersLock = false;
     }
