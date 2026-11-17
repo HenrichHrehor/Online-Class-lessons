@@ -51,7 +51,7 @@ They will **not** master every exception, advanced conditionals, full reported s
 | 22 | TBD | It Is Made Of… | Passive Present / Past (intro) | Past participle from PP |
 | 23 | TBD | Mixed Tenses Clinic | Diagnosis + repair of hours 01–22 | All core |
 | 24 | `classes/24` | **My Story Spotlight** (personal presentation) | Extended intro + Past Simple + Present Perfect + *going to* / *will* | Hours 01, 10, 14, 16 |
-| 25 | TBD | Final Check | Self-assessment + mini oral exam tasks | Whole spine |
+| 25 | `classes/25` | **Jake's Party Problems** | *while* + past continuous, Past Simple, Present Perfect result | Hour 24 |
 
 `TBD` = create next with Class Rules + Class Check.
 

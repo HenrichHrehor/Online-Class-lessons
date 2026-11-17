@@ -1,0 +1,1810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Class 25 - Jake's Party Problems</title>
+  <link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#2d6cdf">
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #1c2430;
+      --muted: #5b6878;
+      --line: #d8deea;
+      --primary: #2d6cdf;
+      --accent: #fff8e1;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .wrap {
+      width: 100%;
+      max-width: 1480px;
+      margin: 12px auto 32px;
+      padding: 0 28px 24px;
+    }
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(245, 247, 251, 0.96);
+      backdrop-filter: blur(4px);
+      border-bottom: 1px solid var(--line);
+      padding: 10px 0;
+      margin-bottom: 12px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    button {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--text);
+      border-radius: 8px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    button:hover { opacity: 0.92; }
+    .primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+    a.home-btn {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--line);
+      background: #1c2430;
+      color: #fff;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+    a.home-btn:hover { opacity: 0.92; color: #fff; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    .listen-block {
+      background: var(--accent);
+      border: 1px solid #ffecb3;
+      border-radius: 10px;
+      padding: 14px;
+      margin: 12px 0;
+    }
+    .block-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+    .block-top h3 { margin: 0; color: var(--text); }
+    #fullTextPanel {
+      display: none;
+      background: var(--accent);
+      border: 1px solid #ffecb3;
+      border-radius: 10px;
+      padding: 14px;
+      margin-top: 10px;
+    }
+    h1, h2, h3, h4 { margin: 0 0 10px; }
+    h1 { font-size: 24px; }
+    h2 { font-size: 19px; border-bottom: 1px solid var(--line); padding-bottom: 6px; }
+    h3 { font-size: 16px; }
+    h4 { font-size: 15px; margin-top: 14px; color: var(--muted); }
+    .meta { display: grid; grid-template-columns: repeat(4, minmax(180px, 1fr)); gap: 10px 16px; }
+    .field-line { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .field-line label { min-width: 120px; font-weight: 600; }
+    input[type="text"], textarea, select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px 10px;
+      font: inherit;
+      color: var(--text);
+      background: #fff;
+    }
+    .inline-input {
+      min-width: 120px;
+      max-width: 190px;
+      display: inline-block;
+      margin: 0 2px;
+      vertical-align: middle;
+      border-bottom: 2px solid #2563eb;
+    }
+    .line-input { width: 100%; margin-top: 4px; }
+    .q { margin: 10px 0; }
+    .muted { color: var(--muted); }
+    .wordbank { font-size: 14px; margin-bottom: 8px; font-weight: 600; }
+    .tf-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+      gap: 6px 10px;
+      margin: 10px 0;
+      line-height: 1.45;
+    }
+    .tf-sentence { flex: 0 1 auto; max-width: 100%; }
+    .tf-choices {
+      display: inline-flex;
+      gap: 6px;
+      vertical-align: baseline;
+      flex-shrink: 0;
+    }
+    .tf-btn {
+      min-width: 40px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--line);
+      background: #fff;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .tf-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .tf-btn.active-t {
+      background: #dcfce7;
+      border-color: #16a34a;
+      color: #166534;
+    }
+    .tf-btn.active-f {
+      background: #fee2e2;
+      border-color: #dc2626;
+      color: #991b1b;
+    }
+    .tf-row select.tf-store { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+    .tf-row.scored-correct {
+      background: #f0fdf4;
+      border-radius: 8px;
+      padding: 6px 8px;
+      border: 1px solid #22c55e;
+    }
+    .tf-row.scored-wrong {
+      background: #fef2f2;
+      border-radius: 8px;
+      padding: 6px 8px;
+      border: 1px solid #ef4444;
+    }
+    .tf-row .mark { margin-left: 4px; font-weight: 700; }
+    .small { font-size: 13px; color: var(--muted); }
+    .term-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    #listeningSection {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+    #listeningSection > h2,
+    #listeningSection > .small { grid-column: 1 / -1; }
+    #section4 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+    #section4 > h2,
+    #section4 > .small,
+    #section4 > .section-sticky-actions,
+    #section4 > .score-box,
+    #section4 > .score-note { grid-column: 1 / -1; }
+    .score-item {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      background: #fff;
+    }
+    .score-item.scored-correct { border-color: #22c55e; background: #f0fdf4; }
+    .score-item.scored-wrong { border-color: #ef4444; background: #fef2f2; }
+    .score-item.reveal-correct { border-color: #2563eb; background: #eff6ff; }
+    .score-item .item-label { font-weight: 600; margin-bottom: 6px; }
+    .score-item .hint { margin-top: 6px; font-size: 13px; color: #334155; display: none; }
+    .score-item .hint.show { display: block; }
+    .score-item .mark { display: inline-block; margin-left: 6px; font-weight: 700; }
+    .section-sticky-actions {
+      position: sticky;
+      top: 56px;
+      z-index: 9;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+      padding: 8px 10px;
+      margin: 0 0 12px;
+      background: rgba(245, 247, 251, 0.96);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      backdrop-filter: blur(4px);
+    }
+    .score-box {
+      margin-top: 12px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #f8fbff;
+      font-weight: 700;
+    }
+    .score-note { margin-top: 8px; font-size: 13px; color: var(--muted); font-weight: 400; }
+    .status { margin-left: auto; font-size: 13px; color: var(--muted); align-self: center; }
+    .pitch-box {
+      border: 1px dashed #93c5fd;
+      background: #f8fbff;
+      border-radius: 10px;
+      padding: 12px;
+      margin-top: 8px;
+    }
+    .transform-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .transform-task .source-line {
+      margin: 0 0 6px;
+      font-size: 15px;
+    }
+    .transform-task .task-badge {
+      display: inline-block;
+      background: #dbeafe;
+      color: #1e3a8a;
+      border-radius: 6px;
+      padding: 2px 8px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .transform-task .tense-tag {
+      display: inline-block;
+      margin-left: 6px;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .pool-select {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 7px 10px;
+      font: inherit;
+      background: #fff;
+    }
+    .gram-hit { border-radius: 3px; }
+    body.gram-on .gram-hit.g-while {
+      background: #fde68a;
+      box-shadow: inset 0 -2px 0 #d97706;
+    }
+    body.gram-on .gram-hit.g-past {
+      background: #dbeafe;
+      box-shadow: inset 0 -2px 0 #2563eb;
+    }
+    body.gram-on .gram-hit.g-perfect {
+      background: #bbf7d0;
+      box-shadow: inset 0 -2px 0 #16a34a;
+    }
+    .gram-legend {
+      display: none;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 8px 0 0;
+      font-size: 13px;
+    }
+    body.gram-on .gram-legend { display: flex; }
+    .gram-legend span { padding: 2px 8px; border-radius: 6px; font-weight: 700; }
+    .leg-while { background: #fde68a; }
+    .leg-past { background: #dbeafe; }
+    .leg-perfect { background: #bbf7d0; }
+    #listeningSection > .section-sticky-actions,
+    #listeningSection > .gram-legend { grid-column: 1 / -1; }
+    @media print {
+      .toolbar { display: none !important; }
+      #fullTextPanel { display: none !important; }
+      body { background: #fff; }
+      .wrap { max-width: 210mm; padding: 0 10mm; }
+      #listeningSection,
+      #section4,
+      .term-grid,
+      .meta { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 1100px) {
+      .meta { grid-template-columns: repeat(2, minmax(180px, 1fr)); }
+      #listeningSection,
+      #section4,
+      .term-grid,
+      .transform-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 760px) {
+      .wrap { padding: 0 12px 20px; }
+      .meta { grid-template-columns: 1fr; }
+      .inline-input { min-width: 95px; max-width: 130px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="toolbar">
+      <a class="home-btn" href="../../">← Home</a>
+      <button class="primary" id="toggleFullBtn" onclick="toggleFullText()">Show Full Text</button>
+      <button onclick="copyFullListening()">Copy Full Listening</button>
+      <button onclick="copyGapFill()">Copy Gap Fill</button>
+      <button onclick="copyPlainLesson()">Copy Plain Text (Lesson)</button>
+      <button onclick="savePdf()">Save as PDF</button>
+      <button onclick="clearData()">Clear Answers</button>
+      <span class="status" id="copyStatus"></span>
+    </div>
+
+    <div class="card">
+      <h1>WORKSHEET - CLASS 25</h1>
+      <p class="muted">Topic: <strong>Jake's Party Problems</strong> — same student, after Class 24. Past tenses with <em>while</em>.</p>
+      <div class="meta">
+        <div class="field-line"><label>Date</label><input class="autosave" id="date" type="text" value=""></div>
+        <div class="field-line"><label>Student</label><input class="autosave" id="student" type="text" value=""></div>
+        <div class="field-line"><label>Unit</label><input class="autosave" id="unit" type="text" value="Spotlight Talk -> Problems"></div>
+        <div class="field-line"><label>Main focus</label><input class="autosave" id="focus" type="text" value="while + past continuous, past simple, present perfect"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Listening - Full Text (Jake's party)</h2>
+      <p class="small">A Friday-night problem story. Listen reads the full text aloud. Highlight grammar lines marks the sentences for section 3.</p>
+      <div class="section-sticky-actions">
+        <button type="button" class="primary" id="listenBtn" onclick="toggleListen()">&#128266; Listen</button>
+        <button type="button" class="primary gram-toggle" onclick="toggleGrammarLines()">Highlight grammar lines</button>
+      </div>
+      <div class="gram-legend" aria-hidden="true">
+        <span class="leg-while">while + past continuous → Review A</span>
+        <span class="leg-past">past simple → Review B</span>
+        <span class="leg-perfect">present perfect → Review C</span>
+      </div>
+      <div id="fullTextPanel">
+        <h3>1. The Secret Party</h3>
+        <p id="full1">It was Friday evening and Jake's parents were leaving for the weekend. Jake invited all his friends to his house, but he did not tell his parents. At seven o'clock Pete phoned him. "OK. <span class="gram-hit g-perfect">They've gone</span>," Jake said. "<span class="gram-hit g-past">They went about ten minutes ago.</span>" Pete answered, "You can have the party at my house." Jake said no, because he wanted the music at home. <span class="gram-hit g-while">While his friends were arriving, he put snacks on the table.</span> He felt excited, but he was also nervous. He hoped the evening would stay simple.</p>
+
+        <h3>2. While She Was Dancing</h3>
+        <p id="full2">The party grew loud very quickly. Ruby was dancing near the shelf when <span class="gram-hit g-past">her hand hit a small china dog</span>. She stopped the music and looked at Jake. "I'm really sorry, Jake. <span class="gram-hit g-perfect">I've broken your china dog.</span> <span class="gram-hit g-while">I knocked it with my hand while I was dancing.</span>" The dog was in two pieces on the floor. Jake picked them up and did not smile. That dog was not a cheap souvenir. It was a family object, and the accident happened in one second. Nobody spoke for a moment.</p>
+
+        <h3>3. While They Were Driving</h3>
+        <p id="full3">Ten minutes later Pete looked out of the window. "<span class="gram-hit g-perfect">A red car has just stopped outside.</span> Isn't that your parents' car?" Jake went pale. "Oh no! <span class="gram-hit g-perfect">They've come back.</span> Quick, everybody, hide in the kitchen." His mum and dad walked in with a small bag. "Hi, Mum, Dad. What have you come back for?" Jake asked. His dad explained, "Well, <span class="gram-hit g-while">while we were driving down the motorway, your mum suddenly remembered her glasses.</span> <span class="gram-hit g-past">She turned round and came back.</span>" Jake nodded, but his hands were shaking. The music was still on in the living room.</p>
+
+        <h3>4. The Family Dog</h3>
+        <p id="full4">"Oh no, Ruby! <span class="gram-hit g-past">That was my great-grandfather's</span>," Jake said. "<span class="gram-hit g-perfect">It's been in the family since the 1930s.</span>" Ruby looked down. "I'm really sorry." Mum smiled and said, "It's all right, dear. I'll get it for you. Where did you leave it?" Jake answered, "<span class="gram-hit g-past">I left it in the kitchen.</span>" <span class="gram-hit g-while">While Mum was looking for her glasses, the friends stayed very quiet.</span> Jake is going to tell his parents the truth after the weekend. He has learned that one broken dog can end a party. The house was a mess, and the secret was no longer safe.</p>
+      </div>
+    </div>
+
+    <div class="card" id="listeningSection">
+      <h2>1. Listening - Gap Fill</h2>
+      <p class="small">Fill in the blanks. Text matches the Full Text word-for-word. Highlight grammar lines shows the sentences for section 3.</p>
+      <div class="section-sticky-actions">
+        <button type="button" class="primary gram-toggle" onclick="toggleGrammarLines()">Highlight grammar lines</button>
+      </div>
+      <div class="gram-legend" aria-hidden="true">
+        <span class="leg-while">while + past continuous → Review A</span>
+        <span class="leg-past">past simple → Review B</span>
+        <span class="leg-perfect">present perfect → Review C</span>
+      </div>
+
+      <div class="listen-block" id="block1">
+        <div class="block-top">
+          <h3>1. The Secret Party</h3>
+          <button type="button" class="listen-block-btn" data-listen="1" onclick="toggleListen(1)">&#128266; Listen</button>
+          <button type="button" onclick="copyBlock(1)">Copy this block</button>
+        </div>
+        <div class="wordbank">Word bank: nervous, invited, weekend, gone, arriving</div>
+        <p data-gap="1">
+          It was Friday evening and Jake's parents were leaving for the
+          <input class="inline-input autosave" id="l1a" type="text" data-blank="weekend">.
+          Jake
+          <input class="inline-input autosave" id="l1b" type="text" data-blank="invited">
+          all his friends to his house, but he did not tell his parents. At seven o'clock Pete phoned him. "OK.
+          <span class="gram-hit g-perfect">They've
+          <input class="inline-input autosave" id="l1c" type="text" data-blank="gone"></span>,"
+          Jake said. "<span class="gram-hit g-past">They went about ten minutes ago.</span>"
+          Pete answered, "You can have the party at my house." Jake said no, because he wanted the music at home.
+          <span class="gram-hit g-while">While his friends were
+          <input class="inline-input autosave" id="l1d" type="text" data-blank="arriving">,
+          he put snacks on the table.</span>
+          He felt excited, but he was also
+          <input class="inline-input autosave" id="l1e" type="text" data-blank="nervous">.
+          He hoped the evening would stay simple.
+        </p>
+      </div>
+
+      <div class="listen-block" id="block2">
+        <div class="block-top">
+          <h3>2. While She Was Dancing</h3>
+          <button type="button" class="listen-block-btn" data-listen="2" onclick="toggleListen(2)">&#128266; Listen</button>
+          <button type="button" onclick="copyBlock(2)">Copy this block</button>
+        </div>
+        <div class="wordbank">Word bank: pieces, souvenir, dancing, broken, knocked</div>
+        <p data-gap="2">
+          The party grew loud very quickly. Ruby was
+          <input class="inline-input autosave" id="l2a" type="text" data-blank="dancing">
+          near the shelf when <span class="gram-hit g-past">her hand hit a small china dog</span>.
+          She stopped the music and looked at Jake. "I'm really sorry, Jake.
+          <span class="gram-hit g-perfect">I've
+          <input class="inline-input autosave" id="l2b" type="text" data-blank="broken">
+          your china dog.</span>
+          <span class="gram-hit g-while">I
+          <input class="inline-input autosave" id="l2c" type="text" data-blank="knocked">
+          it with my hand while I was dancing.</span>"
+          The dog was in two
+          <input class="inline-input autosave" id="l2d" type="text" data-blank="pieces">
+          on the floor. Jake picked them up and did not smile. That dog was not a cheap
+          <input class="inline-input autosave" id="l2e" type="text" data-blank="souvenir">.
+          It was a family object, and the accident happened in one second. Nobody spoke for a moment.
+        </p>
+      </div>
+
+      <div class="listen-block" id="block3">
+        <div class="block-top">
+          <h3>3. While They Were Driving</h3>
+          <button type="button" class="listen-block-btn" data-listen="3" onclick="toggleListen(3)">&#128266; Listen</button>
+          <button type="button" onclick="copyBlock(3)">Copy this block</button>
+        </div>
+        <div class="wordbank">Word bank: driving, shaking, stopped, remembered, hide</div>
+        <p data-gap="3">
+          Ten minutes later Pete looked out of the window. "<span class="gram-hit g-perfect">A red car has just
+          <input class="inline-input autosave" id="l3a" type="text" data-blank="stopped">
+          outside.</span> Isn't that your parents' car?" Jake went pale. "Oh no! <span class="gram-hit g-perfect">They've come back.</span> Quick, everybody,
+          <input class="inline-input autosave" id="l3b" type="text" data-blank="hide">
+          in the kitchen." His mum and dad walked in with a small bag. "Hi, Mum, Dad. What have you come back for?" Jake asked. His dad explained, "Well, <span class="gram-hit g-while">while we were
+          <input class="inline-input autosave" id="l3c" type="text" data-blank="driving">
+          down the motorway, your mum suddenly
+          <input class="inline-input autosave" id="l3d" type="text" data-blank="remembered">
+          her glasses.</span> <span class="gram-hit g-past">She turned round and came back.</span>" Jake nodded, but his hands were
+          <input class="inline-input autosave" id="l3e" type="text" data-blank="shaking">.
+          The music was still on in the living room.
+        </p>
+      </div>
+
+      <div class="listen-block" id="block4">
+        <div class="block-top">
+          <h3>4. The Family Dog</h3>
+          <button type="button" class="listen-block-btn" data-listen="4" onclick="toggleListen(4)">&#128266; Listen</button>
+          <button type="button" onclick="copyBlock(4)">Copy this block</button>
+        </div>
+        <div class="wordbank">Word bank: looking, truth, grandfather, leave, since</div>
+        <p data-gap="4">
+          "Oh no, Ruby! <span class="gram-hit g-past">That was my great-<input class="inline-input autosave" id="l4a" type="text" data-blank="grandfather">'s</span>," Jake said. "<span class="gram-hit g-perfect">It's been in the family
+          <input class="inline-input autosave" id="l4b" type="text" data-blank="since">
+          the 1930s.</span>" Ruby looked down. "I'm really sorry." Mum smiled and said, "It's all right, dear. I'll get it for you. Where did you
+          <input class="inline-input autosave" id="l4c" type="text" data-blank="leave">
+          it?" Jake answered, "<span class="gram-hit g-past">I left it in the kitchen.</span>" <span class="gram-hit g-while">While Mum was
+          <input class="inline-input autosave" id="l4d" type="text" data-blank="looking">
+          for her glasses, the friends stayed very quiet.</span> Jake is going to tell his parents the
+          <input class="inline-input autosave" id="l4e" type="text" data-blank="truth">
+          after the weekend. He has learned that one broken dog can end a party. The house was a mess, and the secret was no longer safe.
+        </p>
+      </div>
+    </div>
+
+    <div class="card" id="sectionTransform">
+      <h2>2. Exercise 2 – Sentence Transformations</h2>
+      <p class="small">
+        <strong>Exercise 2</strong> — kompletna aktivita: <strong>6 uloh</strong> na transformaciu viet
+        (Make affirmative / Make negative / Make question).
+        Kazdy cas ma pool 9 viet (3 + 3 + 3). Vyber pool, vypln vsetkych 6 odpovedi, potom Check.
+        <strong>New set</strong> = novych 6 uloh.
+      </p>
+      <div class="section-sticky-actions">
+        <label class="small" for="transformPool">Pool</label>
+        <select id="transformPool" class="pool-select" onchange="newTransformSet()">
+          <option value="all">All tenses (mix)</option>
+          <option value="past_while">while + past</option>
+          <option value="past_simple">Past Simple</option>
+          <option value="present_perfect">Present Perfect</option>
+          <option value="going_to">be going to</option>
+        </select>
+        <button type="button" onclick="newTransformSet()">New set (6 tasks)</button>
+        <button type="button" class="primary" onclick="checkTransforms()">Check Exercise 2</button>
+      </div>
+      <div id="transformList" class="transform-grid" aria-label="Exercise 2 six transformation tasks"></div>
+      <div id="transformScoreOutput" class="score-box">Exercise 2: 6 tasks — not checked yet.</div>
+      <div id="transformScoreNote" class="score-note">Example: <em>I knocked it while I was dancing.</em> → Make question / Make negative. Always 6 tasks.</div>
+    </div>
+
+    <div class="card">
+      <h2>3. Grammar Review (lines from the listening)</h2>
+      <p class="small">Use the highlighted listening lines. Same verbs, same story.</p>
+      <h3>A) while + past continuous</h3>
+      <div class="q">1) While his friends were (arrive) <input class="inline-input autosave" id="g1" type="text">, he put snacks on the table.</div>
+      <div class="q">2) I knocked it with my hand while I was (dance) <input class="inline-input autosave" id="g2" type="text">.</div>
+      <div class="q">3) While we were (drive) <input class="inline-input autosave" id="g3" type="text"> down the motorway, Mum remembered her glasses.</div>
+      <div class="q">4) While Mum was (look) <input class="inline-input autosave" id="g4" type="text"> for her glasses, the friends stayed quiet.</div>
+
+      <h3>B) Past Simple - finished actions</h3>
+      <div class="q">1) They (go) <input class="inline-input autosave" id="g5" type="text"> about ten minutes ago.</div>
+      <div class="q">2) Her hand (hit) <input class="inline-input autosave" id="g6" type="text"> a small china dog.</div>
+      <div class="q">3) She (turn) <input class="inline-input autosave" id="g7" type="text"> round and came back.</div>
+      <div class="q">4) I (leave) <input class="inline-input autosave" id="g8" type="text"> it in the kitchen.</div>
+
+      <h3>C) Present Perfect - the result now</h3>
+      <div class="q">1) I've (break) <input class="inline-input autosave" id="g9" type="text"> your china dog.</div>
+      <div class="q">2) A red car has just (stop) <input class="inline-input autosave" id="g10" type="text"> outside.</div>
+      <div class="q">3) They've (come) <input class="inline-input autosave" id="g11" type="text"> back.</div>
+      <div class="q">4) It's (be) <input class="inline-input autosave" id="g12" type="text"> in the family since the 1930s.</div>
+    </div>
+
+    <div class="card" id="sectionTf">
+      <h2>4. True / False - Listening Check</h2>
+      <p class="small">Klikni <strong>T</strong> alebo <strong>F</strong> hned za vetou, potom stlac Check True/False.</p>
+      <div class="section-sticky-actions">
+        <button type="button" class="primary" onclick="checkTrueFalse()">Check True/False</button>
+      </div>
+      <h4>4.1 The Party and the Dog</h4>
+      <div class="tf-row" data-tf-id="tf1">
+        <span class="tf-sentence">1) Jake told his parents about the party before they left. <span class="mark" id="mark-tf1"></span></span>
+        <span class="tf-choices"><button type="button" class="tf-btn" data-tf="tf1" data-val="T">T</button><button type="button" class="tf-btn" data-tf="tf1" data-val="F">F</button></span>
+        <select class="autosave tf-store" id="tf1" tabindex="-1" aria-hidden="true"><option value=""></option><option>T</option><option>F</option></select>
+      </div>
+      <div class="tf-row" data-tf-id="tf2">
+        <span class="tf-sentence">2) Pete said Jake could have the party at Pete's house. <span class="mark" id="mark-tf2"></span></span>
+        <span class="tf-choices"><button type="button" class="tf-btn" data-tf="tf2" data-val="T">T</button><button type="button" class="tf-btn" data-tf="tf2" data-val="F">F</button></span>
+        <select class="autosave tf-store" id="tf2" tabindex="-1" aria-hidden="true"><option value=""></option><option>T</option><option>F</option></select>
+      </div>
+      <div class="tf-row" data-tf-id="tf3">
+        <span class="tf-sentence">3) While his friends were arriving, Jake put snacks on the table. <span class="mark" id="mark-tf3"></span></span>
+        <span class="tf-choices"><button type="button" class="tf-btn" data-tf="tf3" data-val="T">T</button><button type="button" class="tf-btn" data-tf="tf3" data-val="F">F</button></span>
+        <select class="autosave tf-store" id="tf3" tabindex="-1" aria-hidden="true"><option value=""></option><option>T</option><option>F</option></select>
+      </div>
+      <div class="tf-row" data-tf-id="tf4">
+        <span class="tf-sentence">4) Ruby knocked the china dog while she was cooking. <span class="mark" id="mark-tf4"></span></span>
+        <span class="tf-choices"><button type="button" class="tf-btn" data-tf="tf4" data-val="T">T</button><button type="button" class="tf-btn" data-tf="tf4" data-val="F">F</button></span>
+        <select class="autosave tf-store" id="tf4" tabindex="-1" aria-hidden="true"><option value=""></option><option>T</option><option>F</option></select>
+      </div>
+      <div class="tf-row" data-tf-id="tf5">
+        <span class="tf-sentence">5) The china dog was a cheap souvenir. <span class="mark" id="mark-tf5"></span></span>
+        <span class="tf-choices"><button type="button" class="tf-btn" data-tf="tf5" data-val="T">T</button><button type="button" class="tf-btn" data-tf="tf5" data-val="F">F</button></span>
+        <select class="autosave tf-store" id="tf5" tabindex="-1" aria-hidden="true"><option value=""></option><option>T</option><option>F</option></select>
+      </div>
+
+      <h4>4.2 The Return and the Result</h4>
+      <div class="tf-row" data-tf-id="tf6">
+        <span class="tf-sentence">1) A red car has just stopped outside. <span class="mark" id="mark-tf6"></span></span>
+        <span class="tf-choices"><button type="button" class="tf-btn" data-tf="tf6" data-val="T">T</button><button type="button" class="tf-btn" data-tf="tf6" data-val="F">F</button></span>
+        <select class="autosave tf-store" id="tf6" tabindex="-1" aria-hidden="true"><option value=""></option><option>T</option><option>F</option></select>
+      </div>
+      <div class="tf-row" data-tf-id="tf7">
+        <span class="tf-sentence">2) While they were driving, Mum remembered her glasses. <span class="mark" id="mark-tf7"></span></span>
+        <span class="tf-choices"><button type="button" class="tf-btn" data-tf="tf7" data-val="T">T</button><button type="button" class="tf-btn" data-tf="tf7" data-val="F">F</button></span>
+        <select class="autosave tf-store" id="tf7" tabindex="-1" aria-hidden="true"><option value=""></option><option>T</option><option>F</option></select>
+      </div>
+      <div class="tf-row" data-tf-id="tf8">
+        <span class="tf-sentence">3) The dog has been in the family since the 1930s. <span class="mark" id="mark-tf8"></span></span>
+        <span class="tf-choices"><button type="button" class="tf-btn" data-tf="tf8" data-val="T">T</button><button type="button" class="tf-btn" data-tf="tf8" data-val="F">F</button></span>
+        <select class="autosave tf-store" id="tf8" tabindex="-1" aria-hidden="true"><option value=""></option><option>T</option><option>F</option></select>
+      </div>
+      <div class="tf-row" data-tf-id="tf9">
+        <span class="tf-sentence">4) Jake left the glasses in the living room. <span class="mark" id="mark-tf9"></span></span>
+        <span class="tf-choices"><button type="button" class="tf-btn" data-tf="tf9" data-val="T">T</button><button type="button" class="tf-btn" data-tf="tf9" data-val="F">F</button></span>
+        <select class="autosave tf-store" id="tf9" tabindex="-1" aria-hidden="true"><option value=""></option><option>T</option><option>F</option></select>
+      </div>
+      <div class="tf-row" data-tf-id="tf10">
+        <span class="tf-sentence">5) Jake has already told his parents the truth. <span class="mark" id="mark-tf10"></span></span>
+        <span class="tf-choices"><button type="button" class="tf-btn" data-tf="tf10" data-val="T">T</button><button type="button" class="tf-btn" data-tf="tf10" data-val="F">F</button></span>
+        <select class="autosave tf-store" id="tf10" tabindex="-1" aria-hidden="true"><option value=""></option><option>T</option><option>F</option></select>
+      </div>
+      <div id="tfScoreOutput" class="score-box">True/False: not checked yet.</div>
+      <div id="tfScoreNote" class="score-note">Po Check True/False uvidis OK/X pri kazdej vete.</div>
+    </div>
+
+    <div class="card" id="section4">
+      <h2>5. Talking - Scrambled Dialogue (after the story)</h2>
+      <p class="small"><strong>Check Dialogue</strong> — answers about Jake's party. Same student, new story.</p>
+      <div class="section-sticky-actions">
+        <button class="primary" onclick="checkDialogue()">Check Dialogue</button>
+      </div>
+
+      <div class="score-item" data-dialogue-id="d1">
+        <div class="item-label">1) Answer: <span class="mark" id="mark-d1"></span></div>
+        <p><strong>Jim:</strong> What has Ruby broken?<br><span class="muted">[ has / She / broken / the / china / dog ]</span></p>
+        <textarea class="autosave" id="d1" rows="2"></textarea>
+        <div class="hint" id="hint-d1"></div>
+      </div>
+      <div class="score-item" data-dialogue-id="d2">
+        <div class="item-label">2) Answer: <span class="mark" id="mark-d2"></span></div>
+        <p><strong>Jim:</strong> When did she knock it?<br><span class="muted">[ knocked / She / it / while / she / was / dancing ]</span></p>
+        <textarea class="autosave" id="d2" rows="2"></textarea>
+        <div class="hint" id="hint-d2"></div>
+      </div>
+      <div class="score-item" data-dialogue-id="d3">
+        <div class="item-label">3) Answer: <span class="mark" id="mark-d3"></span></div>
+        <p><strong>Jim:</strong> When did the parents leave?<br><span class="muted">[ went / They / about / ten / minutes / ago ]</span></p>
+        <textarea class="autosave" id="d3" rows="2"></textarea>
+        <div class="hint" id="hint-d3"></div>
+      </div>
+      <div class="score-item" data-dialogue-id="d4">
+        <div class="item-label">4) Answer: <span class="mark" id="mark-d4"></span></div>
+        <p><strong>Jim:</strong> What happened while they were driving?<br><span class="muted">[ remembered / Mum / her / glasses / while / they / were / driving ]</span></p>
+        <textarea class="autosave" id="d4" rows="2"></textarea>
+        <div class="hint" id="hint-d4"></div>
+      </div>
+      <div class="score-item" data-dialogue-id="d5">
+        <div class="item-label">5) Answer: <span class="mark" id="mark-d5"></span></div>
+        <p><strong>Jim:</strong> How long has the dog been in the family?<br><span class="muted">[ has / It / been / in / the / family / since / the / 1930s ]</span></p>
+        <textarea class="autosave" id="d5" rows="2"></textarea>
+        <div class="hint" id="hint-d5"></div>
+      </div>
+      <div class="score-item" data-dialogue-id="d6">
+        <div class="item-label">6) Answer: <span class="mark" id="mark-d6"></span></div>
+        <p><strong>Jim:</strong> What is Jake going to do after the weekend?<br><span class="muted">[ is / He / going / to / tell / the / truth ]</span></p>
+        <textarea class="autosave" id="d6" rows="2"></textarea>
+        <div class="hint" id="hint-d6"></div>
+      </div>
+
+      <div id="dialogueScoreOutput" class="score-box">Dialogue score: not checked yet.</div>
+      <div id="dialogueScoreNote" class="score-note">Tip: Napoveda zmizne po kliknuti do pola.</div>
+    </div>
+
+    <div class="card">
+      <h2>6. Your Problem Story (same you, new chapter)</h2>
+      <p class="small">Write a short problem from your own week. School-safe facts only. Use while, past simple, and present perfect.</p>
+      <div class="pitch-box">
+        <div class="q"><strong>1) While this was happening:</strong><textarea class="autosave" id="n1" rows="2"></textarea></div>
+        <div class="q"><strong>2) Then this happened (past simple):</strong><textarea class="autosave" id="n2" rows="2"></textarea></div>
+        <div class="q"><strong>3) The result now (I have… / It has…):</strong><textarea class="autosave" id="n3" rows="2"></textarea></div>
+        <div class="q"><strong>4) What someone said:</strong><textarea class="autosave" id="n4" rows="2"></textarea></div>
+        <div class="q"><strong>5) What I am going to do next:</strong><textarea class="autosave" id="n5" rows="2"></textarea></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>7. Grammar Box - Problems with while</h2>
+      <p>
+        - <strong>while + past continuous:</strong> While I was dancing, I knocked it.<br>
+        - <strong>Past simple:</strong> They went ten minutes ago. / She turned round.<br>
+        - <strong>Present perfect:</strong> I've broken it. / It's been in the family since…<br>
+        - <strong>Next step:</strong> I am going to… / I will…
+      </p>
+      <div class="q"><strong>while line from the story or from you:</strong><input class="line-input autosave" id="b1" type="text"></div>
+      <div class="q"><strong>Past Simple line:</strong><input class="line-input autosave" id="b2" type="text"></div>
+      <div class="q"><strong>Present Perfect line:</strong><input class="line-input autosave" id="b3" type="text"></div>
+      <div class="q"><strong>going to / will line:</strong><input class="line-input autosave" id="b4" type="text"></div>
+    </div>
+
+    <div class="card" id="section7">
+      <h2>8. Classroom and Grammar Connection</h2>
+      <p>Choose one correct Slovak option for each English term.</p>
+      <div class="section-sticky-actions">
+        <button class="primary" onclick="checkScore()">Check Score</button>
+        <button id="toggleSec7AnswersBtn" onclick="toggleSec7Answers()">Show Correct Answers</button>
+      </div>
+      <div class="term-grid">
+        <div class="score-item" data-score-id="m1">
+          <div class="item-label">1) past continuous: <span class="mark" id="mark-m1"></span></div>
+          <select class="autosave" id="m1" style="max-width:340px;display:inline-block;width:auto;min-width:240px;">
+            <option value=""></option>
+            <option>minuly cas priebehovy</option>
+            <option>minuly cas jednoduchy</option>
+            <option>buduci cas</option>
+          </select>
+          <div class="hint" id="hint-m1"></div>
+        </div>
+        <div class="score-item" data-score-id="m2">
+          <div class="item-label">2) while: <span class="mark" id="mark-m2"></span></div>
+          <select class="autosave" id="m2" style="max-width:340px;display:inline-block;width:auto;min-width:240px;">
+            <option value=""></option>
+            <option>zatial co / pocas toho</option>
+            <option>pretoze</option>
+            <option>potom</option>
+          </select>
+          <div class="hint" id="hint-m2"></div>
+        </div>
+        <div class="score-item" data-score-id="m3">
+          <div class="item-label">3) past simple: <span class="mark" id="mark-m3"></span></div>
+          <select class="autosave" id="m3" style="max-width:340px;display:inline-block;width:auto;min-width:240px;">
+            <option value=""></option>
+            <option>minuly cas jednoduchy</option>
+            <option>predpritomny cas</option>
+            <option>pritomny cas priebehovy</option>
+          </select>
+          <div class="hint" id="hint-m3"></div>
+        </div>
+        <div class="score-item" data-score-id="m4">
+          <div class="item-label">4) present perfect: <span class="mark" id="mark-m4"></span></div>
+          <select class="autosave" id="m4" style="max-width:340px;display:inline-block;width:auto;min-width:240px;">
+            <option value=""></option>
+            <option>predpritomny cas</option>
+            <option>minuly cas jednoduchy</option>
+            <option>rozkazovaci sposob</option>
+          </select>
+          <div class="hint" id="hint-m4"></div>
+        </div>
+        <div class="score-item" data-score-id="m5">
+          <div class="item-label">5) since: <span class="mark" id="mark-m5"></span></div>
+          <select class="autosave" id="m5" style="max-width:340px;display:inline-block;width:auto;min-width:240px;">
+            <option value=""></option>
+            <option>od urciteho bodu</option>
+            <option>na chvilu</option>
+            <option>vzdy</option>
+          </select>
+          <div class="hint" id="hint-m5"></div>
+        </div>
+        <div class="score-item" data-score-id="m6">
+          <div class="item-label">6) just: <span class="mark" id="mark-m6"></span></div>
+          <select class="autosave" id="m6" style="max-width:340px;display:inline-block;width:auto;min-width:240px;">
+            <option value=""></option>
+            <option>prave / pred chvilou</option>
+            <option>nikdy</option>
+            <option>uz davno</option>
+          </select>
+          <div class="hint" id="hint-m6"></div>
+        </div>
+        <div class="score-item" data-score-id="m7">
+          <div class="item-label">7) apology: <span class="mark" id="mark-m7"></span></div>
+          <select class="autosave" id="m7" style="max-width:340px;display:inline-block;width:auto;min-width:240px;">
+            <option value=""></option>
+            <option>ospravedlnenie</option>
+            <option>pozvanka</option>
+            <option>otazka</option>
+          </select>
+          <div class="hint" id="hint-m7"></div>
+        </div>
+        <div class="score-item" data-score-id="m8">
+          <div class="item-label">8) problem: <span class="mark" id="mark-m8"></span></div>
+          <select class="autosave" id="m8" style="max-width:340px;display:inline-block;width:auto;min-width:240px;">
+            <option value=""></option>
+            <option>problem</option>
+            <option>oslava</option>
+            <option>plan</option>
+          </select>
+          <div class="hint" id="hint-m8"></div>
+        </div>
+        <div class="score-item" data-score-id="m9">
+          <div class="item-label">9) hide: <span class="mark" id="mark-m9"></span></div>
+          <select class="autosave" id="m9" style="max-width:340px;display:inline-block;width:auto;min-width:240px;">
+            <option value=""></option>
+            <option>schovajte sa</option>
+            <option>otvorte dvere</option>
+            <option>zapnite hudbu</option>
+          </select>
+          <div class="hint" id="hint-m9"></div>
+        </div>
+        <div class="score-item" data-score-id="m10">
+          <div class="item-label">10) china dog: <span class="mark" id="mark-m10"></span></div>
+          <select class="autosave" id="m10" style="max-width:340px;display:inline-block;width:auto;min-width:240px;">
+            <option value=""></option>
+            <option>porcelanova soska psa</option>
+            <option>rodinny automobil</option>
+            <option>kuchynske dvere</option>
+          </select>
+          <div class="hint" id="hint-m10"></div>
+        </div>
+        <div class="score-item" data-score-id="m11">
+          <div class="item-label">11) put the words in the correct order: <span class="mark" id="mark-m11"></span></div>
+          <select class="autosave" id="m11" style="max-width:340px;display:inline-block;width:auto;min-width:240px;">
+            <option value=""></option>
+            <option>dajte slova do spravneho poradia</option>
+            <option>vypnite kameru</option>
+            <option>otvorte chat</option>
+          </select>
+          <div class="hint" id="hint-m11"></div>
+        </div>
+      </div>
+      <div id="scoreOutput" class="score-box">Score: not checked yet.</div>
+      <div id="scoreNote" class="score-note">Tip: Po Check Score uvidis OK/X + hint.</div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "esl-class-25-v1";
+    const BLOCK_TITLES = {
+      1: "1. The Secret Party",
+      2: "2. While She Was Dancing",
+      3: "3. While They Were Driving",
+      4: "4. The Family Dog"
+    };
+    const WORD_BANKS = {
+      1: "nervous, invited, weekend, gone, arriving",
+      2: "pieces, souvenir, dancing, broken, knocked",
+      3: "driving, shaking, stopped, remembered, hide",
+      4: "looking, truth, grandfather, leave, since"
+    };
+
+    function setStatus(msg) {
+      document.getElementById("copyStatus").textContent = msg || "";
+    }
+    function val(id) {
+      var el = document.getElementById(id);
+      return el ? (el.value || "").trim() : "";
+    }
+    function blankOr(id) {
+      var v = val(id);
+      return v || "_________";
+    }
+    function copyText(text, okMsg) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function () {
+          setStatus(okMsg || "Copied.");
+        }).catch(function () { fallbackCopy(text, okMsg); });
+      } else fallbackCopy(text, okMsg);
+    }
+    function fallbackCopy(text, okMsg) {
+      var ta = document.createElement("textarea");
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand("copy"); setStatus(okMsg || "Copied."); }
+      catch (e) { setStatus("Copy failed."); }
+      document.body.removeChild(ta);
+    }
+    function saveData() {
+      var data = {};
+      document.querySelectorAll(".autosave").forEach(function (el) {
+        if (el.id) data[el.id] = el.value;
+      });
+      data._transformState = {
+        pool: document.getElementById("transformPool").value,
+        tasks: currentTransformTasks,
+        answers: collectTransformAnswers()
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+    function loadData() {
+      try {
+        var raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) {
+          newTransformSet();
+          syncAllTfButtons();
+          return;
+        }
+        var data = JSON.parse(raw);
+        Object.keys(data).forEach(function (id) {
+          if (id === "_transformState") return;
+          var el = document.getElementById(id);
+          if (el) el.value = data[id];
+        });
+        if (data._transformState && data._transformState.tasks && data._transformState.tasks.length) {
+          document.getElementById("transformPool").value = data._transformState.pool || "all";
+          currentTransformTasks = data._transformState.tasks;
+          renderTransformTasks(data._transformState.answers || {});
+        } else {
+          newTransformSet();
+        }
+        syncAllTfButtons();
+      } catch (e) {
+        newTransformSet();
+        syncAllTfButtons();
+      }
+    }
+
+    function syncTfButtons(id) {
+      var sel = document.getElementById(id);
+      var v = sel ? sel.value : "";
+      document.querySelectorAll('.tf-btn[data-tf="' + id + '"]').forEach(function (btn) {
+        btn.classList.remove("active-t", "active-f");
+        if (v && btn.getAttribute("data-val") === v) {
+          btn.classList.add(v === "T" ? "active-t" : "active-f");
+        }
+      });
+    }
+    function syncAllTfButtons() {
+      ["tf1","tf2","tf3","tf4","tf5","tf6","tf7","tf8","tf9","tf10"].forEach(syncTfButtons);
+    }
+    var TF_KEY = {
+      tf1: "F",
+      tf2: "T",
+      tf3: "T",
+      tf4: "F",
+      tf5: "F",
+      tf6: "T",
+      tf7: "T",
+      tf8: "T",
+      tf9: "F",
+      tf10: "F"
+    };
+    var tfFeedbackVisible = false;
+
+    function resetTfStyles() {
+      document.querySelectorAll("#sectionTf .tf-row").forEach(function (row) {
+        row.classList.remove("scored-correct", "scored-wrong");
+      });
+      Object.keys(TF_KEY).forEach(function (id) {
+        var mark = document.getElementById("mark-" + id);
+        if (mark) mark.textContent = "";
+      });
+    }
+
+    function clearTfFeedback() {
+      if (!tfFeedbackVisible) return;
+      resetTfStyles();
+      tfFeedbackVisible = false;
+      document.getElementById("tfScoreOutput").textContent = "True/False: not checked yet.";
+      document.getElementById("tfScoreNote").textContent =
+        "Podfarbenie zmizlo. Uprav odpoved a stlac Check True/False znova.";
+    }
+
+    function checkTrueFalse() {
+      resetTfStyles();
+      tfFeedbackVisible = true;
+      var score = 0;
+      var total = Object.keys(TF_KEY).length;
+      Object.keys(TF_KEY).forEach(function (id) {
+        var row = document.querySelector('.tf-row[data-tf-id="' + id + '"]');
+        var mark = document.getElementById("mark-" + id);
+        var chosen = val(id);
+        var correct = TF_KEY[id];
+        var ok = chosen === correct;
+        if (row) row.classList.add(ok ? "scored-correct" : "scored-wrong");
+        if (mark) {
+          if (!chosen) mark.textContent = "—";
+          else mark.textContent = ok ? "OK" : "X";
+        }
+        if (ok) score += 1;
+      });
+      var percent = Math.round((score / total) * 100);
+      document.getElementById("tfScoreOutput").textContent =
+        "True/False: " + score + "/" + total + " (" + percent + "%)";
+      document.getElementById("tfScoreNote").textContent =
+        "Check True/False hotovy. Ked zmenis T/F, farby zmiznu.";
+      setStatus("True/False checked: " + score + "/" + total);
+    }
+
+    function setTfAnswer(id, val) {
+      var sel = document.getElementById(id);
+      if (!sel) return;
+      sel.value = val;
+      syncTfButtons(id);
+      clearTfFeedback();
+      saveData();
+      setStatus("T/F: " + id.replace("tf", "") + " = " + val);
+    }
+    function clearData() {
+      if (!confirm("Clear all answers for Class 25?")) return;
+      document.querySelectorAll(".autosave").forEach(function (el) {
+        if (el.tagName === "SELECT") el.selectedIndex = 0;
+        else el.value = "";
+      });
+      localStorage.removeItem(STORAGE_KEY);
+      resetScoreStyles();
+      resetDialogueStyles();
+      resetTransformStyles();
+      answersRevealed = false;
+      scoreFeedbackVisible = false;
+      dialogueFeedbackVisible = false;
+      transformFeedbackVisible = false;
+      setSec7ToggleLabel(false);
+      document.getElementById("scoreOutput").textContent = "Score: not checked yet.";
+      document.getElementById("dialogueScoreOutput").textContent = "Dialogue score: not checked yet.";
+      document.getElementById("transformScoreOutput").textContent = "Exercise 2: 6 tasks — not checked yet.";
+      newTransformSet();
+      syncAllTfButtons();
+      resetTfStyles();
+      tfFeedbackVisible = false;
+      document.getElementById("tfScoreOutput").textContent = "True/False: not checked yet.";
+      document.getElementById("tfScoreNote").textContent = "Po Check True/False uvidis OK/X pri kazdej vete.";
+      setStatus("Cleared.");
+    }
+    function savePdf() { window.print(); }
+    function toggleFullText() {
+      var panel = document.getElementById("fullTextPanel");
+      var btn = document.getElementById("toggleFullBtn");
+      var show = panel.style.display !== "block";
+      panel.style.display = show ? "block" : "none";
+      btn.textContent = show ? "Hide Full Text" : "Show Full Text";
+    }
+    function toggleGrammarLines() {
+      document.body.classList.toggle("gram-on");
+      var on = document.body.classList.contains("gram-on");
+      var label = on ? "Hide grammar lines" : "Highlight grammar lines";
+      document.querySelectorAll(".gram-toggle").forEach(function (btn) {
+        btn.textContent = label;
+      });
+    }
+    var listenTarget = null;
+    var listenRun = 0;
+    function listeningText(n) {
+      var el = document.getElementById("full" + n);
+      return el ? el.textContent.replace(/\s+/g, " ").trim() : "";
+    }
+    function pickEnglishVoice() {
+      var voices = window.speechSynthesis ? speechSynthesis.getVoices() : [];
+      var names = ["Google UK English Female", "Google UK English Male", "Microsoft Libby", "Microsoft Sonia", "Samantha"];
+      var i, j;
+      for (i = 0; i < names.length; i++) {
+        for (j = 0; j < voices.length; j++) {
+          if (voices[j].name.indexOf(names[i]) !== -1) return voices[j];
+        }
+      }
+      for (j = 0; j < voices.length; j++) {
+        if (/^en([-_]|$)/i.test(voices[j].lang)) return voices[j];
+      }
+      return null;
+    }
+    function setListenLabels(activeKey) {
+      var main = document.getElementById("listenBtn");
+      if (main) main.innerHTML = activeKey === "all" ? "&#9209; Stop" : "&#128266; Listen";
+      document.querySelectorAll(".listen-block-btn").forEach(function (btn) {
+        btn.innerHTML = activeKey === btn.getAttribute("data-listen") ? "&#9209; Stop" : "&#128266; Listen";
+      });
+    }
+    function stopListen() {
+      listenRun += 1;
+      listenTarget = null;
+      if (window.speechSynthesis) speechSynthesis.cancel();
+      setListenLabels(null);
+    }
+    function toggleListen(n) {
+      var key = n ? String(n) : "all";
+      if (!window.speechSynthesis) {
+        setStatus("This browser cannot read aloud.");
+        return;
+      }
+      if (listenTarget === key) {
+        stopListen();
+        setStatus("Stopped.");
+        return;
+      }
+      stopListen();
+      listenTarget = key;
+      setListenLabels(key);
+      var parts = n ? [listeningText(n)] : [1, 2, 3, 4].map(listeningText);
+      var run = listenRun;
+      function speakNext(i) {
+        if (run !== listenRun || listenTarget !== key) return;
+        if (i >= parts.length) {
+          stopListen();
+          setStatus("Listening finished.");
+          return;
+        }
+        var utter = new SpeechSynthesisUtterance(parts[i]);
+        utter.lang = "en-GB";
+        utter.rate = 0.92;
+        var voice = pickEnglishVoice();
+        if (voice) utter.voice = voice;
+        utter.onend = function () { speakNext(i + 1); };
+        utter.onerror = function (ev) {
+          if (ev && (ev.error === "interrupted" || ev.error === "canceled")) return;
+          stopListen();
+          setStatus("Playback stopped.");
+        };
+        speechSynthesis.resume();
+        speechSynthesis.speak(utter);
+      }
+      setTimeout(function () { speakNext(0); }, 60);
+      setStatus(n ? "Listening to block " + n + "." : "Listening to the full story.");
+    }
+    if (window.speechSynthesis) speechSynthesis.getVoices();
+    function copyFullListening() {
+      var text = [1, 2, 3, 4].map(function (n) {
+        return BLOCK_TITLES[n] + "\n" + document.getElementById("full" + n).textContent.trim();
+      }).join("\n\n");
+      copyText(text, "Full listening text copied.");
+    }
+    function gapParagraph(n) {
+      if (n === 1) {
+        return "It was Friday evening and Jake's parents were leaving for the " + blankOr("l1a") +
+          ". Jake " + blankOr("l1b") +
+          " all his friends to his house, but he did not tell his parents. At seven o'clock Pete phoned him. \"OK. They've " + blankOr("l1c") +
+          ",\" Jake said. \"They went about ten minutes ago.\" Pete answered, \"You can have the party at my house.\" Jake said no, because he wanted the music at home. While his friends were " + blankOr("l1d") +
+          ", he put snacks on the table. He felt excited, but he was also " + blankOr("l1e") +
+          ". He hoped the evening would stay simple.";
+      }
+      if (n === 2) {
+        return "The party grew loud very quickly. Ruby was " + blankOr("l2a") +
+          " near the shelf when her hand hit a small china dog. She stopped the music and looked at Jake. \"I'm really sorry, Jake. I've " + blankOr("l2b") +
+          " your china dog. I " + blankOr("l2c") +
+          " it with my hand while I was dancing.\" The dog was in two " + blankOr("l2d") +
+          " on the floor. Jake picked them up and did not smile. That dog was not a cheap " + blankOr("l2e") +
+          ". It was a family object, and the accident happened in one second. Nobody spoke for a moment.";
+      }
+      if (n === 3) {
+        return "Ten minutes later Pete looked out of the window. \"A red car has just " + blankOr("l3a") +
+          " outside. Isn't that your parents' car?\" Jake went pale. \"Oh no! They've come back. Quick, everybody, " + blankOr("l3b") +
+          " in the kitchen.\" His mum and dad walked in with a small bag. \"Hi, Mum, Dad. What have you come back for?\" Jake asked. His dad explained, \"Well, while we were " + blankOr("l3c") +
+          " down the motorway, your mum suddenly " + blankOr("l3d") +
+          " her glasses. She turned round and came back.\" Jake nodded, but his hands were " + blankOr("l3e") +
+          ". The music was still on in the living room.";
+      }
+      return "\"Oh no, Ruby! That was my great-" + blankOr("l4a") +
+        "'s,\" Jake said. \"It's been in the family " + blankOr("l4b") +
+        " the 1930s.\" Ruby looked down. \"I'm really sorry.\" Mum smiled and said, \"It's all right, dear. I'll get it for you. Where did you " + blankOr("l4c") +
+        " it?\" Jake answered, \"I left it in the kitchen.\" While Mum was " + blankOr("l4d") +
+        " for her glasses, the friends stayed very quiet. Jake is going to tell his parents the " + blankOr("l4e") +
+        " after the weekend. He has learned that one broken dog can end a party. The house was a mess, and the secret was no longer safe.";
+    }
+    function gapParagraphBlankTemplate(n) {
+      var map = {
+        1: ["l1a", "l1b", "l1c", "l1d", "l1e"],
+        2: ["l2a", "l2b", "l2c", "l2d", "l2e"],
+        3: ["l3a", "l3b", "l3c", "l3d", "l3e"],
+        4: ["l4a", "l4b", "l4c", "l4d", "l4e"]
+      };
+      var originals = {};
+      map[n].forEach(function (id) {
+        originals[id] = val(id);
+        document.getElementById(id).value = "";
+      });
+      var text = gapParagraph(n);
+      map[n].forEach(function (id) { document.getElementById(id).value = originals[id]; });
+      return text;
+    }
+    function copyBlock(n) {
+      copyText([BLOCK_TITLES[n], "Word bank: " + WORD_BANKS[n], "", gapParagraph(n)].join("\n"), "Block " + n + " copied.");
+    }
+    function copyGapFill() {
+      var parts = [1, 2, 3, 4].map(function (n) {
+        return [BLOCK_TITLES[n], "Word bank: " + WORD_BANKS[n], gapParagraphBlankTemplate(n), ""].join("\n");
+      });
+      copyText(["LISTENING GAP FILL - CLASS 25", "Jake's Party Problems", "", parts.join("\n")].join("\n"), "Gap fill copied.");
+    }
+    function copyPlainLesson() {
+      var text = [
+        "WORKSHEET - CLASS 25",
+        "Topic: Jake's Party Problems (while + past tenses)",
+        "Date: " + val("date"),
+        "Student: " + val("student"),
+        "Unit: " + val("unit"),
+        "Main focus: " + val("focus"),
+        "",
+        "1. GRAMMAR",
+        "A: " + [val("g1"), val("g2"), val("g3"), val("g4")].join(" | "),
+        "B: " + [val("g5"), val("g6"), val("g7"), val("g8")].join(" | "),
+        "C: " + [val("g9"), val("g10"), val("g11"), val("g12")].join(" | "),
+        "",
+        "2. LISTENING",
+        gapParagraph(1), "", gapParagraph(2), "", gapParagraph(3), "", gapParagraph(4),
+        "",
+        "3. T/F",
+        [val("tf1"), val("tf2"), val("tf3"), val("tf4"), val("tf5"), val("tf6"), val("tf7"), val("tf8"), val("tf9"), val("tf10")].join(", "),
+        "",
+        "4. DIALOGUE",
+        val("d1"), val("d2"), val("d3"), val("d4"), val("d5"), val("d6"),
+        "",
+        "2. EXERCISE 2 - TRANSFORMATIONS",
+        currentTransformTasks.map(function (task, i) {
+          return (i + 1) + ") [" + task.target + "] " + task.sourceText + " -> " + (collectTransformAnswers()["t" + i] || ".....");
+        }).join("\n"),
+        "",
+        "5. MY PROBLEM STORY",
+        "While: " + val("n1"),
+        "Then: " + val("n2"),
+        "Result: " + val("n3"),
+        "Someone said: " + val("n4"),
+        "Next: " + val("n5"),
+        "",
+        "6. GRAMMAR BOX",
+        val("b1"), val("b2"), val("b3"), val("b4"),
+        "",
+        "7. MATCHING",
+        ["m1","m2","m3","m4","m5","m6","m7","m8","m9","m10","m11"].map(val).join(" | ")
+      ].join("\n");
+      copyText(text, "Full lesson plain text copied.");
+    }
+
+    /* ===== Sentence Transformations (pool per tense) ===== */
+    var FORM_KEYS = ["affirmative", "negative", "question"];
+    var FORM_LABELS = {
+      affirmative: "Make affirmative",
+      negative: "Make negative",
+      question: "Make question"
+    };
+    var TRANSFORM_POOLS = {
+      past_while: {
+        label: "while + past",
+        items: [
+          {
+            id: "w1",
+            forms: {
+              affirmative: "I knocked it while I was dancing.",
+              negative: "I did not knock it while I was dancing.",
+              question: "Did I knock it while I was dancing?"
+            },
+            alts: {
+              negative: ["i didn't knock it while i was dancing"]
+            }
+          },
+          {
+            id: "w2",
+            forms: {
+              affirmative: "While we were driving, Mum remembered her glasses.",
+              negative: "While we were driving, Mum did not remember her glasses.",
+              question: "While we were driving, did Mum remember her glasses?"
+            },
+            alts: {
+              negative: ["while we were driving, mum didn't remember her glasses"]
+            }
+          },
+          {
+            id: "w3",
+            forms: {
+              affirmative: "While Mum was looking for her glasses, the friends stayed quiet.",
+              negative: "While Mum was looking for her glasses, the friends did not stay quiet.",
+              question: "While Mum was looking for her glasses, did the friends stay quiet?"
+            },
+            alts: {
+              negative: ["while mum was looking for her glasses, the friends didn't stay quiet"]
+            }
+          }
+        ]
+      },
+      past_simple: {
+        label: "Past Simple",
+        items: [
+          {
+            id: "past1",
+            forms: {
+              affirmative: "They went about ten minutes ago.",
+              negative: "They did not go about ten minutes ago.",
+              question: "Did they go about ten minutes ago?"
+            },
+            alts: {
+              negative: ["they didn't go about ten minutes ago"]
+            }
+          },
+          {
+            id: "past2",
+            forms: {
+              affirmative: "She turned round and came back.",
+              negative: "She did not turn round and come back.",
+              question: "Did she turn round and come back?"
+            },
+            alts: {
+              negative: ["she didn't turn round and come back"]
+            }
+          },
+          {
+            id: "past3",
+            forms: {
+              affirmative: "I left it in the kitchen.",
+              negative: "I did not leave it in the kitchen.",
+              question: "Did I leave it in the kitchen?"
+            },
+            alts: {
+              negative: ["i didn't leave it in the kitchen"]
+            }
+          }
+        ]
+      },
+      present_perfect: {
+        label: "Present Perfect",
+        items: [
+          {
+            id: "pp1",
+            forms: {
+              affirmative: "I have broken the china dog.",
+              negative: "I have not broken the china dog.",
+              question: "Have I broken the china dog?"
+            },
+            alts: {
+              affirmative: ["i've broken the china dog"],
+              negative: ["i haven't broken the china dog", "i've not broken the china dog"]
+            }
+          },
+          {
+            id: "pp2",
+            forms: {
+              affirmative: "They have come back.",
+              negative: "They have not come back.",
+              question: "Have they come back?"
+            },
+            alts: {
+              affirmative: ["they've come back"],
+              negative: ["they haven't come back", "they've not come back"]
+            }
+          },
+          {
+            id: "pp3",
+            forms: {
+              affirmative: "It has been in the family since the 1930s.",
+              negative: "It has not been in the family since the 1930s.",
+              question: "Has it been in the family since the 1930s?"
+            },
+            alts: {
+              affirmative: ["it's been in the family since the 1930s"],
+              negative: ["it hasn't been in the family since the 1930s", "it's not been in the family since the 1930s"]
+            }
+          }
+        ]
+      },
+      going_to: {
+        label: "be going to",
+        items: [
+          {
+            id: "gt1",
+            forms: {
+              affirmative: "Jake is going to tell the truth.",
+              negative: "Jake is not going to tell the truth.",
+              question: "Is Jake going to tell the truth?"
+            },
+            alts: {
+              affirmative: ["jake's going to tell the truth"],
+              negative: ["jake isn't going to tell the truth", "jake's not going to tell the truth"]
+            }
+          },
+          {
+            id: "gt2",
+            forms: {
+              affirmative: "I am going to hide in the kitchen.",
+              negative: "I am not going to hide in the kitchen.",
+              question: "Am I going to hide in the kitchen?"
+            },
+            alts: {
+              affirmative: ["i'm going to hide in the kitchen"],
+              negative: ["i'm not going to hide in the kitchen"]
+            }
+          },
+          {
+            id: "gt3",
+            forms: {
+              affirmative: "We are going to turn the music off.",
+              negative: "We are not going to turn the music off.",
+              question: "Are we going to turn the music off?"
+            },
+            alts: {
+              affirmative: ["we're going to turn the music off"],
+              negative: ["we aren't going to turn the music off", "we're not going to turn the music off"]
+            }
+          }
+        ]
+      }
+    };
+
+    var currentTransformTasks = [];
+    var transformFeedbackVisible = false;
+
+    function shuffle(arr) {
+      var a = arr.slice();
+      for (var i = a.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var t = a[i]; a[i] = a[j]; a[j] = t;
+      }
+      return a;
+    }
+
+    function findPoolItem(poolKey, itemId) {
+      var pool = TRANSFORM_POOLS[poolKey];
+      if (!pool) return null;
+      for (var i = 0; i < pool.items.length; i++) {
+        if (pool.items[i].id === itemId) return pool.items[i];
+      }
+      return null;
+    }
+
+    function acceptedAnswers(item, form) {
+      var list = [normalizeAnswer(item.forms[form])];
+      if (item.alts && item.alts[form]) {
+        item.alts[form].forEach(function (a) { list.push(normalizeAnswer(a)); });
+      }
+      return list;
+    }
+
+    function isTransformCorrect(task, text) {
+      var item = findPoolItem(task.pool, task.itemId);
+      if (!item) return false;
+      var norm = normalizeAnswer(text);
+      if (!norm) return false;
+      return acceptedAnswers(item, task.target).indexOf(norm) !== -1;
+    }
+
+    function collectTransformAnswers() {
+      var out = {};
+      currentTransformTasks.forEach(function (_, i) {
+        var el = document.getElementById("tr" + i);
+        out["t" + i] = el ? el.value : "";
+      });
+      return out;
+    }
+
+    function resetTransformStyles() {
+      document.querySelectorAll("#transformList .score-item").forEach(function (item) {
+        item.classList.remove("scored-correct", "scored-wrong");
+      });
+      currentTransformTasks.forEach(function (_, i) {
+        var mark = document.getElementById("mark-tr" + i);
+        var hint = document.getElementById("hint-tr" + i);
+        if (mark) mark.textContent = "";
+        if (hint) { hint.classList.remove("show"); hint.textContent = ""; }
+      });
+    }
+
+    function clearTransformFeedback() {
+      if (!transformFeedbackVisible) return;
+      resetTransformStyles();
+      transformFeedbackVisible = false;
+      document.getElementById("transformScoreOutput").textContent = "Exercise 2: 6 tasks — not checked yet.";
+      document.getElementById("transformScoreNote").textContent =
+        "Podfarbenie zmizlo. Uprav odpoved a stlac Check Exercise 2 znova.";
+    }
+
+    function renderTransformTasks(answers) {
+      answers = answers || {};
+      var box = document.getElementById("transformList");
+      box.innerHTML = currentTransformTasks.map(function (task, i) {
+        var saved = answers["t" + i] || "";
+        return [
+          '<div class="score-item transform-task" data-transform-i="' + i + '">',
+          '<div class="item-label">',
+          'Task ' + (i + 1) + '/6 ',
+          '<span class="task-badge">' + FORM_LABELS[task.target] + '</span>',
+          '<span class="tense-tag">' + task.poolLabel + '</span>',
+          ' <span class="mark" id="mark-tr' + i + '"></span>',
+          '</div>',
+          '<p class="source-line"><strong>Source:</strong> ' + task.sourceText + '</p>',
+          '<textarea class="autosave transform-input" id="tr' + i + '" rows="2" placeholder="Write the transformed sentence...">' +
+            saved.replace(/</g, "&lt;") + '</textarea>',
+          '<div class="hint" id="hint-tr' + i + '"></div>',
+          '</div>'
+        ].join("");
+      }).join("");
+      transformFeedbackVisible = false;
+      document.getElementById("transformScoreOutput").textContent = "Exercise 2: 6 tasks — not checked yet.";
+    }
+
+    function newTransformSet() {
+      var poolKey = document.getElementById("transformPool").value;
+      var candidates = [];
+      Object.keys(TRANSFORM_POOLS).forEach(function (key) {
+        if (poolKey !== "all" && key !== poolKey) return;
+        TRANSFORM_POOLS[key].items.forEach(function (item) {
+          FORM_KEYS.forEach(function (source) {
+            FORM_KEYS.forEach(function (target) {
+              if (source === target) return;
+              candidates.push({
+                pool: key,
+                poolLabel: TRANSFORM_POOLS[key].label,
+                itemId: item.id,
+                source: source,
+                target: target,
+                sourceText: item.forms[source]
+              });
+            });
+          });
+        });
+      });
+      // Exercise 2 = always exactly 6 transformation tasks.
+      var setSize = 6;
+      var picked = [];
+      if (poolKey === "all") {
+        var byPool = {};
+        candidates.forEach(function (c) {
+          if (!byPool[c.pool]) byPool[c.pool] = [];
+          byPool[c.pool].push(c);
+        });
+        Object.keys(byPool).forEach(function (k) {
+          byPool[k] = shuffle(byPool[k]);
+        });
+        var keys = shuffle(Object.keys(byPool));
+        keys.forEach(function (k) {
+          if (picked.length < setSize && byPool[k].length) picked.push(byPool[k].shift());
+        });
+        var rest = [];
+        keys.forEach(function (k) { rest = rest.concat(byPool[k]); });
+        rest = shuffle(rest);
+        while (picked.length < setSize && rest.length) picked.push(rest.shift());
+      } else {
+        picked = shuffle(candidates).slice(0, setSize);
+      }
+      if (picked.length < setSize) {
+        var filler = shuffle(candidates);
+        var i = 0;
+        while (picked.length < setSize && filler.length) {
+          picked.push(filler[i % filler.length]);
+          i += 1;
+        }
+      }
+      currentTransformTasks = picked.slice(0, setSize);
+      renderTransformTasks({});
+      document.getElementById("transformScoreNote").textContent =
+        "Exercise 2: 6 uloh z poolu \"" +
+        (poolKey === "all" ? "All tenses" : TRANSFORM_POOLS[poolKey].label) +
+        "\". Vypln vsetky, potom Check.";
+      setStatus("Exercise 2: new set of 6 tasks.");
+      saveData();
+    }
+
+    function checkTransforms() {
+      resetTransformStyles();
+      transformFeedbackVisible = true;
+      var score = 0;
+      var total = currentTransformTasks.length;
+      currentTransformTasks.forEach(function (task, i) {
+        var item = findPoolItem(task.pool, task.itemId);
+        var wrap = document.querySelector('[data-transform-i="' + i + '"]');
+        var mark = document.getElementById("mark-tr" + i);
+        var hint = document.getElementById("hint-tr" + i);
+        var chosen = document.getElementById("tr" + i) ? document.getElementById("tr" + i).value : "";
+        var ok = isTransformCorrect(task, chosen);
+        if (wrap) wrap.classList.add(ok ? "scored-correct" : "scored-wrong");
+        if (mark) mark.textContent = ok ? "OK" : "X";
+        if (hint && item) {
+          var correct = item.forms[task.target];
+          if (ok) hint.textContent = "Spravne. " + FORM_LABELS[task.target] + ": " + correct;
+          else if (!normalizeAnswer(chosen)) hint.textContent = "Prazdne. Spravne: " + correct;
+          else hint.textContent = "Nespravne. Spravne: " + correct;
+          hint.classList.add("show");
+        }
+        if (ok) score += 1;
+      });
+      var percent = total ? Math.round((score / total) * 100) : 0;
+      document.getElementById("transformScoreOutput").textContent =
+        "Exercise 2: " + score + "/" + total + " (" + percent + "%)";
+      document.getElementById("transformScoreNote").textContent =
+        "Check Exercise 2 hotovy. Ked zacnes editovat odpoved, farby zmiznu.";
+      setStatus("Exercise 2 checked: " + score + "/" + total);
+      saveData();
+    }
+
+    const SCORE_KEY = {
+      m1: { answer: "minuly cas priebehovy", hint: "Hint: was dancing / were driving = minul\u00fd \u010das priebehov\u00fd." },
+      m2: { answer: "zatial co / pocas toho", hint: "Hint: while = zatia\u013e \u010do / po\u010das toho." },
+      m3: { answer: "minuly cas jednoduchy", hint: "Hint: They went / She turned = minul\u00fd \u010das jednoduch\u00fd." },
+      m4: { answer: "predpritomny cas", hint: "Hint: I've broken / It's been = predpr\u00edtomn\u00fd \u010das." },
+      m5: { answer: "od urciteho bodu", hint: "Hint: since the 1930s = od ur\u010dit\u00e9ho bodu." },
+      m6: { answer: "prave / pred chvilou", hint: "Hint: has just stopped = pr\u00e1ve / pred chv\u00ed\u013eou." },
+      m7: { answer: "ospravedlnenie", hint: "Hint: I'm really sorry = ospravedlnenie." },
+      m8: { answer: "problem", hint: "Hint: a broken dog at a secret party = probl\u00e9m." },
+      m9: { answer: "schovajte sa", hint: "Hint: hide in the kitchen = schovajte sa." },
+      m10: { answer: "porcelanova soska psa", hint: "Hint: china dog = porcel\u00e1nov\u00e1 so\u0161ka psa." },
+      m11: { answer: "dajte slova do spravneho poradia", hint: "Hint: put the words in the correct order = dajte slov\u00e1 do spr\u00e1vneho poradia." }
+    };
+
+    var answersRevealed = false;
+    var scoreFeedbackVisible = false;
+    var hideAnswersLock = false;
+
+    function resetScoreStyles() {
+      document.querySelectorAll("[data-score-id]").forEach(function (item) {
+        item.classList.remove("scored-correct", "scored-wrong", "reveal-correct");
+      });
+      Object.keys(SCORE_KEY).forEach(function (id) {
+        var mark = document.getElementById("mark-" + id);
+        var hint = document.getElementById("hint-" + id);
+        if (mark) mark.textContent = "";
+        if (hint) { hint.classList.remove("show"); hint.textContent = ""; }
+      });
+    }
+    function setSec7ToggleLabel(revealed) {
+      var b1 = document.getElementById("toggleSec7AnswersBtn");
+      if (b1) b1.textContent = revealed ? "Hide Correct Answers" : "Show Correct Answers";
+    }
+    function hideCorrectAnswersOnEdit(changedId) {
+      if (hideAnswersLock) return;
+      if (!answersRevealed && !scoreFeedbackVisible) return;
+      hideAnswersLock = true;
+      var keepValue = "";
+      if (answersRevealed && changedId) {
+        keepValue = val(changedId);
+        if (keepValue === SCORE_KEY[changedId].answer) keepValue = "";
+      }
+      resetScoreStyles();
+      if (answersRevealed) {
+        Object.keys(SCORE_KEY).forEach(function (id) {
+          var el = document.getElementById(id);
+          if (!el) return;
+          if (id === changedId && keepValue) el.value = keepValue;
+          else el.selectedIndex = 0;
+        });
+        answersRevealed = false;
+        document.getElementById("scoreOutput").textContent = "Score: not checked yet.";
+        document.getElementById("scoreNote").textContent = "Podfarbenie zmizlo. Pokracuj a stlac Check Score.";
+        saveData();
+      } else {
+        document.getElementById("scoreOutput").textContent = "Score: not checked yet.";
+        document.getElementById("scoreNote").textContent = "Podfarbenie z Check Score zmizlo.";
+      }
+      scoreFeedbackVisible = false;
+      setSec7ToggleLabel(false);
+      hideAnswersLock = false;
+    }
+    function checkScore() {
+      resetScoreStyles();
+      answersRevealed = false;
+      scoreFeedbackVisible = true;
+      setSec7ToggleLabel(false);
+      var score = 0;
+      var total = Object.keys(SCORE_KEY).length;
+      Object.keys(SCORE_KEY).forEach(function (id) {
+        var item = document.querySelector('.score-item[data-score-id="' + id + '"]');
+        var mark = document.getElementById("mark-" + id);
+        var hint = document.getElementById("hint-" + id);
+        var correct = SCORE_KEY[id].answer;
+        var chosen = val(id);
+        var isCorrect = chosen === correct;
+        if (item) item.classList.add(isCorrect ? "scored-correct" : "scored-wrong");
+        if (mark) mark.textContent = isCorrect ? "OK" : "X";
+        if (hint) {
+          if (isCorrect) hint.textContent = "Spravne. " + SCORE_KEY[id].hint;
+          else if (!chosen) hint.textContent = "Neoznacene. Spravne: " + correct + ". " + SCORE_KEY[id].hint;
+          else hint.textContent = "Nespravne. Spravne: " + correct + ". " + SCORE_KEY[id].hint;
+          hint.classList.add("show");
+        }
+        if (isCorrect) score += 1;
+      });
+      document.getElementById("scoreOutput").textContent =
+        "Score: " + score + "/" + total + " (" + Math.round((score / total) * 100) + "%)";
+      document.getElementById("scoreNote").textContent = "Check Score hodnotil polozky 1-11.";
+      setStatus("Score checked: " + score + "/" + total);
+    }
+    function showCorrectAnswers() {
+      hideAnswersLock = true;
+      resetScoreStyles();
+      answersRevealed = true;
+      scoreFeedbackVisible = true;
+      Object.keys(SCORE_KEY).forEach(function (id) {
+        var el = document.getElementById(id);
+        var item = document.querySelector('.score-item[data-score-id="' + id + '"]');
+        var mark = document.getElementById("mark-" + id);
+        var hint = document.getElementById("hint-" + id);
+        var correct = SCORE_KEY[id].answer;
+        if (el) el.value = correct;
+        if (item) item.classList.add("reveal-correct");
+        if (mark) mark.textContent = "ANSWER";
+        if (hint) { hint.textContent = "Spravna moznost: " + correct + ". " + SCORE_KEY[id].hint; hint.classList.add("show"); }
+      });
+      saveData();
+      document.getElementById("scoreOutput").textContent = "Correct answers shown (11/11).";
+      setSec7ToggleLabel(true);
+      hideAnswersLock = false;
+    }
+    function hideCorrectAnswers() {
+      hideAnswersLock = true;
+      resetScoreStyles();
+      answersRevealed = false;
+      scoreFeedbackVisible = false;
+      Object.keys(SCORE_KEY).forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) el.selectedIndex = 0;
+      });
+      document.getElementById("scoreOutput").textContent = "Score: not checked yet.";
+      setSec7ToggleLabel(false);
+      saveData();
+      hideAnswersLock = false;
+    }
+    function toggleSec7Answers() {
+      if (answersRevealed) hideCorrectAnswers();
+      else showCorrectAnswers();
+    }
+
+    const DIALOGUE_KEY = {
+      d1: {
+        display: "She has broken the china dog.",
+        words: ["she", "has", "broken", "the", "china", "dog"],
+        answers: ["she has broken the china dog", "she s broken the china dog"],
+        hint: "Hint: She has broken the china dog."
+      },
+      d2: {
+        display: "She knocked it while she was dancing.",
+        words: ["she", "knocked", "it", "while", "she", "was", "dancing"],
+        answers: ["she knocked it while she was dancing"],
+        hint: "Hint: She knocked it while she was dancing."
+      },
+      d3: {
+        display: "They went about ten minutes ago.",
+        words: ["they", "went", "about", "ten", "minutes", "ago"],
+        answers: ["they went about ten minutes ago"],
+        hint: "Hint: They went about ten minutes ago."
+      },
+      d4: {
+        display: "Mum remembered her glasses while they were driving.",
+        words: ["mum", "remembered", "her", "glasses", "while", "they", "were", "driving"],
+        answers: ["mum remembered her glasses while they were driving"],
+        hint: "Hint: Mum remembered her glasses while they were driving."
+      },
+      d5: {
+        display: "It has been in the family since the 1930s.",
+        words: ["it", "has", "been", "in", "the", "family", "since", "the", "1930s"],
+        answers: ["it has been in the family since the 1930s", "it s been in the family since the 1930s"],
+        hint: "Hint: It has been in the family since the 1930s."
+      },
+      d6: {
+        display: "He is going to tell the truth.",
+        words: ["he", "is", "going", "to", "tell", "the", "truth"],
+        answers: ["he is going to tell the truth", "he s going to tell the truth"],
+        hint: "Hint: He is going to tell the truth."
+      }
+    };
+
+    var dialogueRevealed = false;
+    var dialogueFeedbackVisible = false;
+    var hideDialogueLock = false;
+
+    function normalizeAnswer(text) {
+      return (text || "").toLowerCase().replace(/[.,!?;:'"()\-]/g, " ").replace(/\s+/g, " ").trim();
+    }
+    function sameWordBag(a, b) {
+      return (a || []).slice().sort().join(" ") === (b || []).slice().sort().join(" ");
+    }
+    function isDialogueCorrect(id, text) {
+      var norm = normalizeAnswer(text);
+      if (!norm) return false;
+      var key = DIALOGUE_KEY[id];
+      if (!key) return false;
+      if (key.answers.indexOf(norm) !== -1) return true;
+      return sameWordBag(norm.split(" ").filter(Boolean), key.words);
+    }
+    function resetDialogueStyles() {
+      document.querySelectorAll("[data-dialogue-id]").forEach(function (item) {
+        item.classList.remove("scored-correct", "scored-wrong", "reveal-correct");
+      });
+      Object.keys(DIALOGUE_KEY).forEach(function (id) {
+        var mark = document.getElementById("mark-" + id);
+        var hint = document.getElementById("hint-" + id);
+        if (mark) mark.textContent = "";
+        if (hint) { hint.classList.remove("show"); hint.textContent = ""; }
+      });
+    }
+    function clearDialogueFeedback() {
+      if (hideDialogueLock) return;
+      if (!dialogueFeedbackVisible && !dialogueRevealed) return;
+      hideDialogueLock = true;
+      resetDialogueStyles();
+      dialogueRevealed = false;
+      dialogueFeedbackVisible = false;
+      document.getElementById("dialogueScoreOutput").textContent = "Dialogue score: not checked yet.";
+      document.getElementById("dialogueScoreNote").textContent = "Napoveda sa skryla. Stlac Check Dialogue znova.";
+      hideDialogueLock = false;
+    }
+    function checkDialogue() {
+      resetDialogueStyles();
+      dialogueRevealed = false;
+      dialogueFeedbackVisible = true;
+      var score = 0;
+      var total = Object.keys(DIALOGUE_KEY).length;
+      Object.keys(DIALOGUE_KEY).forEach(function (id) {
+        var item = document.querySelector('[data-dialogue-id="' + id + '"]');
+        var mark = document.getElementById("mark-" + id);
+        var hint = document.getElementById("hint-" + id);
+        var chosenNorm = normalizeAnswer(val(id));
+        var isCorrect = isDialogueCorrect(id, val(id));
+        if (item) item.classList.add(isCorrect ? "scored-correct" : "scored-wrong");
+        if (mark) mark.textContent = isCorrect ? "OK" : "X";
+        if (hint) {
+          if (isCorrect) hint.textContent = "Spravne. " + DIALOGUE_KEY[id].hint;
+          else if (!chosenNorm) hint.textContent = "Neoznacene. Spravne: " + DIALOGUE_KEY[id].display + " " + DIALOGUE_KEY[id].hint;
+          else hint.textContent = "Nespravne. Spravne: " + DIALOGUE_KEY[id].display + " " + DIALOGUE_KEY[id].hint;
+          hint.classList.add("show");
+        }
+        if (isCorrect) score += 1;
+      });
+      document.getElementById("dialogueScoreOutput").textContent =
+        "Dialogue score: " + score + "/" + total + " (" + Math.round((score / total) * 100) + "%)";
+      setStatus("Dialogue checked: " + score + "/" + total);
+    }
+
+    document.querySelectorAll(".autosave").forEach(function (el) {
+      el.addEventListener("input", function () {
+        if (el.id && SCORE_KEY[el.id]) hideCorrectAnswersOnEdit(el.id);
+        if (el.id && DIALOGUE_KEY[el.id]) clearDialogueFeedback();
+        saveData();
+      });
+      el.addEventListener("change", function () {
+        if (el.id && SCORE_KEY[el.id]) hideCorrectAnswersOnEdit(el.id);
+        if (el.id && DIALOGUE_KEY[el.id]) clearDialogueFeedback();
+        saveData();
+      });
+      el.addEventListener("focus", function () {
+        if (el.id && DIALOGUE_KEY[el.id]) clearDialogueFeedback();
+        if (el.id && SCORE_KEY[el.id]) hideCorrectAnswersOnEdit(el.id);
+      });
+    });
+
+    var transformListEl = document.getElementById("transformList");
+    transformListEl.addEventListener("input", function (e) {
+      if (e.target && e.target.classList.contains("transform-input")) {
+        clearTransformFeedback();
+        saveData();
+      }
+    });
+    transformListEl.addEventListener("focusin", function (e) {
+      if (e.target && e.target.classList.contains("transform-input")) {
+        clearTransformFeedback();
+      }
+    });
+
+    document.getElementById("sectionTf").addEventListener("click", function (e) {
+      var btn = e.target.closest(".tf-btn");
+      if (!btn) return;
+      setTfAnswer(btn.getAttribute("data-tf"), btn.getAttribute("data-val"));
+    });
+
+    loadData();
+  </script>
+</body>
+</html>
