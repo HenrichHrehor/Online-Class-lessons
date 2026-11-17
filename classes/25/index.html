@@ -88,7 +88,7 @@
       flex-wrap: wrap;
       margin-bottom: 8px;
     }
-    .block-top h3 { margin: 0; color: var(--text); }
+    .block-top h3, .block-top h4 { margin: 0; color: var(--text); }
     #fullTextPanel {
       display: none;
       background: var(--accent);
@@ -555,12 +555,15 @@
 
     <div class="card" id="sectionTf">
       <h2>4. True / False - Listening Check</h2>
-      <p class="small">Choose <strong>T</strong> or <strong>F</strong> after each sentence, then check. The correct letter is shown every time.</p>
+      <p class="small">Choose <strong>T</strong> or <strong>F</strong> after each sentence, then check. Listen plays that section's story twice.</p>
       <div class="section-sticky-actions">
         <button type="button" class="primary" onclick="checkTrueFalse()">Check the answers</button>
         <button type="button" onclick="clearTrueFalse()">Clear</button>
       </div>
-      <h4>4.1 The Party and the Dog</h4>
+      <div class="block-top">
+        <h4>4.1 The Party and the Dog</h4>
+        <button type="button" class="listen-block-btn" data-listen="tf-a" onclick="listenSectionTwice([1, 2], 'tf-a')">&#128266; Listen</button>
+      </div>
       <div class="tf-row" data-tf-id="tf1">
         <span class="tf-sentence">1) Jake told his parents about the party before they left. <span class="mark" id="mark-tf1"></span></span>
         <span class="tf-choices"><button type="button" class="tf-btn" data-tf="tf1" data-val="T">T</button><button type="button" class="tf-btn" data-tf="tf1" data-val="F">F</button></span>
@@ -587,7 +590,10 @@
         <select class="autosave tf-store" id="tf5" tabindex="-1" aria-hidden="true"><option value=""></option><option>T</option><option>F</option></select>
       </div>
 
-      <h4>4.2 The Return and the Result</h4>
+      <div class="block-top">
+        <h4>4.2 The Return and the Result</h4>
+        <button type="button" class="listen-block-btn" data-listen="tf-b" onclick="listenSectionTwice([3, 4], 'tf-b')">&#128266; Listen</button>
+      </div>
       <div class="tf-row" data-tf-id="tf6">
         <span class="tf-sentence">1) A red car has just stopped outside. <span class="mark" id="mark-tf6"></span></span>
         <span class="tf-choices"><button type="button" class="tf-btn" data-tf="tf6" data-val="T">T</button><button type="button" class="tf-btn" data-tf="tf6" data-val="F">F</button></span>
@@ -1229,7 +1235,13 @@
       setListenLabels(null);
     }
     function toggleListen(n) {
-      var key = n ? String(n) : "all";
+      if (n) listenParts([n], String(n), 1, "Listening to block " + n + ".");
+      else listenParts([1, 2, 3, 4], "all", 1, "Listening to the full story.");
+    }
+    function listenSectionTwice(parts, key) {
+      listenParts(parts, key, 2, "Playing this section twice.");
+    }
+    function listenParts(paragraphs, key, repeats, statusText) {
       if (!window.speechSynthesis) {
         setStatus("This browser cannot read aloud.");
         return;
@@ -1242,16 +1254,25 @@
       stopListen();
       listenTarget = key;
       setListenLabels(key);
-      var parts = n ? [listeningText(n)] : [1, 2, 3, 4].map(listeningText);
+      var queue = [];
+      var round, p;
+      for (round = 0; round < repeats; round++) {
+        for (p = 0; p < paragraphs.length; p++) queue.push(listeningText(paragraphs[p]));
+        if (round < repeats - 1) queue.push("");
+      }
       var run = listenRun;
       function speakNext(i) {
         if (run !== listenRun || listenTarget !== key) return;
-        if (i >= parts.length) {
+        if (i >= queue.length) {
           stopListen();
           setStatus("Listening finished.");
           return;
         }
-        var utter = new SpeechSynthesisUtterance(parts[i]);
+        if (!queue[i]) {
+          setTimeout(function () { speakNext(i + 1); }, 900);
+          return;
+        }
+        var utter = new SpeechSynthesisUtterance(queue[i]);
         utter.lang = "en-GB";
         utter.rate = 0.92;
         var voice = pickEnglishVoice();
@@ -1266,7 +1287,7 @@
         speechSynthesis.speak(utter);
       }
       setTimeout(function () { speakNext(0); }, 60);
-      setStatus(n ? "Listening to block " + n + "." : "Listening to the full story.");
+      setStatus(statusText);
     }
     if (window.speechSynthesis) speechSynthesis.getVoices();
     function copyFullListening() {
