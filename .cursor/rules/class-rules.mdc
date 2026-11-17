@@ -19,6 +19,7 @@ Ask only if missing: (1) class number, (2) topic, (3) unit transition, (4) main 
 - T/F: 8–10 items, factual to listening only.
 - Dialogue: 6 Jim questions + Pete scrambled answers; accept flexible order via `DIALOGUE_KEY`.
 - Grammar Review must match the hour’s focus and recycle 1–2 prior hours.
+- Listening marks the sentences that feed Grammar Review. A **Highlight grammar lines** button (full text and Gap Fill, same toggle) adds `body.gram-on` and colours those spans. The legend names the same groups as section 3 (for example present simple → Review A). Colours stay off until the button is pressed. Mark the same spans in the full text and in the gap text, including around a blank when the missing word sits inside the sentence. Do not add words. `textContent` stays the spoken text, so Listen ignores the marks.
 - Optional **Sentence Transformations** pool: per tense 3 lemmas × 3 forms (affirmative/negative/question = 9 sentences); random New set; Check with flexible answers (`don't`/`do not`).
 - Matching (last classroom section): **12** English terms → 3 Slovak options each, so the 2-column grid lines up. Slovak stays in the option answers only. Unicode `\u` in JS hint strings.
 - Slovak diacritics: prefer `\uXXXX` in JS strings to avoid mojibake.

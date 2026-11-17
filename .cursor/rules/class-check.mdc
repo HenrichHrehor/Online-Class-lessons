@@ -17,6 +17,7 @@ Run this checklist on the lesson file. Fix failures before push.
 ## Grammar
 - [ ] Hour’s grammar focus matches `curriculum/25-hours.md` for this class number
 - [ ] Grammar Review + Grammar Box teach the same focus
+- [ ] Highlight grammar lines colours only the listening sentences used in Grammar Review; the same spans are in the full text and the gap text; the legend matches section 3; highlighting is off until the button is pressed
 - [ ] At least one recycle of a prior tense/structure appears in dialogue or listening
 
 ## App behavior

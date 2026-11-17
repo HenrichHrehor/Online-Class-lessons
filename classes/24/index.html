@@ -198,6 +198,7 @@
     #listeningSection > h2,
     #listeningSection > .small,
     #listeningSection > .section-sticky-actions,
+    #listeningSection > .gram-legend,
     #listeningSection > .score-box,
     #listeningSection > .score-note { grid-column: 1 / -1; }
     #section4 {
@@ -289,6 +290,32 @@
       font: inherit;
       background: #fff;
     }
+    .gram-hit { border-radius: 3px; }
+    body.gram-on .gram-hit.g-present {
+      background: #fde68a;
+      box-shadow: inset 0 -2px 0 #d97706;
+    }
+    body.gram-on .gram-hit.g-past {
+      background: #dbeafe;
+      box-shadow: inset 0 -2px 0 #2563eb;
+    }
+    body.gram-on .gram-hit.g-perfect,
+    body.gram-on .gram-hit.g-going {
+      background: #bbf7d0;
+      box-shadow: inset 0 -2px 0 #16a34a;
+    }
+    .gram-legend {
+      display: none;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 8px 0 0;
+      font-size: 13px;
+    }
+    body.gram-on .gram-legend { display: flex; }
+    .gram-legend span { padding: 2px 8px; border-radius: 6px; font-weight: 700; }
+    .leg-present { background: #fde68a; }
+    .leg-past { background: #dbeafe; }
+    .leg-later { background: #bbf7d0; }
     @media print {
       .toolbar { display: none !important; }
       #fullTextPanel { display: none !important; }
@@ -339,22 +366,28 @@
 
     <div class="card">
       <h2>Listening - Full Text (model talk)</h2>
-      <p class="small">Leo gives a 2-minute spotlight presentation. Listen reads the full text aloud.</p>
+      <p class="small">Leo gives a 2-minute spotlight presentation. Listen reads the full text aloud. Highlight grammar lines marks the sentences for section 3.</p>
       <div class="section-sticky-actions">
         <button type="button" class="primary" id="listenBtn" onclick="toggleListen()">&#128266; Listen</button>
+        <button type="button" class="primary gram-toggle" onclick="toggleGrammarLines()">Highlight grammar lines</button>
+      </div>
+      <div class="gram-legend" aria-hidden="true">
+        <span class="leg-present">present simple → Review A</span>
+        <span class="leg-past">past simple → Review B</span>
+        <span class="leg-later">present perfect / going to → Review C</span>
       </div>
       <div id="fullTextPanel">
         <h3>1. Opening: Who I Am Now</h3>
-        <p id="full1">Good morning. My name is Leo and today I want to share my story spotlight. I am fifteen years old and I live in Kosice with my family. I am a year-nine student and I am interested in sport, music, and simple design. In this short talk I am going to introduce myself, explain one important past experience, and finish with my plans. I am a little nervous, but I am ready. Thank you for listening to my personal presentation.</p>
+        <p id="full1">Good morning. My name is Leo and today I want to share my story spotlight. <span class="gram-hit g-present">I am fifteen years old and I live in Kosice with my family.</span> <span class="gram-hit g-present">I am a year-nine student</span> and I am interested in sport, music, and simple design. In this short talk <span class="gram-hit g-going">I am going to introduce myself</span>, explain one important past experience, and finish with my plans. I am a little nervous, but I am ready. Thank you for listening to my personal presentation.</p>
 
         <h3>2. Past Chapter: What Changed Me</h3>
-        <p id="full2">Last year I joined a school project about local history. At first I felt shy and I did not want to speak. Then our teacher asked me to interview my grandfather. I prepared questions, I recorded his answers, and I wrote a short report in English. The presentation day was difficult, but I finished my part and my classmates clapped. That project taught me that practice beats fear. I also learned that real stories are stronger than perfect grammar.</p>
+        <p id="full2"><span class="gram-hit g-past">Last year I joined a school project about local history.</span> <span class="gram-hit g-past">At first I felt shy and I did not want to speak.</span> Then our teacher asked me to interview my grandfather. I prepared questions, I recorded his answers, and <span class="gram-hit g-past">I wrote a short report in English.</span> The presentation day was difficult, but I finished my part and <span class="gram-hit g-past">my classmates clapped.</span> That project taught me that practice beats fear. I also learned that real stories are stronger than perfect grammar.</p>
 
         <h3>3. Skills and Experiences</h3>
-        <p id="full3">Since that project I have practised English more often. I have watched interviews, I have written short posts, and I have spoken with friends online. I have never travelled alone, but I have visited Bratislava with my class. These experiences help me sound more natural. When I make a mistake now, I correct it and continue. That is part of my spotlight story: progress is not a straight line, but I keep moving.</p>
+        <p id="full3"><span class="gram-hit g-perfect">Since that project I have practised English more often.</span> <span class="gram-hit g-perfect">I have watched interviews, I have written short posts, and I have spoken with friends online.</span> <span class="gram-hit g-perfect">I have never travelled alone, but I have visited Bratislava with my class.</span> These experiences help me sound more natural. When I make a mistake now, I correct it and continue. That is part of my spotlight story: progress is not a straight line, but I keep moving.</p>
 
         <h3>4. Closing: Plans and Message</h3>
-        <p id="full4">Next year I am going to join the school media club. I am going to make short videos about teenage hobbies, and I will ask guests simple questions in English. My goal is clear: I want to speak for two minutes without stopping. If I practise every week, I will improve. That is my message. My story is still open, and I am excited about the next chapter. Thank you for your attention.</p>
+        <p id="full4"><span class="gram-hit g-going">Next year I am going to join the school media club.</span> <span class="gram-hit g-going">I am going to make short videos about teenage hobbies</span>, and I will ask guests simple questions in English. My goal is clear: I want to speak for two minutes without stopping. <span class="gram-hit g-going">If I practise every week, I will improve.</span> That is my message. My story is still open, and I am excited about the next chapter. Thank you for your attention.</p>
       </div>
     </div>
 
@@ -362,6 +395,7 @@
       <h2>1. Listening - Gap Fill</h2>
       <p class="small">Fill in the blanks. The text matches the full text word for word. Repeat and Speed apply to each block Listen button.</p>
       <div class="section-sticky-actions">
+        <button type="button" class="primary gram-toggle" onclick="toggleGrammarLines()">Highlight grammar lines</button>
         <button type="button" class="primary" onclick="checkGaps()">Check the answers</button>
         <button type="button" onclick="clearGaps()">Clear</button>
         <label class="small" for="listenRepeat">Repeat</label>
@@ -377,6 +411,11 @@
           <option value="1.1">Fast</option>
         </select>
       </div>
+      <div class="gram-legend" aria-hidden="true">
+        <span class="leg-present">present simple → Review A</span>
+        <span class="leg-past">past simple → Review B</span>
+        <span class="leg-later">present perfect / going to → Review C</span>
+      </div>
 
       <div class="listen-block" id="block1">
         <div class="block-top">
@@ -388,11 +427,11 @@
         <p data-gap="1">
           Good morning. My name is Leo and today I want to share my story
           <input class="inline-input autosave" id="l1a" type="text" data-blank="spotlight">.
-          I am
+          <span class="gram-hit g-present">I am
           <input class="inline-input autosave" id="l1b" type="text" data-blank="fifteen">
-          years old and I live in Kosice with my family. I am a year-nine student and I am interested in sport, music, and simple design. In this short talk I am going to
+          years old and I live in Kosice with my family.</span> <span class="gram-hit g-present">I am a year-nine student</span> and I am interested in sport, music, and simple design. In this short talk <span class="gram-hit g-going">I am going to
           <input class="inline-input autosave" id="l1c" type="text" data-blank="introduce">
-          myself, explain one important past experience, and finish with my plans. I am a little
+          myself</span>, explain one important past experience, and finish with my plans. I am a little
           <input class="inline-input autosave" id="l1d" type="text" data-blank="nervous">,
           but I am ready. Thank you for listening to my personal
           <input class="inline-input autosave" id="l1e" type="text" data-blank="presentation">.
@@ -407,16 +446,16 @@
         </div>
         <div class="wordbank">Word bank: interview, clapped, project, report, shy</div>
         <p data-gap="2">
-          Last year I joined a school
+          <span class="gram-hit g-past">Last year I joined a school
           <input class="inline-input autosave" id="l2a" type="text" data-blank="project">
-          about local history. At first I felt
+          about local history.</span> <span class="gram-hit g-past">At first I felt
           <input class="inline-input autosave" id="l2b" type="text" data-blank="shy">
-          and I did not want to speak. Then our teacher asked me to
+          and I did not want to speak.</span> Then our teacher asked me to
           <input class="inline-input autosave" id="l2c" type="text" data-blank="interview">
-          my grandfather. I prepared questions, I recorded his answers, and I wrote a short
+          my grandfather. I prepared questions, I recorded his answers, and <span class="gram-hit g-past">I wrote a short
           <input class="inline-input autosave" id="l2d" type="text" data-blank="report">
-          in English. The presentation day was difficult, but I finished my part and my classmates
-          <input class="inline-input autosave" id="l2e" type="text" data-blank="clapped">.
+          in English.</span> The presentation day was difficult, but I finished my part and <span class="gram-hit g-past">my classmates
+          <input class="inline-input autosave" id="l2e" type="text" data-blank="clapped">.</span>
           That project taught me that practice beats fear. I also learned that real stories are stronger than perfect grammar.
         </p>
       </div>
@@ -429,13 +468,13 @@
         </div>
         <div class="wordbank">Word bank: practised, interviews, visited, mistake, progress</div>
         <p data-gap="3">
-          Since that project I have
+          <span class="gram-hit g-perfect">Since that project I have
           <input class="inline-input autosave" id="l3a" type="text" data-blank="practised">
-          English more often. I have watched
+          English more often.</span> <span class="gram-hit g-perfect">I have watched
           <input class="inline-input autosave" id="l3b" type="text" data-blank="interviews">,
-          I have written short posts, and I have spoken with friends online. I have never travelled alone, but I have
+          I have written short posts, and I have spoken with friends online.</span> <span class="gram-hit g-perfect">I have never travelled alone, but I have
           <input class="inline-input autosave" id="l3c" type="text" data-blank="visited">
-          Bratislava with my class. These experiences help me sound more natural. When I make a
+          Bratislava with my class.</span> These experiences help me sound more natural. When I make a
           <input class="inline-input autosave" id="l3d" type="text" data-blank="mistake">
           now, I correct it and continue. That is part of my spotlight story:
           <input class="inline-input autosave" id="l3e" type="text" data-blank="progress">
@@ -451,14 +490,14 @@
         </div>
         <div class="wordbank">Word bank: media, videos, goal, improve, chapter</div>
         <p data-gap="4">
-          Next year I am going to join the school
+          <span class="gram-hit g-going">Next year I am going to join the school
           <input class="inline-input autosave" id="l4a" type="text" data-blank="media">
-          club. I am going to make short
+          club.</span> <span class="gram-hit g-going">I am going to make short
           <input class="inline-input autosave" id="l4b" type="text" data-blank="videos">
-          about teenage hobbies, and I will ask guests simple questions in English. My
+          about teenage hobbies</span>, and I will ask guests simple questions in English. My
           <input class="inline-input autosave" id="l4c" type="text" data-blank="goal">
-          is clear: I want to speak for two minutes without stopping. If I practise every week, I will
-          <input class="inline-input autosave" id="l4d" type="text" data-blank="improve">.
+          is clear: I want to speak for two minutes without stopping. <span class="gram-hit g-going">If I practise every week, I will
+          <input class="inline-input autosave" id="l4d" type="text" data-blank="improve">.</span>
           That is my message. My story is still open, and I am excited about the next
           <input class="inline-input autosave" id="l4e" type="text" data-blank="chapter">.
           Thank you for your attention.
@@ -1169,6 +1208,14 @@
       var show = panel.style.display !== "block";
       panel.style.display = show ? "block" : "none";
       btn.textContent = show ? "Hide Full Text" : "Show Full Text";
+    }
+    function toggleGrammarLines() {
+      document.body.classList.toggle("gram-on");
+      var on = document.body.classList.contains("gram-on");
+      var label = on ? "Hide grammar lines" : "Highlight grammar lines";
+      document.querySelectorAll(".gram-toggle").forEach(function (btn) {
+        btn.textContent = label;
+      });
     }
     var listenTarget = null;
     var listenRun = 0;
