@@ -254,7 +254,8 @@
     function showClass(id) {
       var info = CLASSES[id];
       if (!info) return;
-      document.getElementById("preview").src = info.src;
+      var fresh = info.src + (info.src.indexOf("?") === -1 ? "?" : "&") + "v=" + Date.now();
+      document.getElementById("preview").src = fresh;
       document.getElementById("viewerTitle").textContent = info.title;
       document.getElementById("viewerMeta").textContent = info.meta;
       document.getElementById("openFull").href = info.src;
