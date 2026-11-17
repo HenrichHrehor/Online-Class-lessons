@@ -1052,7 +1052,17 @@
       saveData();
       setStatus("Gap fill cleared.");
     }
+    var grammarFeedbackVisible = false;
+    function clearGrammarFeedback() {
+      if (!grammarFeedbackVisible) return;
+      grammarFeedbackVisible = false;
+      clearFieldMarks(document.getElementById("sectionGrammar"));
+      document.getElementById("grammarScoreOutput").textContent = "Grammar review: not checked yet.";
+      document.getElementById("grammarScoreNote").textContent =
+        "Answers hidden. Finish writing, then check again.";
+    }
     function checkGrammar() {
+      grammarFeedbackVisible = true;
       var ids = Object.keys(GRAMMAR_KEY);
       var score = 0;
       ids.forEach(function (id) {
@@ -1070,6 +1080,7 @@
       saveData();
     }
     function clearGrammar() {
+      grammarFeedbackVisible = false;
       var root = document.getElementById("sectionGrammar");
       clearFieldMarks(root);
       Object.keys(GRAMMAR_KEY).forEach(function (id) {
@@ -1163,6 +1174,7 @@
       syncAllTfButtons();
       resetTfStyles();
       tfFeedbackVisible = false;
+      grammarFeedbackVisible = false;
       document.getElementById("tfScoreOutput").textContent = "True/False: not checked yet.";
       document.getElementById("tfScoreNote").textContent = "Each sentence shows OK or X and the correct letter.";
       setStatus("Cleared.");
@@ -1989,6 +2001,7 @@
 
     document.querySelectorAll(".autosave").forEach(function (el) {
       el.addEventListener("input", function () {
+        if (el.id && GRAMMAR_KEY[el.id]) clearGrammarFeedback();
         if (el.id && SCORE_KEY[el.id]) hideCorrectAnswersOnEdit(el.id);
         if (el.id && DIALOGUE_KEY[el.id]) clearDialogueFeedback();
         saveData();
