@@ -20,16 +20,27 @@ Ask only if missing: (1) class number, (2) topic, (3) unit transition, (4) main 
 - Dialogue: 6 Jim questions + Pete scrambled answers; accept flexible order via `DIALOGUE_KEY`.
 - Grammar Review must match the hour’s focus and recycle 1–2 prior hours.
 - Optional **Sentence Transformations** pool: per tense 3 lemmas × 3 forms (affirmative/negative/question = 9 sentences); random New set; Check with flexible answers (`don't`/`do not`).
-- Section 7: 11 English terms → 3 Slovak options each; Unicode `\u` in JS hints.
+- Matching (last classroom section): **12** English terms → 3 Slovak options each, so the 2-column grid lines up. Slovak stays in the option answers only. Unicode `\u` in JS hint strings.
 - Slovak diacritics: prefer `\uXXXX` in JS strings to avoid mojibake.
 
 ## UX / app rules
 - Desktop web layout (not A4): `.wrap` up to ~1480px; listening / dialogue / matching in 2 columns on wide screens; collapse under 1100px; A4 only in `@media print`.
 - Sticky toolbar: first control is `← Home` linking to `../../`; then Show Full Text, Copy controls, Clear Answers.
-- Check Dialogue / Check Score: sticky bar **inside** Section 4 / 7 (not only global toolbar); no `scrollIntoView` jump.
-- Show/Hide toggles; hide check feedback on focus/edit.
+- **Every task** has its own sticky bar with **Check the answers** and **Clear**. Button labels and instructions are English. Section Clear does not confirm; the global Clear Answers does (`confirm`).
+- Check always shows the correct answer: gap/grammar/story/box use `Correct answer: …` after the field; True/False shows `OK` or `X` plus `Correct: T/F`; transforms, dialogue, and matching show `Correct answer:` in the hint even when the student was right.
+- Story and Grammar Box checks show a model line (`ok === null`, no red/green). They are not scored.
+- Grammar Review hides those answers on the first **input** keystroke (`clearGrammarFeedback`), not on focus. The student checks again to see them.
+- Dialogue, transforms, and matching hide check colours when the student edits.
+- No `scrollIntoView` jump on check.
 - `localStorage` key unique per class: `esl-class-NN-v1`.
-- Update root `index.html` hub link when adding a class.
+- Update root `index.html` hub link when adding a class. Hub preview must cache-bust the iframe (`?v=` + `Date.now()`).
+
+## Listen
+- Web Speech API (`speechSynthesis`), `en-GB`. Preferred voices: Google UK English Female/Male, Microsoft Libby/Sonia, Samantha. Speaker button label `Listen`; while that clip plays, the same button is `Stop`.
+- Full-text Listen reads all 4 paragraphs **once** at rate `0.92`.
+- Gap Fill has one shared bar: Repeat `1×` / `2×` / `3×` (default `1×`) and Speed Slow `0.75` / Normal `0.92` / Fast `1.1` (default Normal). Each block Listen uses those settings. A speed change applies on the next press, not mid-utterance. Pause between repeats is about `900ms` (empty queue item).
+- True/False: each subsection has its own Listen. It plays that subsection’s listening paragraphs **twice** at `0.92`, ignoring the Gap Fill Repeat/Speed controls.
+- `stopListen` increments a run id so an in-flight `onend` cannot start the next utterance.
 
 ## Honesty constraint
 Do not promise “full English grammar in 25 hours”. Promise a **recycled functional core** (see curriculum). Each new topic carries old grammar forward.

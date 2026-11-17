@@ -88,7 +88,7 @@
       flex-wrap: wrap;
       margin-bottom: 8px;
     }
-    .block-top h3 { margin: 0; color: var(--text); }
+    .block-top h3, .block-top h4 { margin: 0; color: var(--text); }
     #fullTextPanel {
       display: none;
       background: var(--accent);
@@ -121,6 +121,17 @@
       margin: 0 2px;
       vertical-align: middle;
       border-bottom: 2px solid #2563eb;
+    }
+    .inline-input.scored-correct,
+    .line-input.scored-correct { border-color: #16a34a; background: #f0fdf4; }
+    .inline-input.scored-wrong,
+    .line-input.scored-wrong { border-color: #dc2626; background: #fef2f2; }
+    .answer-reveal {
+      display: inline;
+      margin-left: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #166534;
     }
     .line-input { width: 100%; margin-top: 4px; }
     .q { margin: 10px 0; }
@@ -185,7 +196,10 @@
       align-items: start;
     }
     #listeningSection > h2,
-    #listeningSection > .small { grid-column: 1 / -1; }
+    #listeningSection > .small,
+    #listeningSection > .section-sticky-actions,
+    #listeningSection > .score-box,
+    #listeningSection > .score-note { grid-column: 1 / -1; }
     #section4 {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -325,7 +339,10 @@
 
     <div class="card">
       <h2>Listening - Full Text (model talk)</h2>
-      <p class="small">Leo gives a 2-minute spotlight presentation. Use Show Full Text for Natural Reader.</p>
+      <p class="small">Leo gives a 2-minute spotlight presentation. Listen reads the full text aloud.</p>
+      <div class="section-sticky-actions">
+        <button type="button" class="primary" id="listenBtn" onclick="toggleListen()">&#128266; Listen</button>
+      </div>
       <div id="fullTextPanel">
         <h3>1. Opening: Who I Am Now</h3>
         <p id="full1">Good morning. My name is Leo and today I want to share my story spotlight. I am fifteen years old and I live in Kosice with my family. I am a year-nine student and I am interested in sport, music, and simple design. In this short talk I am going to introduce myself, explain one important past experience, and finish with my plans. I am a little nervous, but I am ready. Thank you for listening to my personal presentation.</p>
@@ -343,11 +360,28 @@
 
     <div class="card" id="listeningSection">
       <h2>1. Listening - Gap Fill</h2>
-      <p class="small">Fill in the blanks. Text matches the Full Text word-for-word.</p>
+      <p class="small">Fill in the blanks. The text matches the full text word for word. Repeat and Speed apply to each block Listen button.</p>
+      <div class="section-sticky-actions">
+        <button type="button" class="primary" onclick="checkGaps()">Check the answers</button>
+        <button type="button" onclick="clearGaps()">Clear</button>
+        <label class="small" for="listenRepeat">Repeat</label>
+        <select id="listenRepeat" class="pool-select" aria-label="Repeat">
+          <option value="1" selected>1×</option>
+          <option value="2">2×</option>
+          <option value="3">3×</option>
+        </select>
+        <label class="small" for="listenSpeed">Speed</label>
+        <select id="listenSpeed" class="pool-select" aria-label="Speed">
+          <option value="0.75">Slow</option>
+          <option value="0.92" selected>Normal</option>
+          <option value="1.1">Fast</option>
+        </select>
+      </div>
 
       <div class="listen-block" id="block1">
         <div class="block-top">
           <h3>1. Opening: Who I Am Now</h3>
+          <button type="button" class="listen-block-btn" data-listen="1" onclick="toggleListen(1)">&#128266; Listen</button>
           <button type="button" onclick="copyBlock(1)">Copy this block</button>
         </div>
         <div class="wordbank">Word bank: spotlight, fifteen, introduce, nervous, presentation</div>
@@ -368,6 +402,7 @@
       <div class="listen-block" id="block2">
         <div class="block-top">
           <h3>2. Past Chapter: What Changed Me</h3>
+          <button type="button" class="listen-block-btn" data-listen="2" onclick="toggleListen(2)">&#128266; Listen</button>
           <button type="button" onclick="copyBlock(2)">Copy this block</button>
         </div>
         <div class="wordbank">Word bank: interview, clapped, project, report, shy</div>
@@ -389,6 +424,7 @@
       <div class="listen-block" id="block3">
         <div class="block-top">
           <h3>3. Skills and Experiences</h3>
+          <button type="button" class="listen-block-btn" data-listen="3" onclick="toggleListen(3)">&#128266; Listen</button>
           <button type="button" onclick="copyBlock(3)">Copy this block</button>
         </div>
         <div class="wordbank">Word bank: practised, interviews, visited, mistake, progress</div>
@@ -410,6 +446,7 @@
       <div class="listen-block" id="block4">
         <div class="block-top">
           <h3>4. Closing: Plans and Message</h3>
+          <button type="button" class="listen-block-btn" data-listen="4" onclick="toggleListen(4)">&#128266; Listen</button>
           <button type="button" onclick="copyBlock(4)">Copy this block</button>
         </div>
         <div class="wordbank">Word bank: media, videos, goal, improve, chapter</div>
@@ -427,15 +464,15 @@
           Thank you for your attention.
         </p>
       </div>
+      <div id="gapScoreOutput" class="score-box">Gap fill: not checked yet.</div>
+      <div id="gapScoreNote" class="score-note">Check the answers shows the correct word after every blank.</div>
     </div>
 
     <div class="card" id="sectionTransform">
       <h2>2. Exercise 2 – Sentence Transformations</h2>
       <p class="small">
-        <strong>Exercise 2</strong> — kompletna aktivita: <strong>6 uloh</strong> na transformaciu viet
-        (Make affirmative / Make negative / Make question).
-        Kazdy cas ma pool 9 viet (3 + 3 + 3). Vyber pool, vypln vsetkych 6 odpovedi, potom Check.
-        <strong>New set</strong> = novych 6 uloh.
+        Six sentence tasks: make affirmative, negative, or question.
+        Choose a pool, write all six answers, then check. New set gives six new tasks.
       </p>
       <div class="section-sticky-actions">
         <label class="small" for="transformPool">Pool</label>
@@ -447,15 +484,21 @@
           <option value="going_to">be going to</option>
         </select>
         <button type="button" onclick="newTransformSet()">New set (6 tasks)</button>
-        <button type="button" class="primary" onclick="checkTransforms()">Check Exercise 2</button>
+        <button type="button" class="primary" onclick="checkTransforms()">Check the answers</button>
+        <button type="button" onclick="clearTransforms()">Clear</button>
       </div>
       <div id="transformList" class="transform-grid" aria-label="Exercise 2 six transformation tasks"></div>
       <div id="transformScoreOutput" class="score-box">Exercise 2: 6 tasks — not checked yet.</div>
       <div id="transformScoreNote" class="score-note">Example: <em>I am going to study this year.</em> → Make question / Make negative. Always 6 tasks.</div>
     </div>
 
-    <div class="card">
+    <div class="card" id="sectionGrammar">
       <h2>3. Grammar Review (for your pitch)</h2>
+      <p class="small">Write the correct verb form.</p>
+      <div class="section-sticky-actions">
+        <button type="button" class="primary" onclick="checkGrammar()">Check the answers</button>
+        <button type="button" onclick="clearGrammar()">Clear</button>
+      </div>
       <h3>A) Present Simple - who you are</h3>
       <div class="q">1) I (be) <input class="inline-input autosave" id="g1" type="text"> a year-nine student.</div>
       <div class="q">2) I (live) <input class="inline-input autosave" id="g2" type="text"> in ________.</div>
@@ -473,15 +516,21 @@
       <div class="q">2) I have never (travel) <input class="inline-input autosave" id="g10" type="text"> alone.</div>
       <div class="q">3) Next year I am going to (join) <input class="inline-input autosave" id="g11" type="text"> a club.</div>
       <div class="q">4) I will (improve) <input class="inline-input autosave" id="g12" type="text"> if I practise.</div>
+      <div id="grammarScoreOutput" class="score-box">Grammar review: not checked yet.</div>
+      <div id="grammarScoreNote" class="score-note">Check the answers shows the correct form after every gap.</div>
     </div>
 
     <div class="card" id="sectionTf">
       <h2>4. True / False - Listening Check</h2>
-      <p class="small">Klikni <strong>T</strong> alebo <strong>F</strong> hned za vetou, potom stlac Check True/False.</p>
+      <p class="small">Choose <strong>T</strong> or <strong>F</strong> after each sentence, then check. Listen plays that section's story twice.</p>
       <div class="section-sticky-actions">
-        <button type="button" class="primary" onclick="checkTrueFalse()">Check True/False</button>
+        <button type="button" class="primary" onclick="checkTrueFalse()">Check the answers</button>
+        <button type="button" onclick="clearTrueFalse()">Clear</button>
       </div>
-      <h4>4.1 Opening and Past Chapter</h4>
+      <div class="block-top">
+        <h4>4.1 Opening and Past Chapter</h4>
+        <button type="button" class="listen-block-btn" data-listen="tf-a" onclick="listenSectionTwice([1, 2], 'tf-a')">&#128266; Listen</button>
+      </div>
       <div class="tf-row" data-tf-id="tf1">
         <span class="tf-sentence">1) Leo is fifteen years old. <span class="mark" id="mark-tf1"></span></span>
         <span class="tf-choices"><button type="button" class="tf-btn" data-tf="tf1" data-val="T">T</button><button type="button" class="tf-btn" data-tf="tf1" data-val="F">F</button></span>
@@ -508,7 +557,10 @@
         <select class="autosave tf-store" id="tf5" tabindex="-1" aria-hidden="true"><option value=""></option><option>T</option><option>F</option></select>
       </div>
 
-      <h4>4.2 Experiences and Plans</h4>
+      <div class="block-top">
+        <h4>4.2 Experiences and Plans</h4>
+        <button type="button" class="listen-block-btn" data-listen="tf-b" onclick="listenSectionTwice([3, 4], 'tf-b')">&#128266; Listen</button>
+      </div>
       <div class="tf-row" data-tf-id="tf6">
         <span class="tf-sentence">1) Leo has practised English more often. <span class="mark" id="mark-tf6"></span></span>
         <span class="tf-choices"><button type="button" class="tf-btn" data-tf="tf6" data-val="T">T</button><button type="button" class="tf-btn" data-tf="tf6" data-val="F">F</button></span>
@@ -535,14 +587,15 @@
         <select class="autosave tf-store" id="tf10" tabindex="-1" aria-hidden="true"><option value=""></option><option>T</option><option>F</option></select>
       </div>
       <div id="tfScoreOutput" class="score-box">True/False: not checked yet.</div>
-      <div id="tfScoreNote" class="score-note">Po Check True/False uvidis OK/X pri kazdej vete.</div>
+      <div id="tfScoreNote" class="score-note">Each sentence shows OK or X and the correct letter.</div>
     </div>
 
     <div class="card" id="section4">
       <h2>5. Talking - Scrambled Dialogue (after the talk)</h2>
-      <p class="small"><strong>Check Dialogue</strong> — odpovede po Leo-vej prezentacii.</p>
+      <p class="small">Put the words in order. Check shows the correct sentence for every answer.</p>
       <div class="section-sticky-actions">
-        <button class="primary" onclick="checkDialogue()">Check Dialogue</button>
+        <button type="button" class="primary" onclick="checkDialogue()">Check the answers</button>
+        <button type="button" onclick="clearDialogueAnswers()">Clear</button>
       </div>
 
       <div class="score-item" data-dialogue-id="d1">
@@ -583,12 +636,16 @@
       </div>
 
       <div id="dialogueScoreOutput" class="score-box">Dialogue score: not checked yet.</div>
-      <div id="dialogueScoreNote" class="score-note">Tip: Napoveda zmizne po kliknuti do pola.</div>
+      <div id="dialogueScoreNote" class="score-note">The hint hides when you click in a box. Check again to see the answers.</div>
     </div>
 
-    <div class="card">
+    <div class="card" id="sectionStory">
       <h2>6. Your Spotlight Script (personal presentation)</h2>
       <p class="small">Write your own 2-minute talk. Use school-safe facts only.</p>
+      <div class="section-sticky-actions">
+        <button type="button" class="primary" onclick="checkStory()">Check the answers</button>
+        <button type="button" onclick="clearStory()">Clear</button>
+      </div>
       <div class="pitch-box">
         <div class="q"><strong>1) Opening (who I am now):</strong><textarea class="autosave" id="n1" rows="2"></textarea></div>
         <div class="q"><strong>2) Past chapter (one real story):</strong><textarea class="autosave" id="n2" rows="2"></textarea></div>
@@ -596,10 +653,15 @@
         <div class="q"><strong>4) Plans (I am going to… / I will…):</strong><textarea class="autosave" id="n4" rows="2"></textarea></div>
         <div class="q"><strong>5) Closing message (one sentence):</strong><textarea class="autosave" id="n5" rows="2"></textarea></div>
       </div>
+      <div id="storyScoreNote" class="score-note">Check shows a model answer for each line. Your own talk can use different words.</div>
     </div>
 
-    <div class="card">
+    <div class="card" id="sectionBox">
       <h2>7. Grammar Box - Spotlight Talk</h2>
+      <div class="section-sticky-actions">
+        <button type="button" class="primary" onclick="checkGrammarBox()">Check the answers</button>
+        <button type="button" onclick="clearGrammarBox()">Clear</button>
+      </div>
       <p>
         - <strong>Now:</strong> I am / I live / I like<br>
         - <strong>Past story:</strong> Last year I joined… / I felt… / I learned…<br>
@@ -610,14 +672,15 @@
       <div class="q"><strong>Past Simple line:</strong><input class="line-input autosave" id="b2" type="text"></div>
       <div class="q"><strong>Present Perfect line:</strong><input class="line-input autosave" id="b3" type="text"></div>
       <div class="q"><strong>going to / will line:</strong><input class="line-input autosave" id="b4" type="text"></div>
+      <div id="boxScoreNote" class="score-note">Check shows one correct model line for each box.</div>
     </div>
 
     <div class="card" id="section7">
       <h2>8. Classroom and Grammar Connection</h2>
       <p>Choose one correct Slovak option for each English term.</p>
       <div class="section-sticky-actions">
-        <button class="primary" onclick="checkScore()">Check Score</button>
-        <button id="toggleSec7AnswersBtn" onclick="toggleSec7Answers()">Show Correct Answers</button>
+        <button type="button" class="primary" onclick="checkScore()">Check the answers</button>
+        <button type="button" onclick="clearMatching()">Clear</button>
       </div>
       <div class="term-grid">
         <div class="score-item" data-score-id="m1">
@@ -730,9 +793,19 @@
           </select>
           <div class="hint" id="hint-m11"></div>
         </div>
+        <div class="score-item" data-score-id="m12">
+          <div class="item-label">12) fill in the blanks: <span class="mark" id="mark-m12"></span></div>
+          <select class="autosave" id="m12" style="max-width:340px;display:inline-block;width:auto;min-width:240px;">
+            <option value=""></option>
+            <option>doplnte prazdne miesta</option>
+            <option>prelozte vetu</option>
+            <option>zatvorte okno</option>
+          </select>
+          <div class="hint" id="hint-m12"></div>
+        </div>
       </div>
       <div id="scoreOutput" class="score-box">Score: not checked yet.</div>
-      <div id="scoreNote" class="score-note">Tip: Po Check Score uvidis OK/X + hint.</div>
+      <div id="scoreNote" class="score-note">Check shows the correct Slovak option for every term.</div>
     </div>
   </div>
 
@@ -861,7 +934,7 @@
       tfFeedbackVisible = false;
       document.getElementById("tfScoreOutput").textContent = "True/False: not checked yet.";
       document.getElementById("tfScoreNote").textContent =
-        "Podfarbenie zmizlo. Uprav odpoved a stlac Check True/False znova.";
+        "Colours cleared. Change an answer, then check again.";
     }
 
     function checkTrueFalse() {
@@ -876,18 +949,180 @@
         var correct = TF_KEY[id];
         var ok = chosen === correct;
         if (row) row.classList.add(ok ? "scored-correct" : "scored-wrong");
-        if (mark) {
-          if (!chosen) mark.textContent = "—";
-          else mark.textContent = ok ? "OK" : "X";
-        }
+        if (mark) mark.textContent = (ok ? "OK" : "X") + " · Correct: " + correct;
         if (ok) score += 1;
       });
       var percent = Math.round((score / total) * 100);
       document.getElementById("tfScoreOutput").textContent =
         "True/False: " + score + "/" + total + " (" + percent + "%)";
       document.getElementById("tfScoreNote").textContent =
-        "Check True/False hotovy. Ked zmenis T/F, farby zmiznu.";
+        "The correct letter is shown after every sentence.";
       setStatus("True/False checked: " + score + "/" + total);
+    }
+
+    function clearTrueFalse() {
+      Object.keys(TF_KEY).forEach(function (id) {
+        var sel = document.getElementById(id);
+        if (sel) sel.value = "";
+        syncTfButtons(id);
+      });
+      resetTfStyles();
+      tfFeedbackVisible = false;
+      document.getElementById("tfScoreOutput").textContent = "True/False: not checked yet.";
+      document.getElementById("tfScoreNote").textContent = "Answers cleared.";
+      saveData();
+      setStatus("True/False cleared.");
+    }
+
+    function normWord(text) {
+      return (text || "").toLowerCase().replace(/[.,!?;:'"()]/g, "").replace(/\s+/g, " ").trim();
+    }
+    function showFieldAnswer(input, answer, ok) {
+      input.classList.remove("scored-correct", "scored-wrong");
+      if (ok !== null) input.classList.add(ok ? "scored-correct" : "scored-wrong");
+      var key = input.parentNode.querySelector('.answer-reveal[data-for="' + input.id + '"]');
+      if (!key) {
+        key = document.createElement("span");
+        key.className = "answer-reveal";
+        key.setAttribute("data-for", input.id);
+        input.insertAdjacentElement("afterend", key);
+      }
+      key.textContent = "Correct answer: " + answer;
+    }
+    function clearFieldMarks(root) {
+      if (!root) return;
+      root.querySelectorAll(".answer-reveal").forEach(function (el) { el.remove(); });
+      root.querySelectorAll(".scored-correct, .scored-wrong").forEach(function (el) {
+        el.classList.remove("scored-correct", "scored-wrong");
+      });
+    }
+    var GRAMMAR_KEY = {
+      g1: ["am"],
+      g2: ["live"],
+      g3: ["don't like", "do not like"],
+      g4: ["do you enjoy"],
+      g5: ["joined"],
+      g6: ["felt"],
+      g7: ["wrote"],
+      g8: ["clapped"],
+      g9: ["practised", "practiced"],
+      g10: ["travelled", "traveled"],
+      g11: ["join"],
+      g12: ["improve"]
+    };
+    var grammarFeedbackVisible = false;
+    function grammarOk(id, text) {
+      var forms = GRAMMAR_KEY[id];
+      var got = normWord(text);
+      for (var i = 0; i < forms.length; i++) {
+        if (got === normWord(forms[i])) return true;
+      }
+      return false;
+    }
+    function clearGrammarFeedback() {
+      if (!grammarFeedbackVisible) return;
+      grammarFeedbackVisible = false;
+      clearFieldMarks(document.getElementById("sectionGrammar"));
+      document.getElementById("grammarScoreOutput").textContent = "Grammar review: not checked yet.";
+      document.getElementById("grammarScoreNote").textContent =
+        "Answers hidden. Finish writing, then check again.";
+    }
+    function checkGaps() {
+      var inputs = document.querySelectorAll("#listeningSection input[data-blank]");
+      var score = 0;
+      inputs.forEach(function (input) {
+        var answer = input.getAttribute("data-blank");
+        var ok = normWord(input.value) === normWord(answer);
+        showFieldAnswer(input, answer, ok);
+        if (ok) score += 1;
+      });
+      document.getElementById("gapScoreOutput").textContent = "Gap fill: " + score + "/" + inputs.length;
+      document.getElementById("gapScoreNote").textContent = "Correct answer is shown after every blank.";
+      setStatus("Gap fill checked: " + score + "/" + inputs.length);
+      saveData();
+    }
+    function clearGaps() {
+      var root = document.getElementById("listeningSection");
+      clearFieldMarks(root);
+      root.querySelectorAll("input[data-blank]").forEach(function (input) { input.value = ""; });
+      document.getElementById("gapScoreOutput").textContent = "Gap fill: not checked yet.";
+      document.getElementById("gapScoreNote").textContent = "Answers cleared.";
+      saveData();
+      setStatus("Gap fill cleared.");
+    }
+    function checkGrammar() {
+      grammarFeedbackVisible = true;
+      var ids = Object.keys(GRAMMAR_KEY);
+      var score = 0;
+      ids.forEach(function (id) {
+        var input = document.getElementById(id);
+        var ok = grammarOk(id, input.value);
+        showFieldAnswer(input, GRAMMAR_KEY[id][0], ok);
+        if (ok) score += 1;
+      });
+      document.getElementById("grammarScoreOutput").textContent = "Grammar review: " + score + "/" + ids.length;
+      document.getElementById("grammarScoreNote").textContent = "Correct answer is shown after every gap.";
+      setStatus("Grammar review checked: " + score + "/" + ids.length);
+      saveData();
+    }
+    function clearGrammar() {
+      grammarFeedbackVisible = false;
+      var root = document.getElementById("sectionGrammar");
+      clearFieldMarks(root);
+      Object.keys(GRAMMAR_KEY).forEach(function (id) {
+        var input = document.getElementById(id);
+        if (input) input.value = "";
+      });
+      document.getElementById("grammarScoreOutput").textContent = "Grammar review: not checked yet.";
+      document.getElementById("grammarScoreNote").textContent = "Answers cleared.";
+      saveData();
+      setStatus("Grammar review cleared.");
+    }
+    var STORY_MODELS = {
+      n1: "Good morning. My name is Leo and I am fifteen.",
+      n2: "Last year I joined a school project about local history.",
+      n3: "I have practised English more often.",
+      n4: "Next year I am going to join the school media club.",
+      n5: "My story is still open."
+    };
+    var BOX_MODELS = {
+      b1: "I am a year-nine student.",
+      b2: "Last year I joined a school project.",
+      b3: "I have practised English more often.",
+      b4: "I am going to join the media club."
+    };
+    function showModels(map) {
+      Object.keys(map).forEach(function (id) {
+        var input = document.getElementById(id);
+        if (input) showFieldAnswer(input, map[id], null);
+      });
+    }
+    function clearModels(rootId, ids, noteId) {
+      clearFieldMarks(document.getElementById(rootId));
+      ids.forEach(function (id) {
+        var input = document.getElementById(id);
+        if (input) input.value = "";
+      });
+      document.getElementById(noteId).textContent = "Answers cleared.";
+      saveData();
+    }
+    function checkStory() {
+      showModels(STORY_MODELS);
+      document.getElementById("storyScoreNote").textContent = "Model answer is shown after every line.";
+      setStatus("Spotlight script: model answers shown.");
+    }
+    function clearStory() {
+      clearModels("sectionStory", ["n1", "n2", "n3", "n4", "n5"], "storyScoreNote");
+      setStatus("Spotlight script cleared.");
+    }
+    function checkGrammarBox() {
+      showModels(BOX_MODELS);
+      document.getElementById("boxScoreNote").textContent = "Model answer is shown after every line.";
+      setStatus("Grammar box: model answers shown.");
+    }
+    function clearGrammarBox() {
+      clearModels("sectionBox", ["b1", "b2", "b3", "b4"], "boxScoreNote");
+      setStatus("Grammar box cleared.");
     }
 
     function setTfAnswer(id, val) {
@@ -906,6 +1141,7 @@
         else el.value = "";
       });
       localStorage.removeItem(STORAGE_KEY);
+      clearFieldMarks(document);
       resetScoreStyles();
       resetDialogueStyles();
       resetTransformStyles();
@@ -921,8 +1157,9 @@
       syncAllTfButtons();
       resetTfStyles();
       tfFeedbackVisible = false;
+      grammarFeedbackVisible = false;
       document.getElementById("tfScoreOutput").textContent = "True/False: not checked yet.";
-      document.getElementById("tfScoreNote").textContent = "Po Check True/False uvidis OK/X pri kazdej vete.";
+      document.getElementById("tfScoreNote").textContent = "Each sentence shows OK or X and the correct letter.";
       setStatus("Cleared.");
     }
     function savePdf() { window.print(); }
@@ -933,6 +1170,108 @@
       panel.style.display = show ? "block" : "none";
       btn.textContent = show ? "Hide Full Text" : "Show Full Text";
     }
+    var listenTarget = null;
+    var listenRun = 0;
+    function listeningText(n) {
+      var el = document.getElementById("full" + n);
+      return el ? el.textContent.replace(/\s+/g, " ").trim() : "";
+    }
+    function pickEnglishVoice() {
+      var voices = window.speechSynthesis ? speechSynthesis.getVoices() : [];
+      var names = ["Google UK English Female", "Google UK English Male", "Microsoft Libby", "Microsoft Sonia", "Samantha"];
+      var i, j;
+      for (i = 0; i < names.length; i++) {
+        for (j = 0; j < voices.length; j++) {
+          if (voices[j].name.indexOf(names[i]) !== -1) return voices[j];
+        }
+      }
+      for (j = 0; j < voices.length; j++) {
+        if (/^en([-_]|$)/i.test(voices[j].lang)) return voices[j];
+      }
+      return null;
+    }
+    function setListenLabels(activeKey) {
+      var main = document.getElementById("listenBtn");
+      if (main) main.innerHTML = activeKey === "all" ? "&#9209; Stop" : "&#128266; Listen";
+      document.querySelectorAll(".listen-block-btn").forEach(function (btn) {
+        btn.innerHTML = activeKey === btn.getAttribute("data-listen") ? "&#9209; Stop" : "&#128266; Listen";
+      });
+    }
+    function stopListen() {
+      listenRun += 1;
+      listenTarget = null;
+      if (window.speechSynthesis) speechSynthesis.cancel();
+      setListenLabels(null);
+    }
+    function gapListenSettings() {
+      var repeatEl = document.getElementById("listenRepeat");
+      var speedEl = document.getElementById("listenSpeed");
+      var repeats = repeatEl ? parseInt(repeatEl.value, 10) : 1;
+      var rate = speedEl ? parseFloat(speedEl.value) : 0.92;
+      if (!repeats || repeats < 1) repeats = 1;
+      if (!rate) rate = 0.92;
+      return { repeats: repeats, rate: rate };
+    }
+    function toggleListen(n) {
+      if (n) {
+        var set = gapListenSettings();
+        listenParts([n], String(n), set.repeats, "Listening to block " + n + ", " + set.repeats + "×.", set.rate);
+      } else {
+        listenParts([1, 2, 3, 4], "all", 1, "Listening to the full story.", 0.92);
+      }
+    }
+    function listenSectionTwice(parts, key) {
+      listenParts(parts, key, 2, "Playing this section twice.", 0.92);
+    }
+    function listenParts(paragraphs, key, repeats, statusText, rate) {
+      if (!window.speechSynthesis) {
+        setStatus("This browser cannot read aloud.");
+        return;
+      }
+      if (listenTarget === key) {
+        stopListen();
+        setStatus("Stopped.");
+        return;
+      }
+      stopListen();
+      listenTarget = key;
+      setListenLabels(key);
+      var queue = [];
+      var round, p;
+      for (round = 0; round < repeats; round++) {
+        for (p = 0; p < paragraphs.length; p++) queue.push(listeningText(paragraphs[p]));
+        if (round < repeats - 1) queue.push("");
+      }
+      var run = listenRun;
+      function speakNext(i) {
+        if (run !== listenRun || listenTarget !== key) return;
+        if (i >= queue.length) {
+          stopListen();
+          setStatus("Listening finished.");
+          return;
+        }
+        if (!queue[i]) {
+          setTimeout(function () { speakNext(i + 1); }, 900);
+          return;
+        }
+        var utter = new SpeechSynthesisUtterance(queue[i]);
+        utter.lang = "en-GB";
+        utter.rate = rate || 0.92;
+        var voice = pickEnglishVoice();
+        if (voice) utter.voice = voice;
+        utter.onend = function () { speakNext(i + 1); };
+        utter.onerror = function (ev) {
+          if (ev && (ev.error === "interrupted" || ev.error === "canceled")) return;
+          stopListen();
+          setStatus("Playback stopped.");
+        };
+        speechSynthesis.resume();
+        speechSynthesis.speak(utter);
+      }
+      setTimeout(function () { speakNext(0); }, 60);
+      setStatus(statusText);
+    }
+    if (window.speechSynthesis) speechSynthesis.getVoices();
     function copyFullListening() {
       var text = [1, 2, 3, 4].map(function (n) {
         return BLOCK_TITLES[n] + "\n" + document.getElementById("full" + n).textContent.trim();
@@ -1034,7 +1373,7 @@
         val("b1"), val("b2"), val("b3"), val("b4"),
         "",
         "7. MATCHING",
-        ["m1","m2","m3","m4","m5","m6","m7","m8","m9","m10","m11"].map(val).join(" | ")
+        ["m1","m2","m3","m4","m5","m6","m7","m8","m9","m10","m11","m12"].map(val).join(" | ")
       ].join("\n");
       copyText(text, "Full lesson plain text copied.");
     }
@@ -1274,7 +1613,7 @@
       transformFeedbackVisible = false;
       document.getElementById("transformScoreOutput").textContent = "Exercise 2: 6 tasks — not checked yet.";
       document.getElementById("transformScoreNote").textContent =
-        "Podfarbenie zmizlo. Uprav odpoved a stlac Check Exercise 2 znova.";
+        "Colours cleared. Edit an answer, then check again.";
     }
 
     function renderTransformTasks(answers) {
@@ -1356,9 +1695,9 @@
       currentTransformTasks = picked.slice(0, setSize);
       renderTransformTasks({});
       document.getElementById("transformScoreNote").textContent =
-        "Exercise 2: 6 uloh z poolu \"" +
+        "Six tasks from \"" +
         (poolKey === "all" ? "All tenses" : TRANSFORM_POOLS[poolKey].label) +
-        "\". Vypln vsetky, potom Check.";
+        "\". Write all six, then check.";
       setStatus("Exercise 2: new set of 6 tasks.");
       saveData();
     }
@@ -1379,9 +1718,7 @@
         if (mark) mark.textContent = ok ? "OK" : "X";
         if (hint && item) {
           var correct = item.forms[task.target];
-          if (ok) hint.textContent = "Spravne. " + FORM_LABELS[task.target] + ": " + correct;
-          else if (!normalizeAnswer(chosen)) hint.textContent = "Prazdne. Spravne: " + correct;
-          else hint.textContent = "Nespravne. Spravne: " + correct;
+          hint.textContent = (ok ? "Correct. " : "Not correct. ") + "Correct answer: " + correct;
           hint.classList.add("show");
         }
         if (ok) score += 1;
@@ -1390,23 +1727,33 @@
       document.getElementById("transformScoreOutput").textContent =
         "Exercise 2: " + score + "/" + total + " (" + percent + "%)";
       document.getElementById("transformScoreNote").textContent =
-        "Check Exercise 2 hotovy. Ked zacnes editovat odpoved, farby zmiznu.";
+        "The correct sentence is shown under every task.";
       setStatus("Exercise 2 checked: " + score + "/" + total);
       saveData();
     }
+    function clearTransforms() {
+      document.querySelectorAll("#transformList .transform-input").forEach(function (el) { el.value = ""; });
+      resetTransformStyles();
+      transformFeedbackVisible = false;
+      document.getElementById("transformScoreOutput").textContent = "Exercise 2: 6 tasks — not checked yet.";
+      document.getElementById("transformScoreNote").textContent = "Answers cleared. The six tasks stay the same.";
+      saveData();
+      setStatus("Exercise 2 cleared.");
+    }
 
     const SCORE_KEY = {
-      m1: { answer: "osobna prezentacia", hint: "Hint: personal presentation = osobn\u00e1 prezent\u00e1cia." },
-      m2: { answer: "pritomny cas jednoduchy", hint: "Hint: I live / I like = pr\u00edtomn\u00fd \u010das jednoduch\u00fd." },
-      m3: { answer: "minuly cas jednoduchy", hint: "Hint: Last year I joined = minul\u00fd \u010das jednoduch\u00fd." },
-      m4: { answer: "predpritomny cas", hint: "Hint: I have practised = predpr\u00edtomn\u00fd \u010das." },
-      m5: { answer: "chystam sa / planujem", hint: "Hint: be going to = chyst\u00e1m sa / pl\u00e1nujem." },
-      m6: { answer: "uvod prezentacie", hint: "Hint: opening = \u00favod prezent\u00e1cie." },
-      m7: { answer: "záver prezentacie", hint: "Hint: closing = z\u00e1ver prezent\u00e1cie." },
-      m8: { answer: "skusenost", hint: "Hint: experience = sk\u00fasenos\u0165." },
-      m9: { answer: "ciel", hint: "Hint: goal = cie\u013e." },
-      m10: { answer: "dakujem za pozornost", hint: "Hint: Thank you for your attention = \u010fakujem za pozornos\u0165." },
-      m11: { answer: "dajte slova do spravneho poradia", hint: "Hint: put words in order = dajte slov\u00e1 do spr\u00e1vneho poradia." }
+      m1: { answer: "osobna prezentacia", hint: "personal presentation = a short talk about yourself." },
+      m2: { answer: "pritomny cas jednoduchy", hint: "I live / I like = present simple." },
+      m3: { answer: "minuly cas jednoduchy", hint: "Last year I joined = past simple." },
+      m4: { answer: "predpritomny cas", hint: "I have practised = present perfect." },
+      m5: { answer: "chystam sa / planujem", hint: "be going to = a plan." },
+      m6: { answer: "uvod prezentacie", hint: "opening = the start of the talk." },
+      m7: { answer: "záver prezentacie", hint: "closing = the end of the talk." },
+      m8: { answer: "skusenost", hint: "experience = something you have done." },
+      m9: { answer: "ciel", hint: "goal = what you want to reach." },
+      m10: { answer: "dakujem za pozornost", hint: "Thank you for your attention = the closing line." },
+      m11: { answer: "dajte slova do spravneho poradia", hint: "put the words in the correct order." },
+      m12: { answer: "doplnte prazdne miesta", hint: "fill in the blanks = write the missing words." }
     };
 
     var answersRevealed = false;
@@ -1447,11 +1794,11 @@
         });
         answersRevealed = false;
         document.getElementById("scoreOutput").textContent = "Score: not checked yet.";
-        document.getElementById("scoreNote").textContent = "Podfarbenie zmizlo. Pokracuj a stlac Check Score.";
+        document.getElementById("scoreNote").textContent = "Colours cleared. Choose again, then check.";
         saveData();
       } else {
         document.getElementById("scoreOutput").textContent = "Score: not checked yet.";
-        document.getElementById("scoreNote").textContent = "Podfarbenie z Check Score zmizlo.";
+        document.getElementById("scoreNote").textContent = "Colours from the check were cleared.";
       }
       scoreFeedbackVisible = false;
       setSec7ToggleLabel(false);
@@ -1474,17 +1821,31 @@
         if (item) item.classList.add(isCorrect ? "scored-correct" : "scored-wrong");
         if (mark) mark.textContent = isCorrect ? "OK" : "X";
         if (hint) {
-          if (isCorrect) hint.textContent = "Spravne. " + SCORE_KEY[id].hint;
-          else if (!chosen) hint.textContent = "Neoznacene. Spravne: " + correct + ". " + SCORE_KEY[id].hint;
-          else hint.textContent = "Nespravne. Spravne: " + correct + ". " + SCORE_KEY[id].hint;
+          hint.textContent = (isCorrect ? "Correct. " : "Not correct. ") + "Correct answer: " + correct + ". " + SCORE_KEY[id].hint;
           hint.classList.add("show");
         }
         if (isCorrect) score += 1;
       });
       document.getElementById("scoreOutput").textContent =
         "Score: " + score + "/" + total + " (" + Math.round((score / total) * 100) + "%)";
-      document.getElementById("scoreNote").textContent = "Check Score hodnotil polozky 1-11.";
+      document.getElementById("scoreNote").textContent = "The correct option is shown under every term.";
       setStatus("Score checked: " + score + "/" + total);
+    }
+    function clearMatching() {
+      hideAnswersLock = true;
+      resetScoreStyles();
+      answersRevealed = false;
+      scoreFeedbackVisible = false;
+      Object.keys(SCORE_KEY).forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) el.selectedIndex = 0;
+      });
+      document.getElementById("scoreOutput").textContent = "Score: not checked yet.";
+      document.getElementById("scoreNote").textContent = "Answers cleared.";
+      setSec7ToggleLabel(false);
+      hideAnswersLock = false;
+      saveData();
+      setStatus("Matching answers cleared.");
     }
     function showCorrectAnswers() {
       hideAnswersLock = true;
@@ -1500,10 +1861,10 @@
         if (el) el.value = correct;
         if (item) item.classList.add("reveal-correct");
         if (mark) mark.textContent = "ANSWER";
-        if (hint) { hint.textContent = "Spravna moznost: " + correct + ". " + SCORE_KEY[id].hint; hint.classList.add("show"); }
+        if (hint) { hint.textContent = "Correct answer: " + correct + ". " + SCORE_KEY[id].hint; hint.classList.add("show"); }
       });
       saveData();
-      document.getElementById("scoreOutput").textContent = "Correct answers shown (11/11).";
+      document.getElementById("scoreOutput").textContent = "Correct answers shown (" + Object.keys(SCORE_KEY).length + "/" + Object.keys(SCORE_KEY).length + ").";
       setSec7ToggleLabel(true);
       hideAnswersLock = false;
     }
@@ -1602,7 +1963,7 @@
       dialogueRevealed = false;
       dialogueFeedbackVisible = false;
       document.getElementById("dialogueScoreOutput").textContent = "Dialogue score: not checked yet.";
-      document.getElementById("dialogueScoreNote").textContent = "Napoveda sa skryla. Stlac Check Dialogue znova.";
+      document.getElementById("dialogueScoreNote").textContent = "The hint was hidden. Check again to see the answers.";
       hideDialogueLock = false;
     }
     function checkDialogue() {
@@ -1615,25 +1976,37 @@
         var item = document.querySelector('[data-dialogue-id="' + id + '"]');
         var mark = document.getElementById("mark-" + id);
         var hint = document.getElementById("hint-" + id);
-        var chosenNorm = normalizeAnswer(val(id));
         var isCorrect = isDialogueCorrect(id, val(id));
         if (item) item.classList.add(isCorrect ? "scored-correct" : "scored-wrong");
         if (mark) mark.textContent = isCorrect ? "OK" : "X";
         if (hint) {
-          if (isCorrect) hint.textContent = "Spravne. " + DIALOGUE_KEY[id].hint;
-          else if (!chosenNorm) hint.textContent = "Neoznacene. Spravne: " + DIALOGUE_KEY[id].display + " " + DIALOGUE_KEY[id].hint;
-          else hint.textContent = "Nespravne. Spravne: " + DIALOGUE_KEY[id].display + " " + DIALOGUE_KEY[id].hint;
+          hint.textContent = (isCorrect ? "Correct. " : "Not correct. ") + "Correct answer: " + DIALOGUE_KEY[id].display;
           hint.classList.add("show");
         }
         if (isCorrect) score += 1;
       });
       document.getElementById("dialogueScoreOutput").textContent =
         "Dialogue score: " + score + "/" + total + " (" + Math.round((score / total) * 100) + "%)";
+      document.getElementById("dialogueScoreNote").textContent =
+        "The correct sentence is shown under every answer.";
       setStatus("Dialogue checked: " + score + "/" + total);
+    }
+    function clearDialogueAnswers() {
+      Object.keys(DIALOGUE_KEY).forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) el.value = "";
+      });
+      resetDialogueStyles();
+      dialogueFeedbackVisible = false;
+      document.getElementById("dialogueScoreOutput").textContent = "Dialogue score: not checked yet.";
+      document.getElementById("dialogueScoreNote").textContent = "Answers cleared.";
+      saveData();
+      setStatus("Dialogue cleared.");
     }
 
     document.querySelectorAll(".autosave").forEach(function (el) {
       el.addEventListener("input", function () {
+        if (el.id && GRAMMAR_KEY[el.id]) clearGrammarFeedback();
         if (el.id && SCORE_KEY[el.id]) hideCorrectAnswersOnEdit(el.id);
         if (el.id && DIALOGUE_KEY[el.id]) clearDialogueFeedback();
         saveData();
